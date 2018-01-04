@@ -5,9 +5,73 @@
   <xsl:strip-space elements="*"/> 
 
 
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
-
   <xsl:include href="sequence_enhancements.xslt"/>
+  
+  <xsl:template match="/" mode="text" >
+		<xsl:copy>
+			<xsl:apply-templates mode="text"/>
+		</xsl:copy>
+	</xsl:template>
+  
+ 
+    <xsl:template match="/algebra" mode="longtext" >
+    <xsl:for-each select="rewriteRule">
+      <xsl:text>&#xA;</xsl:text>
+      <xsl:value-of select="id"/> 
+      <xsl:text>.  </xsl:text>  
+      <xsl:for-each select="lhs">
+        <xsl:variable name="lhstype">
+          <xsl:apply-templates mode="type">
+            <xsl:with-param name="absolute" select=".."/>
+          </xsl:apply-templates>
+        </xsl:variable>             
+        <xsl:apply-templates mode="text"/>
+        <xsl:text> : </xsl:text>
+        <xsl:apply-templates select="$lhstype" mode="text"/>
+      </xsl:for-each>
+      <xsl:text disable-output-escaping="yes">=></xsl:text>
+      <xsl:for-each select="rhs">
+        <xsl:variable name="rhstype">
+          <xsl:apply-templates mode="type">
+            <xsl:with-param name="absolute" select=".."/>
+          </xsl:apply-templates>
+        </xsl:variable>             
+        <xsl:apply-templates mode="text"/>
+        <xsl:text> : </xsl:text>
+        <xsl:apply-templates select="$rhstype" mode="text"/>
+      </xsl:for-each>
+    </xsl:for-each>
+    <xsl:text>&#xA;</xsl:text>
+  </xsl:template>
+  
+  
+    <xsl:template match="/" mode="tex" >
+    <xsl:text>
+\documentclass[10pt,a4paper]{article}
+\usepackage{mathtools}
+\usepackage{alltt}
+\usepackage{mnsymbol}
+\renewcommand{\ttdefault}{txtt}
+\begin{document}
+\title{ccseq Rules}
+\maketitle
+    </xsl:text>
+    <xsl:apply-templates mode="tex"/>
+      <xsl:text>
+\end{document}
+&#xA;
+      </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="*" >
+        <xsl:apply-templates mode="tex"/>
+    </xsl:template>
+    
+       
+    <xsl:template match="algebra/name" mode="tex">
+    </xsl:template>
+    
+    
 
   <!-- A specialisation of a term is a substitutional instance -->
   

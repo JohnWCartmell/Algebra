@@ -1,0 +1,13 @@
+
+temp/ccseqRewrite.enriched.xml
+temp/ccseqDiamonds.xml
+temp/ccseqRewrite.module.xslt
+temp/ccseq_longText.txt
+temp/ccseq_text.txt
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.pdf
+*.ps
+*.tex

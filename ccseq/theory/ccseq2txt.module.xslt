@@ -28,7 +28,7 @@ DESCRIPTION
       <xsl:apply-templates mode="number"/>
     </xsl:for-each>
     <xsl:text>}</xsl:text>
-    <xsl:text>=></xsl:text>
+    <xsl:text disable-output-escaping="yes"> => </xsl:text>
     <xsl:for-each select="rhs">
       <xsl:apply-templates mode="text"/>
     </xsl:for-each>
