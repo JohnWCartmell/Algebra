@@ -4,6 +4,7 @@
   <xsl:strip-space elements="*"/> 
 
   <xsl:include href="ccseq2txt.module.xslt" />
+  <xsl:include href="ccseq2type.module.xslt" />
   <xsl:include href="../../temp/ccseqRewrite.module.xslt"/>
   
   <xsl:include href="../../algebraLibrary/algebra.module.xslt"/>

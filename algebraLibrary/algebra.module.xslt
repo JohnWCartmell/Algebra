@@ -11,6 +11,86 @@
 
   <!-- A specialisation of a term is a substitutional instance -->
   
+  
+  <xsl:template match="/" mode="annotate_with_type">
+    <xsl:for-each select="test/term">
+      <example>
+        <term>
+          <xsl:apply-templates select="./*" mode="text"/>
+        </term>
+        <type>
+            <xsl:apply-templates  mode="type">
+                  <xsl:with-param name="context" select="'hom'"/>
+            </xsl:apply-templates>
+        </type>
+      </example>
+    </xsl:for-each>
+  </xsl:template>
+  
+   <xsl:template match="/" mode="testspecialisation">
+    <xsl:for-each select="test/termpair">
+      <example>
+        <super>
+          <xsl:apply-templates select="super/*" mode="text"/>
+        </super>
+        <target>
+          <xsl:message> target <xsl:apply-templates select="target/*" mode="text"/>
+          </xsl:message>
+          <xsl:apply-templates select= "target/*" mode="text"/>
+        </target>
+        <xsl:variable name="specialisations">
+          <xsl:for-each select="super/*">
+            <xsl:call-template name="specialiseTerm">
+              <xsl:with-param name="targetTerm" select="../../target/*"/>
+            </xsl:call-template>
+          </xsl:for-each>
+        </xsl:variable>
+        <results>
+          <xsl:variable name="super" select="super"/>
+          <xsl:variable name="target" select="target"/>
+          <xsl:for-each select="$specialisations/substitution">
+            <xsl:variable name="substitution" select="."/>
+            <xsl:message> substitution name <xsl:value-of select="$substitution/name()"/>
+            </xsl:message> 
+            <result>
+              <xsl:copy-of select="."/>
+              <specialisedTerm>
+                <xsl:for-each select="$super"> 
+                  <xsl:message>DOT name <xsl:value-of select="name()"/>
+                  </xsl:message>
+                  <xsl:message>count $substitution/* <xsl:value-of select="count($substitution/*)"/>
+                  </xsl:message>
+                  <xsl:apply-templates mode="substitution">
+                    <xsl:with-param name="substitutions" select="$substitution"/>
+                  </xsl:apply-templates>
+                </xsl:for-each>
+              </specialisedTerm>
+              <specialisedTarget>
+                <xsl:for-each select="$target/*">
+                  <xsl:call-template name="applyTargetSubstitutions">
+                    <xsl:with-param name="substitution" select="$substitution"/>
+                  </xsl:call-template>
+                </xsl:for-each>
+              </specialisedTarget>
+            </result>
+          </xsl:for-each>
+        </results>
+      </example>
+    </xsl:for-each>
+  </xsl:template>
+  
+  
+  
+    <xsl:template match="/" mode="normalise">
+      <xsl:for-each select="algebra/term">
+          <xsl:call-template name="recursive_rewrite">
+                <xsl:with-param name="document">
+                     <xsl:apply-templates select="*" mode="rewrite"/>
+                </xsl:with-param>
+          </xsl:call-template>
+      </xsl:for-each>
+     </xsl:template>
+  
   <xsl:template match = "/" mode="prepare_diamonds">
      <xsl:apply-templates mode="prepare_diamonds"/>
   </xsl:template>

@@ -1,0 +1,115 @@
+<!-- test for specialisation -->
+
+<test>
+
+
+  <termpair>
+    <super>
+      <o>
+        <seq>h1</seq>
+        <s>
+          <o>
+             <seq>h2</seq>
+          </o>
+        </s>
+        <q>
+          <o>
+             <seq>h2</seq>
+             <p/>
+             <seq>h3</seq>
+          </o>
+          <var>y</var>
+        </q>
+        <seq>h4</seq>
+      </o> 
+    </super>
+    <target>
+      <o>
+        <seq>h1</seq>
+        <q>
+          <var>f</var>
+          <star>
+            <var>g</var>
+            <var>x</var>
+          </star>
+        </q>
+        <q>
+          <var>g</var>
+          <var>x</var>
+        </q>
+        <seq>h2</seq>
+      </o>
+    </target>
+  </termpair>
+
+  <!--
+  <termpair>
+    <super>
+      <o>
+        <var>g</var>
+        <p/>
+      </o>
+    </super>
+    <target>
+      <o>
+      </o>
+    </target>
+  </termpair>
+
+  <termpair>
+    <super>
+      <o>
+        <seq>w1</seq>
+        <q>
+          <var>f</var>
+          <star>
+            <var>g</var>
+            <var>x</var>
+          </star>
+        </q>
+        <q>
+          <var>g</var>
+          <var>x</var>
+        </q>
+        <seq>w2</seq>
+      </o>
+    </super>
+    <target>
+      <o>
+        <seq>v1</seq>
+        <o>
+          <seq>v2</seq>
+        </o>
+        <seq>v3</seq>
+      </o>
+    </target>
+  </termpair>
+  
+
+  
+  <termpair>
+    <super>
+        <o/> 
+    </super>
+    <target>
+      <o>
+        <seq>w1</seq>
+        <q>
+          <var>f</var>
+          <star>
+            <var>g</var>
+            <var>x</var>
+          </star>
+        </q>
+        <q>
+          <var>g</var>
+          <var>x</var>
+        </q>
+        <seq>w2</seq>
+      </o>
+    </target>
+  </termpair>
+  
+    -->
+
+</test>

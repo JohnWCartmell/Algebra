@@ -1,0 +1,38 @@
+<!-- 22 Feb 2017 -->
+
+<algebra>
+
+  <term>
+    <s>
+      <q>
+        <var>G</var>
+        <var>Z</var>
+      </q>
+    </s>
+  </term>
+
+
+  <term>
+    <s>
+      <o>
+        <s>
+          <o>
+            <var>F</var>
+            <var>G</var>
+          </o>
+        </s>
+        <s>
+          <o>
+            <q>
+              <var>F</var>
+              <var>Y</var>
+            </q>
+            <var>H</var>
+          </o>
+        </s>
+      </o>
+    </s>
+  </term>
+
+
+</algebra>
