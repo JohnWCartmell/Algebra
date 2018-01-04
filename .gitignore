@@ -11,3 +11,8 @@ temp/ccseq_text.txt
 *.pdf
 *.ps
 *.tex
+ccseq/docs/diamonds.xml
+ccseq/docs/rewrite_rules.txt
+ccseq/docs/rewrite_rules_long.txt
+ccseq/theory/temp/rewrite.module.xslt
+ccseq/theory/temp/rewrite.enriched.xml
