@@ -12,6 +12,7 @@ DESCRIPTION
 
 
 
+
   <xsl:template match="o"  mode="tex">
     <xsl:variable name="args" as="xs:string *">
       <xsl:for-each select="*">

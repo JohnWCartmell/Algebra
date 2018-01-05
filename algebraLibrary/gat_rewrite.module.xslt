@@ -5,8 +5,9 @@
   <xsl:strip-space elements="*"/> 
 
 
-  <xsl:include href="sequence_enhancements.xslt"/>
-  
+ 
+ 
+ <!--
   <xsl:template match="/" mode="text" >
 		<xsl:copy>
 			<xsl:apply-templates mode="text"/>
@@ -71,10 +72,6 @@
     <xsl:template match="algebra/name" mode="tex">
     </xsl:template>
     
-    
-
-  <!-- A specialisation of a term is a substitutional instance -->
-  
   
   <xsl:template match="/" mode="annotate_with_type">
     <xsl:for-each select="test/term">
@@ -142,7 +139,7 @@
       </example>
     </xsl:for-each>
   </xsl:template>
-  
+  -->
   
   
     <xsl:template match="/" mode="normalise">
@@ -420,7 +417,9 @@
 
   <xsl:template match="var|seq" mode="get_instances_of">
     <!-- don't want a result from a variable or sequence matching whole lhs term-->
-  </xsl:template>       
+  </xsl:template>     
+
+<!--  
 
   <xsl:template name="execute_specialisation" >
     <xsl:for-each select= "algebra/termSpecialisation">
@@ -447,9 +446,6 @@
   </xsl:template>
 
 
-
-
-
   <xsl:template name="execute_substitutions">
     <xsl:for-each select= "algebra/termSubstitution">
       <xsl:message>substitution in term: <xsl:apply-templates select="term" mode="text"/>
@@ -461,7 +457,7 @@
       </xsl:copy>
     </xsl:for-each>
   </xsl:template>
-
+  
   <xsl:template match="*" mode="copy">
     <xsl:copy>
       <xsl:apply-templates mode="copy"/>
@@ -528,6 +524,8 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  -->
 
 </xsl:transform>
 

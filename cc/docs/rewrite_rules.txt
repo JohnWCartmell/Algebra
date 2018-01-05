@@ -1,0 +1,24 @@
+cc
+1.  o(id,f) = f
+
+2.  o(f,id) = f
+
+3.  o(f,o(g,h)) = o(o(f,g),h)
+
+4r.  o(f,p) = f
+
+5.  f*(g5*x) = (o(f,g5))*x
+
+6p.  o(q(f,g*x),q(g,x)) = q(o(f,g),x)
+
+7.  id*x = x
+
+8.  q(id,x) = id
+
+9p.  q(f,y) = o(p,f)
+
+10p.  s(f) = id
+
+11pp.  o(s(fff),q(fff,yy)) = fff
+
+12.  s(o(f,q(g,z))) = s(f)

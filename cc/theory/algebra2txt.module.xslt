@@ -12,11 +12,12 @@ DESCRIPTION
 
 
 
-  <xsl:template match="o"  mode="tex">
+
+  <xsl:template match="o"  mode="text">
     <xsl:variable name="args" as="xs:string *">
       <xsl:for-each select="*">
         <xsl:variable name="arg">
-          <xsl:apply-templates select="." mode="tex"/>
+          <xsl:apply-templates select="." mode="text"/>
         </xsl:variable>
         <xsl:value-of select="$arg"/>
       </xsl:for-each>
@@ -27,46 +28,61 @@ DESCRIPTION
   </xsl:template>
 
 
-  <xsl:template match="q" mode="tex">
+  <xsl:template match="q" mode="text">
     <xsl:text>q(</xsl:text>
-    <xsl:apply-templates select="*[1]" mode="tex"/>
+    <xsl:apply-templates select="*[1]" mode="text"/>
     <xsl:text>,</xsl:text>
-    <xsl:apply-templates select="*[2]" mode="tex"/>
+    <xsl:apply-templates select="*[2]" mode="text"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="star" mode="tex">
+  <xsl:template match="star" mode="text">
     <xsl:choose> 
       <xsl:when test="*[1][self::o|self::star]">
         <xsl:text>(</xsl:text>
-        <xsl:apply-templates select="*[1]" mode="tex"/>
+        <xsl:apply-templates select="*[1]" mode="text"/>
         <xsl:text>)</xsl:text>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:apply-templates select="*[1]" mode="tex"/>
+        <xsl:apply-templates select="*[1]" mode="text"/>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:text>^*</xsl:text>
+    <xsl:text>*</xsl:text>
     <xsl:choose> 
       <xsl:when test="*[2][self::o | self::star]">
         <xsl:text>(</xsl:text>
-        <xsl:apply-templates select="*[2]" mode="tex"/>
+        <xsl:apply-templates select="*[2]" mode="text"/>
         <xsl:text>)</xsl:text>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:apply-templates select="*[2]" mode="tex"/>
+        <xsl:apply-templates select="*[2]" mode="text"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="s" mode="tex">
+  <xsl:template match="s" mode="text">
     <xsl:text>s(</xsl:text>
-    <xsl:apply-templates select="*[1]" mode="tex"/>
+    <xsl:apply-templates select="*[1]" mode="text"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="p|id|a|b|c|d|e" mode="tex">
+  <xsl:template match="p|id|a|b|c|d|e" mode="text">
     <xsl:value-of select="name()"/>
   </xsl:template>
+
+  <xsl:template match="ob" mode="text">
+    <xsl:text>ob</xsl:text>
+  </xsl:template>  
+
+  <xsl:template match="hom" mode="text">
+    <xsl:text>hom(</xsl:text>
+    <xsl:apply-templates select="*[1]" mode="text"/>
+    <xsl:text>,</xsl:text>
+    <xsl:apply-templates select="*[2]" mode="text"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
+
+
 
 </xsl:transform>
