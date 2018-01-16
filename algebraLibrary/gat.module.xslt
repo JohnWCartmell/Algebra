@@ -41,7 +41,7 @@
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
   
-    <xsl:template match="equation" mode="text">
+  <xsl:template match="equation" mode="text">
     <xsl:text>&#xA;</xsl:text>
     <xsl:value-of select="id"/> 
     <xsl:text>.  </xsl:text>    
@@ -85,8 +85,15 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
   
-  <xsl:template match="/algebra" mode="longtext" >
-    <xsl:for-each select="rewriteRule">
+    <xsl:template match="/" mode="longtext" >
+		<xsl:copy>
+			<xsl:apply-templates mode="longtext"/>
+      <xsl:text>&#xA;</xsl:text>
+		</xsl:copy>
+	</xsl:template>
+  
+  
+  <xsl:template match="rewriteRule|equation" mode="longtext" >
       <xsl:text>&#xA;</xsl:text>
       <xsl:value-of select="id"/> 
       <xsl:text>.  </xsl:text>  
@@ -100,7 +107,15 @@
         <xsl:text> : </xsl:text>
         <xsl:apply-templates select="$lhstype" mode="text"/>
       </xsl:for-each>
-      <xsl:text disable-output-escaping="yes">=></xsl:text>
+          <xsl:choose>
+        <xsl:when test="self::equation">
+            <xsl:text> = </xsl:text>
+        </xsl:when>
+        <xsl:when test="self::rewriteRule">
+            <xsl:text disable-output-escaping="yes">=></xsl:text>
+        </xsl:when>
+    </xsl:choose>
+    
       <xsl:for-each select="rhs">
         <xsl:variable name="rhstype">
           <xsl:apply-templates mode="type">
@@ -111,12 +126,10 @@
         <xsl:text> : </xsl:text>
         <xsl:apply-templates select="$rhstype" mode="text"/>
       </xsl:for-each>
-    </xsl:for-each>
-    <xsl:text>&#xA;</xsl:text>
   </xsl:template>
   
   
-    <xsl:template match="/" mode="tex" >
+  <xsl:template match="/" mode="tex" >
     <xsl:text>
 \documentclass[10pt,a4paper]{article}
 \usepackage{mathtools}
@@ -146,7 +159,7 @@
     <xsl:apply-templates mode="tex"/>	   
   </xsl:template>
 
-  <xsl:template match="rewriteRule" mode="tex">
+  <xsl:template match="rewriteRule|equation" mode="tex">
     <xsl:text>
 \begin{equation}
     </xsl:text>
@@ -164,7 +177,14 @@
     </xsl:for-each>
     <xsl:text>\right\}</xsl:text>
     -->
-    <xsl:text>\Rightarrow </xsl:text>
+    <xsl:choose>
+        <xsl:when test="self::equation">
+            <xsl:text> = </xsl:text>
+        </xsl:when>
+        <xsl:when test="self::rewriteRule">
+              <xsl:text>\Rightarrow </xsl:text>
+        </xsl:when>
+    </xsl:choose>
     <xsl:for-each select="rhs">
       <xsl:apply-templates mode="tex"/>
     </xsl:for-each>

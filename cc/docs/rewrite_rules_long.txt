@@ -1,1 +1,13 @@
-
+cc
+1.  o(id,f) : hom(yd6e10,) = f : 
+2.  o(f,id) : hom(xd6e20,) = f : 
+3.  o(f,o(g,h)) : hom(xd6e31,yd6e36) = o(o(f,g),h) : hom(xd6e31,yd6e36)
+4r.  o(f,p) : hom(xd6e52,yd6e54) = f : 
+5.  f*(g5*x) : ob = (o(f,g5))*x : ob
+6p.  o(q(f,g*x),q(g,x)) : hom(xd6e86*(g*x),x) = q(o(f,g),x) : hom(xd6e86*x,x)
+7.  id*x : ob = x : 
+8.  q(id,x) : hom(x*,x) = id : 
+9p.  q(f,y) : hom(xd6e134*y,y) = o(p,f) : hom(xd6e140,yd6e134)
+10p.  s(f) : hom(xd6e149,(o(f,p))*yd6e149) = id : 
+11pp.  o(s(fff),q(fff,yy)) : hom(xd6e160,yy) = fff : 
+12.  s(o(f,q(g,z))) : hom(xd6e177,(o(o(f,q(g,z)),p))*z) = s(f) : hom(xd6e177,(o(f,p))*yd6e177)

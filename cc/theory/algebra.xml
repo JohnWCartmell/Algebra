@@ -52,20 +52,6 @@
     </rhs>
   </equation>
 
-  <equation>
-    <id>4r</id>
-    <lhs>
-      <o>
-        <var>f</var>
-        <p/>
-      </o>
-    </lhs>
-    <rhs>
-      <ft>
-        <var>f</var>
-      </ft>
-    </rhs>
-  </equation>
 
   <equation>
     <id>5</id>
@@ -73,7 +59,7 @@
       <star>
         <var>f</var>
         <star>
-          <var>g5</var>
+          <var>g</var>
           <var>x</var>
         </star>
       </star>
@@ -82,7 +68,7 @@
       <star>
         <o>
           <var>f</var>
-          <var>g5</var>
+          <var>g</var>
         </o>
         <var>x</var>
       </star>
@@ -90,7 +76,7 @@
   </equation>
 
   <equation>
-    <id>6p</id>
+    <id>6</id>
     <lhs>
       <o>
         <q>
@@ -144,14 +130,15 @@
   </equation>
 
   <equation>
-    <id>9p</id>
+    <id>9</id>
     <lhs>
-      <ft>
+      <o>
         <q>
           <var>f</var>
           <var>y</var>
         </q>
-      </ft>
+        <p/>
+      </o>
     </lhs>
     <rhs>
       <o>
@@ -162,13 +149,14 @@
   </equation>
 
   <equation>
-    <id>10p</id>
+    <id>10</id>
     <lhs>
-      <ft>
+      <o>
         <s>
           <var>f</var>
         </s>
-      </ft>
+        <p/>
+      </o>
     </lhs>
     <rhs>
       <id/>
@@ -176,22 +164,23 @@
   </equation>
 
   <equation>
-    <id>11pp</id>
+    <id>11</id>
     <lhs>
       <o>
         <s>
-          <var>fff</var>
+          <var>f</var>
         </s>
         <q>
-          <ft>
-            <var>fff</var>
-          </ft>
-          <var>yy</var>
+          <o>
+            <var>f</var>
+            <p/>
+          </o>
+          <var>y</var>
         </q>
       </o>
     </lhs>
     <rhs>
-      <var>fff</var>
+      <var>f</var>
     </rhs>
   </equation>
 
