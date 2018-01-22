@@ -1,38 +1,64 @@
 <!-- 22 Feb 2017 -->
 
-<algebra>
+<gat:algebra 
+	    xmlns:ccseq            ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
+		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+		                  xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+						  
 
-  <term>
+
+	<gat:term>
+	     <o><var><name>f</name></var></o>
+    </gat:term>
+						  					  
+	<gat:term>
+		<var><gat:name>x</gat:name></var>
+		<gat:type>
+			This is an annotation. This term is already normalised.
+		</gat:type>
+	</gat:term>
+
+	<gat:term>
+		<o>
+			<var><gat:name>f</gat:name></var>
+			<o/>
+			<var><gat:name>g</gat:name></var>
+			<gat:type>
+				<Hom><var><gat:name>x</gat:name></var><s><var><gat:name>f</gat:name></var></s></Hom>
+			</gat:type>
+		</o>
+	</gat:term>
+  <gat:term>
     <s>
       <q>
-        <var>G</var>
-        <var>Z</var>
+        <var><gat:name>G</gat:name></var>
+        <var><gat:name>Z</gat:name></var>
       </q>
     </s>
-  </term>
+  </gat:term>
 
-
-  <term>
+	<!--
+  <gat:term>
     <s>
       <o>
         <s>
           <o>
-            <var>F</var>
-            <var>G</var>
+            <var><gat:name>F</gat:name></var>
+            <var><gat:name>G</gat:name></var>
           </o>
         </s>
         <s>
           <o>
             <q>
-              <var>F</var>
-              <var>Y</var>
+              <var><gat:name>F</gat:name></var>
+              <var><gat:name>Y</gat:name></var>
             </q>
-            <var>H</var>
+            <var><gat:name>H</gat:name></var>
           </o>
         </s>
       </o>
     </s>
-  </term>
+  </gat:term>
 
-
-</algebra>
+-->
+</gat:algebra>

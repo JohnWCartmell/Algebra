@@ -1,6 +1,9 @@
 <xsl:transform version="2.0" 
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
+		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
+		                  xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
 
 
 
@@ -24,7 +27,7 @@
     <xsl:choose>
       <!-- 15 Feb 2017 switched order of these when branches -->
       <!-- to avoid proof that f=g -->
-      <xsl:when test=".[self::var|self::seq]">
+      <xsl:when test=".[self::*:var|self::*:seq]">
         <!--  BELIEVE THAT WE NEED THE self::seq CASE for engulfing target seq-->
         <substitution>
           <substitute>
@@ -37,7 +40,7 @@
           </substitute>
         </substitution>
       </xsl:when>
-      <xsl:when test="$targetTerm[self::var]">
+      <xsl:when test="$targetTerm[self::*:var]">
         <!-- removed then included |self:seq previously 16 Mar 2017 -->
         <substitution>
           <targetSubstitute>
@@ -68,7 +71,7 @@
           <xsl:when test="count($targetTerm/*)=0"> <!-- if get here then  count(./*) != 0 -->
              <INCOMPATIBLE/>
           </xsl:when>
-          <xsl:when test="$targetTerm/*[1][self::seq]">
+          <xsl:when test="$targetTerm/*[1][self::*:seq]">
             <xsl:call-template name="proceedFromAllTargetSequenceBackMappings">
               <xsl:with-param name="targetTerm" select="$targetTerm"/>
               <xsl:with-param name="targetIndex" select="1"/>
@@ -212,7 +215,7 @@
           </xsl:if>
           <xsl:if test="($targetIndex + $numberOfTargetChildrenConsumed &gt; count($targetTerm/* ))
                         or (($targetIndex + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
-                             and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::seq])
+                             and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
                            )">
             <!-- need to have consumed all target term children or there to be just a seq remaining -->
             <xsl:message> sSTF finished consumption </xsl:message>
@@ -221,7 +224,7 @@
         </xsl:when >
         <xsl:when test="count($head_substitution/tail/*) &gt; 0">  
           <xsl:if test="($targetIndex + $numberOfTargetChildrenConsumed &lt; count($targetTerm/* ) + 1)
-                        or ( count($head_substitution/tail/*) = 1 and  $head_substitution/tail/*[self::seq]  )"> 
+                        or ( count($head_substitution/tail/*) = 1 and  $head_substitution/tail/*[self::*:seq]  )"> 
             <!-- xxxxxxx  -->
             <xsl:variable name="tailspecialised">
               <xsl:for-each select="$head_substitution/tail"> 
@@ -294,7 +297,7 @@
     <xsl:message>  hS targetIndex  <xsl:value-of select="$targetIndex"/>
     </xsl:message>
     <xsl:choose>
-      <xsl:when test="not(./*[1][self::seq]) and not($targetTerm/*[$targetIndex][self::seq])">
+      <xsl:when test="not(./*[1][self::*:seq]) and not($targetTerm/*[$targetIndex][self::*:seq])">
         <xsl:message> hS branch 1 </xsl:message>
         <!-- source is not  target is not seq -->
         <xsl:variable name="substitutions">
@@ -322,7 +325,7 @@
         </xsl:for-each>
       </xsl:when>
 
-      <xsl:when test="not(./*[1][self::seq]) and $targetTerm/*[$targetIndex][self::seq]">
+      <xsl:when test="not(./*[1][self::*:seq]) and $targetTerm/*[$targetIndex][self::*:seq]">
         <xsl:message> hS branch 2 </xsl:message>     
         <xsl:for-each select="./*">
           <head_substitution>
@@ -359,7 +362,7 @@
       <!-- current seq can map to any upto end of target-->
 
 
-      <xsl:when test="(./*[1][self::seq]) and count(./*) &gt; 1">
+      <xsl:when test="(./*[1][self::*:seq]) and count(./*) &gt; 1">
         <xsl:message> Hs branch 3 </xsl:message>
 
         <xsl:variable name="seq_sub_options">
@@ -400,7 +403,7 @@
           </head_substitution>
         </xsl:for-each>
       </xsl:when>
-      <xsl:when test="(./*[1][self::seq]) and count(./*) = 1">
+      <xsl:when test="(./*[1][self::*:seq]) and count(./*) = 1">
         <xsl:message>hS TAIL seq found</xsl:message>
         <head_substitution>
           <substitution>
@@ -426,11 +429,11 @@
     </xsl:choose>
     <xsl:message> hS pre final case <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>  then  <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::seq"/>
     </xsl:message> 
-    <xsl:if test="./*[1][self::seq] and count(./*) &gt; 2 and $targetTerm/*[$targetIndex]/following-sibling::seq">
+    <xsl:if test="./*[1][self::*:seq] and count(./*) &gt; 2 and $targetTerm/*[$targetIndex]/following-sibling::*:seq">
       <xsl:message> hS final case</xsl:message> 
       <xsl:variable name="indexofTargetSeq" 
                     as="xs:integer"
-                    select = "count($targetTerm/*[$targetIndex]/following-sibling::seq[1]/preceding-sibling::*)+1"  
+                    select = "count($targetTerm/*[$targetIndex]/following-sibling::*:seq[1]/preceding-sibling::*)+1"  
       />         
 
       <xsl:message> hS indexofTargetSeq <xsl:value-of select="$indexofTargetSeq"/>
@@ -451,7 +454,7 @@
             </substitute>
             <targetSubstitute>
               <placefive/>
-              <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::seq[1]"/>
+              <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::*:seq[1]"/>
               <xsl:for-each select="self::* | preceding-sibling::*[count(preceding-sibling::*) &gt; 0]"> 
                 <term>
                   <xsl:copy-of select="."/>

@@ -4,27 +4,20 @@ Description
  
  -->
 
-
 <xsl:transform version="2.0" 
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
-		xmlns:cc               ="http://www.entitymodelling.org/theory/contextualcategory"
-		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
-		xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
+		xmlns:trm="http://www.entitymodelling.org/theory/term"
+		xmlns:typ="http://www.entitymodelling.org/theory/type"
+		xpath-default-namespace="http://www.entitymodelling.org/theory/term" 	   
+		xmlns="http://www.entitymodelling.org/theory/term" >
 
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
 	<xsl:template match="/">
-		<xsl:for-each select="algebra">
-			<xsl:copy>
-				<xsl:copy-of select="namespace::*"/>
-				<xsl:for-each select="*">
-					<xsl:call-template name="initial_enrichment">
-						<xsl:with-param name="document" select="."/>
-					</xsl:call-template>
-				</xsl:for-each>
-			</xsl:copy>
-		</xsl:for-each>
+		<xsl:message> at root</xsl:message>
+		<xsl:call-template name="initial_enrichment">
+			<xsl:with-param name="document" select="."/>
+		</xsl:call-template>
 	</xsl:template>
 
 
@@ -40,34 +33,22 @@ Description
 		<xsl:variable name="current_state">
 			<xsl:for-each select="$document">
 				<xsl:copy>
-					<xsl:apply-templates mode="initial_enrichment_zero_pass"/>
-				</xsl:copy>
-			</xsl:for-each>
-		</xsl:variable>
-		<xsl:variable name="current_state">
-			<xsl:for-each select="$current_state">
-				<xsl:copy>
 					<xsl:apply-templates mode="initial_enrichment_first_pass"/>
 				</xsl:copy>
 			</xsl:for-each>
 		</xsl:variable>
-		<xsl:variable name="current_state">
-			<xsl:for-each select="$current_state">
-				<xsl:copy>
-					<xsl:apply-templates mode="initial_enrichment_second_pass"/>
-				</xsl:copy>
-			</xsl:for-each>
-		</xsl:variable>
-		<xsl:variable name="current_state">
-			<xsl:for-each select="$current_state">
-				<xsl:copy>
-					<xsl:apply-templates mode="initial_enrichment_third_pass"/>
-				</xsl:copy>
-			</xsl:for-each>
-		</xsl:variable>
-		<xsl:call-template name="initial_enrichment_recursive">
-			<xsl:with-param name="interim" select="$current_state"/>
-		</xsl:call-template>
+
+		<xsl:for-each select="$current_state">
+			<xsl:copy>
+				<xsl:apply-templates mode="initial_enrichment_second_pass"/>
+			</xsl:copy>
+		</xsl:for-each>
+
+		<!--
+    <xsl:call-template name="initial_enrichment_recursive">
+      <xsl:with-param name="interim" select="$current_state"/>
+    </xsl:call-template>
+    -->
 	</xsl:template>
 
 
@@ -98,27 +79,10 @@ Description
 		<xsl:copy-of select="$result"/>
 	</xsl:template>
 
-	<xsl:template match="*"
-			mode="initial_enrichment_zero_pass"> 
-		<xsl:if test="self::cc:*">
-		</xsl:if>
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates mode="initial_enrichment_zero_pass"/>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="*[self::*:var|self::*:seq][not(name)]" mode="initial_enrichment_zero_pass">
-		<xsl:copy>
-			<gat:name><xsl:value-of select="text()"/></gat:name>
-			<xsl:apply-templates select="*[not(text())]" mode="initial_enrichment_zero_pass"/>
-		</xsl:copy>
-	</xsl:template>
-
 
 	<xsl:template match="*"
 			mode="initial_enrichment_first_pass"> 
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
 		</xsl:copy>
@@ -131,7 +95,8 @@ Description
 	</xsl:template>
 
 
-	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::*:var|self::*:seq)]" mode="initial_enrichment_first_pass">
+
+	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::var|self::seq)]" mode="initial_enrichment_first_pass">
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id">
@@ -143,24 +108,24 @@ Description
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*:var" mode="initial_enrichment_first_pass">
+	<xsl:template match="var" mode="initial_enrichment_first_pass">
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id" select="concat(
 					.,'_',
-					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::*:var[name=current()/name])+1
+					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::var[.=current()/.])+1
 					)"/>
 			</xsl:if>
 			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*:seq" mode="initial_enrichment_first_pass">
+	<xsl:template match="seq" mode="initial_enrichment_first_pass">
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id" select="concat(
 					.,'_',
-					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::*:seq[name=current()/name])+1
+					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::seq[.=current()/.])+1
 					)"/>
 			</xsl:if>
 			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
@@ -188,17 +153,17 @@ Description
 	</xsl:template>
 
 
-	<!--	<xsl:template match="algebra|name|id" mode="initial_enrichment_second_pass"> -->
-	<xsl:template match="*" mode="initial_enrichment_second_pass">
-		<xsl:copy copy-namespaces="no">
+<!--	<xsl:template match="algebra|name|id" mode="initial_enrichment_second_pass"> -->
+<xsl:template match="*" mode="initial_enrichment_second_pass">
+		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_second_pass"/>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::*:seq)]" 
+	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::seq)]" 
 			mode="initial_enrichment_second_pass">
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="context">
@@ -207,12 +172,12 @@ Description
 							<!-- outer op of term    -->
 							<xsl:text>self::*</xsl:text>
 						</xsl:when>
-						<xsl:when test="preceding-sibling::*[not(self::*:seq)]">
+						<xsl:when test="preceding-sibling::*[not(self::seq)]">
 							<!-- not the first non seq child -->
 							<xsl:text>$</xsl:text>
-							<xsl:value-of select="preceding-sibling::*[not(self::*:seq)]/@id"/>
+							<xsl:value-of select="preceding-sibling::*[not(self::seq)]/@id"/>
 							<xsl:text>/following-sibling::*[1]</xsl:text>
-							<xsl:if test="not(self::*:var)">
+							<xsl:if test="not(self::var)">
 								<xsl:text>[self::</xsl:text>
 								<xsl:value-of select="name()"/>
 								<xsl:text>]</xsl:text>
@@ -223,24 +188,24 @@ Description
 							<xsl:text>$</xsl:text>
 							<xsl:value-of select="parent::*/@id"/>
 							<xsl:text>/child::*[1]</xsl:text>
-							<xsl:if test="not(self::*:var)">
+							<xsl:if test="not(self::var)">
 								<xsl:text>[self::</xsl:text>
 								<xsl:value-of select="name()"/>
 								<xsl:text>]</xsl:text>
 							</xsl:if>
 						</xsl:when>
-						<xsl:when test="not(preceding-sibling::*[not(self::*:seq)])">
+						<xsl:when test="not(preceding-sibling::*[not(self::seq)])">
 							<!-- the first non-seq child -->
 							<xsl:text>$</xsl:text>
 							<xsl:value-of select="parent::*/@id"/>
 							<xsl:text>/child::</xsl:text>
-							<xsl:value-of select="if (self::*:var) then '*' else name()"/>
+							<xsl:value-of select="if (self::var) then '*' else name()"/>
 						</xsl:when>
 					</xsl:choose>
 					<xsl:if test="not(following-sibling::*) and not(parent::lhs)">
 						<xsl:text>[not(following-sibling::*)]</xsl:text>
 					</xsl:if>
-					<xsl:if test="not(child::*) and not(self::*:var)">
+					<xsl:if test="not(child::*) and not(self::var)">
 						<xsl:text>[not(child::*)]</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
@@ -250,7 +215,7 @@ Description
 	</xsl:template>
 
 
-	<xsl:template match="*:seq" mode="initial_enrichment_second_pass">
+	<xsl:template match="seq" mode="initial_enrichment_second_pass">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:if test="ancestor::lhs">
@@ -303,26 +268,27 @@ Description
 	</xsl:template>
 
 	<xsl:template match="*" mode="initial_enrichment_third_pass">
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
+	<xsl:template match="*[self::var][not(typ:type)]" mode="initial_enrichment_third_pass">
 		<xsl:copy>  
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
-			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation)/context/decl[name=current()/name]/type" />
+			<typ:type>
+				<xsl:value-of select="(ancestor::rewriteRule|ancestor::equation)/context/decl[name=current()/name]/type"/>
+			</typ:type>
 		</xsl:copy>
 	</xsl:template>
-
 
 
 	<!-- recursive step -->
 
 	<xsl:template match="*"
 			mode="initial_enrichment_recursive"> 
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_recursive"/>
 		</xsl:copy>

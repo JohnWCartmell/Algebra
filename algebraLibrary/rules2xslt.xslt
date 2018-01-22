@@ -7,7 +7,10 @@ DESCRIPTION
 -->
 
 <xsl:transform version="2.0" 
-        xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
+		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
 
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
@@ -130,10 +133,10 @@ DESCRIPTION
       <xsl:text>self::</xsl:text>
     </xsl:if>
     <xsl:value-of select="name()"/>
-    <xsl:if test="*[not(self::var)]">
+    <xsl:if test="*[not(self::*:var)]">
       <xsl:text>[</xsl:text>
     </xsl:if>
-    <xsl:for-each select="*[not(self::var)]"> 
+    <xsl:for-each select="*[not(self::*:var)]"> 
       <xsl:message>At <xsl:value-of select="name()"/>
       </xsl:message>
       <xsl:if test="position()!= 1">
@@ -146,16 +149,16 @@ DESCRIPTION
       <xsl:apply-templates select="." mode="lhs"/>
       <xsl:text>]</xsl:text>
     </xsl:for-each>
-    <xsl:if test="*[not(self::var)]">
+    <xsl:if test="*[not(self::*:var)]">
       <xsl:text>]</xsl:text>
     </xsl:if>
-    <xsl:for-each select="*/self::var">
-      <xsl:if test="preceding::var[(.=current()/.) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
+    <xsl:for-each select="*/self::*:var">
+      <xsl:if test="preceding::*:var[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
         <xsl:text> and deep-equal(</xsl:text>
         <xsl:text>ancestor::term/</xsl:text>
         <xsl:call-template name="index"/>
         <xsl:text>,ancestor::term/</xsl:text>
-        <xsl:for-each select="preceding::var[.=current()/.][1]">
+        <xsl:for-each select="preceding::*:var[name=current()/name][1]">
           <xsl:call-template name="index"/>
         </xsl:for-each>
         <xsl:text>)</xsl:text>               
@@ -163,8 +166,8 @@ DESCRIPTION
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="var" mode="lhs">
-    <xsl:for-each select="preceding::var[.=current()/.][1]">
+  <xsl:template match="*:var" mode="lhs">
+    <xsl:for-each select="preceding::*:var[name=current()/name][1]">
       <duplicateOf>
         <xsl:call-template name="index"/>
       </duplicateOf>
@@ -172,7 +175,7 @@ DESCRIPTION
   </xsl:template>
 
 
-  <xsl:template match="var" mode="rhs">
+  <xsl:template match="*:var" mode="rhs">
     <!--
         <xsl:copy>
             <xsl:apply-templates mode="rhs"/>
@@ -189,7 +192,7 @@ DESCRIPTION
     -->
     <xsl:element name="xsl:apply-templates">
       <xsl:attribute name="select">
-        <xsl:for-each select="ancestor::rewriteRule/lhs/descendant-or-self::var[.=current()/.][1]">
+        <xsl:for-each select="ancestor::rewriteRule/lhs/descendant-or-self::*:var[.=current()/.][1]">
           <xsl:call-template name="selectindex"/>
         </xsl:for-each>
       </xsl:attribute>

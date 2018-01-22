@@ -5,20 +5,18 @@ cc
 
 3.  o(f,o(g,h)) = o(o(f,g),h)
 
-4r.  o(f,p) = f
+5.  f*(g*z) = (o(f,g))*z
 
-5.  f*(g5*x) = (o(f,g5))*x
+6.  o(q(f,g*z),q(g,z)) = q(o(f,g),z)
 
-6p.  o(q(f,g*x),q(g,x)) = q(o(f,g),x)
+7.  id*y = x
 
-7.  id*x = x
+8.  q(id,y) = id
 
-8.  q(id,x) = id
+9.  o(q(f,z),p) = o(p,f)
 
-9p.  q(f,y) = o(p,f)
+10.  o(s(f),p) = id
 
-10p.  s(f) = id
-
-11pp.  o(s(fff),q(fff,yy)) = fff
+11.  o(s(f),q(o(f,p),y)) = f
 
 12.  s(o(f,q(g,z))) = s(f)

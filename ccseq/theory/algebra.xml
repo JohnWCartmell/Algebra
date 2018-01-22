@@ -1,11 +1,16 @@
 <!-- 22 Feb 2017 -->
 
-<algebra>
-  <name>ccseq</name>
+<gat:algebra 
+	    xmlns:ccseq               ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
+		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+		                  xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+	
+  <gat:name>ccseq</gat:name>
+  <gat:namespace>http://www.entitymodelling.org/theory/contextualcategory/sequence</gat:namespace>
 
-  <rewriteRule>
-    <id>3s</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>3s</gat:id>
+    <gat:lhs>
       <o>
         <seq>f1</seq>
         <o>
@@ -13,32 +18,32 @@
         </o>
         <seq>f3</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>f1</seq>
         <seq>f2</seq>
         <seq>f3</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>3sp</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>3sp</gat:id>
+    <gat:lhs>
       <o>
         <var>f</var>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <var>f</var>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>5</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>5</gat:id>
+    <gat:lhs>
       <star>
         <var>f</var>
         <star>
@@ -46,8 +51,8 @@
           <var>x</var>
         </star>
       </star>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <star>
         <o>
           <var>f</var>
@@ -55,12 +60,12 @@
         </o>
         <var>x</var>
       </star>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>6ps</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>6ps</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <q>
@@ -76,8 +81,8 @@
         </q>
         <seq>h2</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <q>
@@ -89,38 +94,38 @@
         </q>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>7</id>
-    <lhs>      
+  <gat:rewriteRule>
+    <gat:id>7</gat:id>
+    <gat:lhs>      
       <star>
         <o/>
         <var>x</var>
       </star>       
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <var>x</var>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>8</id>
-    <lhs>      
+  <gat:rewriteRule>
+    <gat:id>8</gat:id>
+    <gat:lhs>      
       <q>
         <o/>
         <var>x</var>
       </q>       
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o/>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>9ps</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>9ps</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <q>
@@ -130,20 +135,20 @@
         <p/>
         <seq>h2</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <p/>
         <var>f</var>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>10ps</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>10ps</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -152,19 +157,19 @@
         <p/>
         <seq>h2</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>11pps</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>11pps</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -179,19 +184,19 @@
         </q>
         <seq>h2</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>f</var>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>11pps.id</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>11pps.id</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -204,18 +209,18 @@
         </q>
         <seq>h2</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>11pps2</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>11pps2</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -232,8 +237,8 @@
         </q>
         <seq>h3</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <o>
@@ -241,12 +246,12 @@
         </o>
         <seq>h3</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>11pps3</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>11pps3</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -264,8 +269,8 @@
         </q>
         <seq>h4</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <o>
@@ -279,12 +284,12 @@
         </q>
         <seq>h4</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>11pps4</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>11pps4</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -300,8 +305,8 @@
         </q>
         <seq>h3</seq>
       </o>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>ff</var>
@@ -313,12 +318,12 @@
         </q>
         <seq>h3</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>12s</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>12s</gat:id>
+    <gat:lhs>
       <s>
         <o>
           <seq>f</seq>
@@ -328,19 +333,19 @@
           </q>
         </o>
       </s>
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <s>
         <o>
           <seq>f</seq>
         </o>
       </s>
-    </rhs>
-  </rewriteRule> 
+    </gat:rhs>
+  </gat:rewriteRule> 
 
-  <rewriteRule>
-    <id>17s</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17s</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -363,8 +368,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>f</var>
@@ -373,13 +378,13 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>17ss</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17ss</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -404,8 +409,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <seq>f</seq>
@@ -414,13 +419,13 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
   
-  <rewriteRule>
-    <id>17sss</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17sss</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -445,8 +450,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>f</var>
@@ -457,12 +462,12 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>17ssss</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17ssss</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -489,8 +494,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <seq>f</seq>
@@ -501,13 +506,13 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>17s.id</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17s.id</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -528,8 +533,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>f</var>
@@ -539,13 +544,13 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>17ss.id</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>17ss.id</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -568,8 +573,8 @@
         </q>
         <seq>h2</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <seq>f</seq>
@@ -579,47 +584,47 @@
         </s>
         <seq>h2</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>21</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>21</gat:id>
+    <gat:lhs>
       <s>
         <s>
           <var>f</var>
         </s>
       </s>	
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <s>
         <var>f</var>
       </s>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
 
-  <rewriteRule>
-    <id>26</id>
-    <lhs>      
+  <gat:rewriteRule>
+    <gat:id>26</gat:id>
+    <gat:lhs>      
       <s>
         <q>
           <var>g</var>
           <var>z</var>
         </q>
       </s>       
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <s>
         <o/>
       </s>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
 
-  <rewriteRule>
-    <id>28s</id>
-    <lhs>
+  <gat:rewriteRule>
+    <gat:id>28s</gat:id>
+    <gat:lhs>
       <o>
         <seq>h1</seq>
         <s>
@@ -639,8 +644,8 @@
         </q>
         <seq>h3</seq>
       </o>    
-    </lhs>
-    <rhs>
+    </gat:lhs>
+    <gat:rhs>
       <o>
         <seq>h1</seq>
         <var>f</var>
@@ -650,9 +655,9 @@
         </s>
         <seq>h3</seq>
       </o>
-    </rhs>
-  </rewriteRule>
+    </gat:rhs>
+  </gat:rewriteRule>
  
 
 
-</algebra>
+</gat:algebra>
