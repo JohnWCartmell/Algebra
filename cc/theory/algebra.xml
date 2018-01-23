@@ -6,6 +6,42 @@
 			 
 	<gat:name>cc</gat:name>			 
 	<gat:namespace>http://www.entitymodelling.org/theory/gat:contextualcategory</gat:namespace>
+	
+		<gat:example>
+		<gat:id>ex1</gat:id>
+		<gat:context>
+			<gat:decl>
+				<gat:name>x</gat:name>
+				<gat:type>
+					<Ob><var>x_p</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>y</gat:name>
+				<gat:type>
+					<Ob><var>y_p</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>z</gat:name>
+				<gat:type>
+					<Ob><var>y</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>f</gat:name>
+				<gat:type>
+					<Hom>
+						<var>x</var>
+						<var>y</var>
+					</Hom>
+				</gat:type>
+			</gat:decl>
+		</gat:context>
+		<gat:term>
+		<q><var>f</var><var>z</var></q>
+		</gat:term>
+		</gat:example>
 
 	<gat:equation>
 		<gat:id>1</gat:id>
@@ -317,7 +353,7 @@
 			</star>       
 		</gat:lhs>
 		<gat:rhs>
-			<var>x</var>
+			<var>y</var>
 		</gat:rhs>
 	</gat:equation>
 

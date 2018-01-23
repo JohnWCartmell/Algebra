@@ -131,7 +131,7 @@ Description
 	</xsl:template>
 
 
-	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::*:var|self::*:seq)]" mode="initial_enrichment_first_pass">
+	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::term|self::*:var|self::*:seq)]" mode="initial_enrichment_first_pass">
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id">
@@ -175,18 +175,11 @@ Description
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="lhs" mode="initial_enrichment_first_pass">
+	<xsl:template match="lhs|rhs|term" mode="initial_enrichment_first_pass">
 		<xsl:copy>
 			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
 		</xsl:copy>
 	</xsl:template>
-
-	<xsl:template match="rhs" mode="initial_enrichment_first_pass">
-		<xsl:copy>
-			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
-		</xsl:copy>
-	</xsl:template>
-
 
 	<!--	<xsl:template match="algebra|name|id" mode="initial_enrichment_second_pass"> -->
 	<xsl:template match="*" mode="initial_enrichment_second_pass">
@@ -312,7 +305,7 @@ Description
 	<xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
 		<xsl:copy>  
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
-			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation)/context/decl[name=current()/name]/type" />
+			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
 		</xsl:copy>
 	</xsl:template>
 

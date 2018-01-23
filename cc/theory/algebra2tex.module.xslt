@@ -7,31 +7,38 @@ DESCRIPTION
 -->
 
 <xsl:transform version="2.0" 
-        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	    xmlns:cc               ="http://www.entitymodelling.org/theory/contextualcategory"
+		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:cc               ="http://www.entitymodelling.org/theory/contextualcategory"
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory" 	   
-		                  xmlns="http://www.entitymodelling.org/theory/contextualcategory" >
+		xmlns="http://www.entitymodelling.org/theory/contextualcategory" >
 
+	<xsl:template match="gat:lhs|gat:rhs|gat:term" mode="tex">	
+		<xsl:text>\ofT{</xsl:text>
+		<xsl:apply-templates select="cc:*" mode="tex"/>
+		<xsl:text>}{</xsl:text>
+		<xsl:apply-templates select="cc:*/gat:type/cc:*" mode="tex"/>
+		<xsl:text>}</xsl:text>				      
+	</xsl:template>
 
 	<xsl:template match="Ob" mode="tex">
 		<xsl:text>Ob(</xsl:text>
-		<xsl:apply-templates mode="tex"/>
+		<xsl:apply-templates select="cc:*" mode="tex"/>
 		<xsl:text>)</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="Hom" mode="tex">
-         <xsl:text>Hom(</xsl:text>
-		 <xsl:apply-templates select="*[1]" mode="tex"/>
-		 <xsl:text>, </xsl:text>
-		 <xsl:apply-templates select="*[2]" mode="tex"/>
-		 <xsl:text>)</xsl:text>
+		<xsl:text>Hom(</xsl:text>
+		<xsl:apply-templates select="cc:*[1]" mode="tex"/>
+		<xsl:text>, </xsl:text>
+		<xsl:apply-templates select="cc:*[2]" mode="tex"/>
+		<xsl:text>)</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="o"  mode="tex">
 		<xsl:variable name="args" as="xs:string *">
-			<xsl:for-each select="*">
+			<xsl:for-each select="cc:*">
 				<xsl:variable name="arg">
 					<xsl:apply-templates select="." mode="tex"/>
 				</xsl:variable>
@@ -46,9 +53,9 @@ DESCRIPTION
 
 	<xsl:template match="q" mode="tex">
 		<xsl:text>q(</xsl:text>
-		<xsl:apply-templates select="*[1]" mode="tex"/>
+		<xsl:apply-templates select="cc:*[1]" mode="tex"/>
 		<xsl:text>,</xsl:text>
-		<xsl:apply-templates select="*[2]" mode="tex"/>
+		<xsl:apply-templates select="cc:*[2]" mode="tex"/>
 		<xsl:text>)</xsl:text>
 	</xsl:template>
 
@@ -56,36 +63,36 @@ DESCRIPTION
 		<xsl:choose> 
 			<xsl:when test="*[1][self::o|self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="cc:*[1]" mode="tex"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="cc:*[1]" mode="tex"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>^*</xsl:text>
 		<xsl:choose> 
 			<xsl:when test="*[2][self::o | self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="cc:*[2]" mode="tex"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="cc:*[2]" mode="tex"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="s" mode="tex">
 		<xsl:text>s(</xsl:text>
-		<xsl:apply-templates select="*[1]" mode="tex"/>
+		<xsl:apply-templates select="cc:*" mode="tex"/>
 		<xsl:text>)</xsl:text>
 	</xsl:template>
-	
+
 	<xsl:template match="p|id" mode="tex">
 		<xsl:value-of select="name()"/>
 		<xsl:text>_{</xsl:text>
-		<xsl:apply-templates mode="tex"/>
+		<xsl:apply-templates select="cc:*" mode="tex"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
 

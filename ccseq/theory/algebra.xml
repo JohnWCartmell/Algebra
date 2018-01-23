@@ -10,6 +10,35 @@
 
   <gat:rewriteRule>
     <gat:id>3s</gat:id>
+	<gat:context>
+	   <gat:decl>
+	        <gat:name>f_1</gat:name>
+			<gat:type>
+			      <HomSeq>
+				      <var><gat:name>x_0</gat:name></var>
+	                  <var><gat:name>x_1</gat:name></var>
+				  </HomSeq>
+		    </gat:type>
+	    </gat:decl>
+			   <gat:decl>
+	        <gat:name>f_2</gat:name>
+			<gat:type>
+			      <HomSeq>
+				      <var><gat:name>x_1</gat:name></var>
+	                  <var><gat:name>x_2</gat:name></var>
+				  </HomSeq>
+		    </gat:type>
+	    </gat:decl>
+			   <gat:decl>
+	        <gat:name>f_3</gat:name>
+			<gat:type>
+			      <HomSeq>
+				      <var><gat:name>x_2</gat:name></var>
+	                  <var><gat:name>x_3</gat:name></var>
+				  </HomSeq>
+		    </gat:type>
+	    </gat:decl>
+	</gat:context>
     <gat:lhs>
       <o>
         <seq>f1</seq>
@@ -30,6 +59,7 @@
 
   <gat:rewriteRule>
     <gat:id>3sp</gat:id>
+	
     <gat:lhs>
       <o>
         <var>f</var>
@@ -43,6 +73,50 @@
 
   <gat:rewriteRule>
     <gat:id>5</gat:id>
+		<gat:context>
+			<gat:decl>
+				<gat:name>w</gat:name>
+				<gat:type>
+					<Ob><var>w_p</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>x</gat:name>
+				<gat:type>
+					<Ob><var>x_p</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>y</gat:name>
+				<gat:type>
+					<Ob><var>y_p</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>z</gat:name>
+				<gat:type>
+					<Ob><var>y</var></Ob>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>f</gat:name>
+				<gat:type>
+					<Hom>
+						<var>w</var>
+						<var>x</var>
+					</Hom>
+				</gat:type>
+			</gat:decl>
+			<gat:decl>
+				<gat:name>g</gat:name>
+				<gat:type>
+					<Hom>
+						<var>x</var>
+						<var>y</var>
+					</Hom>
+				</gat:type>
+			</gat:decl>
+		</gat:context>
     <gat:lhs>
       <star>
         <var>f</var>
