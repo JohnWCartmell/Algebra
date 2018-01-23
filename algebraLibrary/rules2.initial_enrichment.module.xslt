@@ -308,7 +308,13 @@ Description
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
 		</xsl:copy>
 	</xsl:template>
-
+	
+		<xsl:template match="*[self::*:seq][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
+		<xsl:copy>  
+			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
+		</xsl:copy>
+	</xsl:template>
 
 
 	<!-- recursive step -->

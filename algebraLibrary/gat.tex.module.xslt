@@ -139,9 +139,9 @@
 
 
 	<xsl:template match="context" mode="tex">
-		<xsl:for-each select="decl">
+		<xsl:for-each select="decl|sequence">
 			<xsl:apply-templates select="." mode ="tex"/>
-			<xsl:if test="following-sibling::decl">
+			<xsl:if test="following-sibling::decl | following-sibling::sequence">
 				<xsl:text>,\ </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -154,6 +154,14 @@
 		<xsl:apply-templates select="type" mode="tex"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
+	
+	<xsl:template match="sequence" mode="tex">
+		<xsl:text>\ofT{\vec{</xsl:text>
+		<xsl:value-of select="name"/>
+		<xsl:text>}}{</xsl:text>
+		<xsl:apply-templates select="type" mode="tex"/>
+		<xsl:text>}</xsl:text>
+	</xsl:template>
 
 	<xsl:template match="type" mode="tex">
 		<xsl:apply-templates mode="tex"/> 
@@ -162,13 +170,11 @@
 	<xsl:template match="*:var" mode="tex">
 		<xsl:value-of select="name"/>
 	</xsl:template>
+	
 
 	<xsl:template match="*:seq" mode="tex">
-		<xsl:variable name="stem" select="replace(., '[\d]', '')"/>
-		<xsl:variable name="subscript" select="replace(., '[^\d]', '')"/>
 		<xsl:text>\vec{</xsl:text>
-		<xsl:value-of select="$stem"/>
-		<xsl:value-of select="if (string-length($subscript)=0) then '' else concat('_',$subscript)"/>
+		<xsl:value-of select="name"/>
 		<xsl:text>}</xsl:text>
 
 	</xsl:template>

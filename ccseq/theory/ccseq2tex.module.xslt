@@ -13,11 +13,41 @@ DESCRIPTION
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
+	<xsl:template match="gat:lhs|gat:rhs|gat:term" mode="tex">	
+		<xsl:text>\ofT{</xsl:text>
+		<xsl:apply-templates select="ccseq:*" mode="tex"/>
+		<xsl:text>}{</xsl:text>
+		<xsl:apply-templates select="ccseq:*/gat:type/ccseq:*" mode="tex"/>
+		<xsl:text>}</xsl:text>				      
+	</xsl:template>
+	
+		<xsl:template match="Ob" mode="tex">
+		<xsl:text>Ob(</xsl:text>
+		<xsl:apply-templates select="ccseq:*" mode="tex"/>
+		<xsl:text>)</xsl:text>
+	</xsl:template>
 
+	<xsl:template match="Hom" mode="tex">
+		<xsl:text>Hom(</xsl:text>
+		<xsl:apply-templates select="ccseq:*[1]" mode="tex"/>
+		<xsl:text>, </xsl:text>
+		<xsl:apply-templates select="ccseq:*[2]" mode="tex"/>
+		<xsl:text>)</xsl:text>
+	</xsl:template>
+	
+		<xsl:template match="HomSeq" mode="tex">
+		<xsl:text>H\overrightarrow{om}(</xsl:text>
+		<xsl:apply-templates select="ccseq:*[1]" mode="tex"/>
+		<xsl:text>, </xsl:text>
+		<xsl:apply-templates select="ccseq:*[2]" mode="tex"/>
+		<xsl:text>)</xsl:text>
+	</xsl:template>
+	
+	
 
   <xsl:template match="o"  mode="tex">
     <xsl:variable name="args" as="xs:string *">
-      <xsl:for-each select="*">
+      <xsl:for-each select="ccseq:*">
         <xsl:variable name="arg">
           <xsl:apply-templates select="." mode="tex"/>
         </xsl:variable>
