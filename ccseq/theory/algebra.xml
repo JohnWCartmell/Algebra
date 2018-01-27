@@ -58,19 +58,18 @@
 	</gat:rewriteRule>
 
 	<gat:rewriteRule>
-		<gat:context>
-			<gat:var>
+  	<gat:id>3sp</gat:id>
+		<gat:context>  
+			<gat:decl>
 				<gat:name>f</gat:name>
 				<gat:type>
-					<HomSeq>
+					<Hom>
 						<var><gat:name>x</gat:name></var>
 						<var><gat:name>y</gat:name></var>
-					</HomSeq>
+					</Hom>
 				</gat:type>
-			</gat:var>
+			</gat:decl>
 		</gat:context>
-		<gat:id>3sp</gat:id>
-
 		<gat:lhs>
 			<o>
 				<var>f</var>
@@ -272,7 +271,7 @@
 		<gat:lhs>      
 			<q>
 				<o/>
-				<var>x</var>
+				<var>y</var>
 			</q>       
 		</gat:lhs>
 		<gat:rhs>
