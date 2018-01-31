@@ -1,0 +1,180 @@
+
+<gat:algebra 
+    xmlns:cat              ="http://www.entitymodelling.org/theory/exampleone"
+    xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+    xmlns="http://www.entitymodelling.org/theory/exampleone" >
+
+  <gat:id>cat</gat:id>	
+  <gat:name>Example from thesis 1978</gat:name>  
+  <gat:namespace>http://www.entitymodelling.org/theory/gat:exampleone</gat:namespace>
+
+  <gat:sort>
+    <gat:id>A</gat:id>
+    <gat:context>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <A/>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:sort>
+
+  <gat:sort>
+    <gat:id>B</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>x</gat:name>
+        <gat:type>
+          <A/>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <B><var>x</var></B>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:sort>
+
+  <gat:sort>
+    <gat:id>C</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>x</gat:name>
+        <gat:type>
+          <A/>
+        </gat:type>
+      </gat:decl>
+      <gat:decl>
+        <gat:name>y</gat:name>
+        <gat:type>
+          <B><var>x</var></B>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <C><var>x</var><var>y</var></C>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:sort>
+
+  <gat:operator>
+    <gat:id>a_1</gat:id>
+    <gat:context>
+    </gat:context>
+    <gat:tT-conclusion>
+      <gat:term>
+        <a_1/>
+      </gat:term>
+      <gat:type>
+        <A/>
+      </gat:type>
+    </gat:tT-conclusion>
+  </gat:operator>
+
+  <gat:operator>
+    <gat:id>a_2</gat:id>
+    <gat:context>
+    </gat:context>
+    <gat:tT-conclusion>
+      <gat:term>
+        <a_2/>
+      </gat:term>
+      <gat:type>
+        <A/>
+      </gat:type>
+    </gat:tT-conclusion>
+  </gat:operator>
+
+
+  <gat:equation>
+    <gat:id>1</gat:id>
+    <gat:context>
+    </gat:context>
+    <gat:TT-conclusion>
+      <gat:lhs>
+        <B><a_1/></B>
+      </gat:lhs>
+      <gat:rhs>
+        <B><a_2/></B>
+      </gat:rhs>
+    </gat:TT-conclusion>
+  </gat:equation>
+
+  <gat:type_assertion>
+    <gat:id>typexpr1</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>y</gat:name>
+        <gat:type>
+          <B><a_1/></B>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <C><a_1/><var>y</var></C>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:type_assertion>
+  
+  <gat:type_assertion>
+    <gat:id>typeexpr2</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>y</gat:name>
+        <gat:type>
+          <B><a_1/></B>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <C><a_2/><var>y</var></C>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:type_assertion>
+  
+  <gat:type_assertion>
+    <gat:id>typeexpr3</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>y</gat:name>
+        <gat:type>
+          <B><a_2/></B>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:T-conclusion>
+      <gat:type>
+        <C><a_2/><var>y</var></C>
+      </gat:type>
+    </gat:T-conclusion>
+  </gat:type_assertion>
+  
+    <gat:example>
+    <gat:id>typeequality</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>y</gat:name>
+        <gat:type>
+          <B><a_1/></B>
+        </gat:type>
+      </gat:decl>
+    </gat:context>
+    <gat:TT-conclusion>
+      <gat:lhs>
+        <C><a_1/><var>y</var></C>
+      </gat:lhs>
+      <gat:rhs>
+        <C><a_2/><var>y</var></C>
+      </gat:rhs>
+    </gat:TT-conclusion>
+  </gat:example>
+  
+  
+  
+
+
+</gat:algebra>
