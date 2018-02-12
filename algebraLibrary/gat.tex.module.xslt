@@ -120,10 +120,10 @@ Derived Rules\\
     <xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
     <xsl:if test ="context/*">
       <xsl:apply-templates select="context" mode="tex"/>
-      <xsl:text>\tstyle</xsl:text>
+      <xsl:text>\tstyle </xsl:text>
     </xsl:if>
     <xsl:apply-templates select="TT-conclusion|tt-conclusion" mode="tex"/>
-    <xsl:if test="following-sibling::*[self::sort|self::operator|rewriteRukle|equation]">
+    <xsl:if test="following-sibling::*[self::sort|self::operator|self::rewriteRule|self::equation]">
       <xsl:text> \\</xsl:text>
     </xsl:if>
     <xsl:text>

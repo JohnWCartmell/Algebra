@@ -97,8 +97,21 @@ DESCRIPTION
     <xsl:apply-templates select="*[1]" mode="tex"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
+  
+    <xsl:template match="p" mode="tex">
+    <xsl:text>p_{</xsl:text>
+    <xsl:apply-templates select="*[1]" mode="tex"/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="id" mode="tex">
+    <xsl:text>id_{</xsl:text>
+    <xsl:apply-templates select="*[1]" mode="tex"/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+  
 
-  <xsl:template match="p|id|a|b|c|d|e" mode="tex">
+  <xsl:template match="a|b|c|d|e" mode="tex">
     <xsl:value-of select="name()"/>
   </xsl:template>
 
