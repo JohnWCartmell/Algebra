@@ -1,33 +1,218 @@
 <!-- 22 Feb 2017 -->
+<!-- updated 13 Feb 2018 -->
 
 <gat:algebra 
-	    xmlns:ccseq            ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
-		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
-		                  xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
-						  
+    xmlns:ccseq ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
+    xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+    xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+  <gat:term>
+    <star>
+      <o>
+        <o>
+          <seq>
+            <gat:name>f</gat:name>
+          </seq>
+          <q>
+            <var>g</var>
+            <var>z</var>
+          </q>
+          <gat:type>
+            <Hom>
+              <var>
+                <gat:name>w</gat:name>
+              </var>
+              <var>
+                <gat:name>z</gat:name>
+                <gat:type>
+                  <Ob>
+                    <var>
+                      <gat:name>y</gat:name>
+                    </var>
+                  </Ob>
+                </gat:type>
+              </var>
+            </Hom>
+          </gat:type>
+        </o>
+        <p><var>z</var></p>
+      </o>     
+      <var>z</var>       
+    </star>
+  </gat:term>
 
 
-	<gat:term>
-	     <o><var><name>f</name></var></o>
+  <!--
+    
+    <gat:term>
+    <o>
+                           <seq>
+                              <gat:name>f</gat:name>
+                              <gat:type>
+                                 <HomSeq>
+                                    <var>
+                                       <gat:name>w</gat:name>
+                                    </var>
+                                    <star>
+                                       <var>
+                                          <gat:name>g</gat:name>
+                                       </var>
+                                       <var>
+                                          <gat:name>z</gat:name>
+                                       </var>
+                                    </star>
+                                 </HomSeq>
+                              </gat:type>
+                           </seq>
+                           <q>
+                              <var>
+                                 <gat:name>g</gat:name>
+                                 <gat:type>
+                                    <Hom>
+                                       <var>
+                                          <gat:name>x</gat:name>
+                                       </var>
+                                       <var>
+                                          <gat:name>y</gat:name>
+                                       </var>
+                                    </Hom>
+                                 </gat:type>
+                              </var>
+                              <var>
+                                 <gat:name>z</gat:name>
+                                 <gat:type>
+                                    <Ob>
+                                       <var>
+                                          <gat:name>y</gat:name>
+                                       </var>
+                                    </Ob>
+                                 </gat:type>
+                              </var>
+                              <gat:type>
+                                 <Hom>
+                                    <star xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                                       <var>
+                                          <gat:name>g</gat:name>
+                                          <gat:type>
+                                             <Hom>
+                                                <var>
+                                                   <gat:name>x</gat:name>
+                                                </var>
+                                                <var>
+                                                   <gat:name>y</gat:name>
+                                                </var>
+                                             </Hom>
+                                          </gat:type>
+                                       </var>
+                                       <var>
+                                          <gat:name>z</gat:name>
+                                          <gat:type>
+                                             <Ob>
+                                                <var>
+                                                   <gat:name>y</gat:name>
+                                                </var>
+                                             </Ob>
+                                          </gat:type>
+                                       </var>
+                                       <gat:type>
+                                          <Ob>
+                                             <var>
+                                                <gat:name>x</gat:name>
+                                             </var>
+                                          </Ob>
+                                       </gat:type>
+                                    </star>
+                                    <var>
+                                       <gat:name>z</gat:name>
+                                       <gat:type>
+                                          <Ob>
+                                             <var>
+                                                <gat:name>y</gat:name>
+                                             </var>
+                                          </Ob>
+                                       </gat:type>
+                                    </var>
+                                 </Hom>
+                              </gat:type>
+                           </q>
+                           
+                           -->
+  <!--
+                           <gat:type>
+                              <Hom>
+                                 <var>
+                                    <gat:name>w</gat:name>
+                                 </var>
+                                 <var>
+                                    <gat:name>z</gat:name>
+                                    <gat:type>
+                                       <Ob>
+                                          <var>
+                                             <gat:name>y</gat:name>
+                                          </var>
+                                       </Ob>
+                                    </gat:type>
+                                 </var>
+                              </Hom>
+                           </gat:type>
+                           -->
+  <!--
+                           <p xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                              <var>
+                                 <gat:name>z</gat:name>
+                                 <gat:type>
+                                    <Ob>
+                                       <var>
+                                          <gat:name>y</gat:name>
+                                       </var>
+                                    </Ob>
+                                 </gat:type>
+                              </var>
+                              <gat:type>
+                                 <Hom>
+                                    <var>
+                                       <gat:name>z</gat:name>
+                                       <gat:type>
+                                          <Ob>
+                                             <var>
+                                                <gat:name>y</gat:name>
+                                             </var>
+                                          </Ob>
+                                       </gat:type>
+                                    </var>
+                                    <var>
+                                       <gat:name>y</gat:name>
+                                    </var>
+                                 </Hom>
+                              </gat:type>
+                           </p>
+                        </o>
+    
     </gat:term>
-						  					  
-	<gat:term>
-		<var><gat:name>x</gat:name></var>
-		<gat:type>
-			This is an annotation. This term is already normalised.
-		</gat:type>
-	</gat:term>
+    -->
+  <!--
+  <gat:term>
+    <o><var><name>f</name></var></o>
+  </gat:term>
 
-	<gat:term>
-		<o>
-			<var><gat:name>f</gat:name></var>
-			<o/>
-			<var><gat:name>g</gat:name></var>
-			<gat:type>
-				<Hom><var><gat:name>x</gat:name></var><s><var><gat:name>f</gat:name></var></s></Hom>
-			</gat:type>
-		</o>
-	</gat:term>
+  <gat:term>
+    <var><gat:name>x</gat:name></var>
+    <gat:type>
+      This is an annotation. This term is already normalised.
+    </gat:type>
+  </gat:term>
+
+  <gat:term>
+    <o>
+      <var><gat:name>f</gat:name></var>
+      <o/>
+      <var><gat:name>g</gat:name></var>
+      <gat:type>
+        <Hom><var><gat:name>x</gat:name></var><s><var><gat:name>f</gat:name></var></s></Hom>
+      </gat:type>
+    </o>
+  </gat:term>
+  
+  
   <gat:term>
     <s>
       <q>
@@ -36,8 +221,120 @@
       </q>
     </s>
   </gat:term>
+  
+  
+  <gat:term>
+    <star>
+      <var>
+        <gat:name>f</gat:name>
+        <gat:type>
+          <Hom>
+            <var>
+              <gat:name>w</gat:name>
+            </var>
+            <var>
+              <gat:name>x</gat:name>
+            </var>
+          </Hom>
+        </gat:type>
+      </var>
+      <star>
+        <var>
+          <gat:name>g</gat:name>
+          <gat:type>
+            <Hom>
+              <var>
+                <gat:name>x</gat:name>
+              </var>
+              <var>
+                <gat:name>y_p</gat:name>
+              </var>
+            </Hom>
+          </gat:type>
+        </var>
+        <var>
+          <gat:name>y</gat:name>
+          <gat:type>
+            <Ob>
+              <var>
+                <gat:name>y_p</gat:name>
+              </var>
+            </Ob>
+          </gat:type>
+        </var>
+        <gat:type>
+          <Ob>
+            <var>
+              <gat:name>x</gat:name>
+            </var>
+          </Ob>
+        </gat:type>
+      </star>
 
-	<!--
+    </star>
+  </gat:term>
+
+  
+
+  <gat:term>
+    <star>
+      <var>
+        <gat:name>f</gat:name>
+        <gat:type>
+          <Hom>
+            <var>
+              <gat:name>w</gat:name>
+            </var>
+            <var>
+              <gat:name>x</gat:name>
+            </var>
+          </Hom>
+        </gat:type>
+      </var>
+      <star>
+        <var>
+          <gat:name>g</gat:name>
+          <gat:type>
+            <Hom>
+              <var>
+                <gat:name>x</gat:name>
+              </var>
+              <var>
+                <gat:name>y_p</gat:name>
+              </var>
+            </Hom>
+          </gat:type>
+        </var>
+        <var>
+          <gat:name>y</gat:name>
+          <gat:type>
+            <Ob>
+              <var>
+                <gat:name>y_p</gat:name>
+              </var>
+            </Ob>
+          </gat:type>
+        </var>
+        <gat:type>
+          <Ob>
+            <var>
+              <gat:name>x</gat:name>
+            </var>
+          </Ob>
+        </gat:type>
+      </star>
+      <gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <Ob>
+          <var>
+            <gat:name>w</gat:name>
+          </var>
+        </Ob>
+      </gat:type>
+    </star>
+  </gat:term>
+-->
+
+  <!--
   <gat:term>
     <s>
       <o>
