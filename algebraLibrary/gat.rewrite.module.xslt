@@ -16,6 +16,7 @@
 	</xsl:template>
 
 	<xsl:template match="term" mode="normalise">
+    <xsl:message> Normalising <xsl:value-of select="name()"/> . <xsl:value-of select="*/name()"/></xsl:message>
 		<xsl:copy>
 			<xsl:call-template name="recursive_rewrite">
 				<xsl:with-param name="document">

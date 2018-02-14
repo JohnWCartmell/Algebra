@@ -91,14 +91,14 @@ DESCRIPTION
         <xsl:value-of select="concat(../name,id)"/>
       </xsl:attribute>
       <xsl:attribute name="match">
-        <xsl:apply-templates select="lhs/*" mode="lhs"/>
+        <xsl:apply-templates select="tt-conclusion/lhs/*" mode="lhs"/>
       </xsl:attribute>
       <xsl:attribute name="mode" select="'rewrite'"/>
       <xsl:element name="xsl:message">
         <xsl:value-of select="../name"/>
         <xsl:value-of select="id"/>
       </xsl:element>
-      <xsl:apply-templates select="rhs/*" mode="rhs"/>
+      <xsl:apply-templates select="tt-conclusion/rhs/*" mode="rhs"/>
     </xsl:element>
   </xsl:template>
 
@@ -111,7 +111,7 @@ DESCRIPTION
       <xsl:element name="xsl:choose">
         <xsl:element name="xsl:when">
           <xsl:attribute name="test">
-            <xsl:apply-templates select="lhs/*" mode="lhs"/>
+            <xsl:apply-templates select="tt-conclusion/lhs/*:*" mode="lhs"/>
           </xsl:attribute>
           <xsl:element name="xsl:value-of">
             <xsl:attribute name="select" select="'''PASS'''"/>
@@ -127,8 +127,7 @@ DESCRIPTION
   </xsl:template>
 
 
-
-  <xsl:template match="*" mode="lhs">
+  <xsl:template match="*:*" mode="lhs">
     <xsl:if test="not(../self::lhs)">
       <xsl:text>self::</xsl:text>
     </xsl:if>

@@ -58,16 +58,20 @@ Description
 				</xsl:copy>
 			</xsl:for-each>
 		</xsl:variable>
+    <!--
 		<xsl:variable name="current_state">
+    -->
 			<xsl:for-each select="$current_state">
 				<xsl:copy>
 					<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 				</xsl:copy>
 			</xsl:for-each>
+      <!--
 		</xsl:variable>
 		<xsl:call-template name="initial_enrichment_recursive">
 			<xsl:with-param name="interim" select="$current_state"/>
 		</xsl:call-template>
+    -->
 	</xsl:template>
 
 
@@ -231,10 +235,10 @@ Description
 						</xsl:when>
 					</xsl:choose>
 					<xsl:if test="not(following-sibling::*) and not(parent::lhs)">
-						<xsl:text>[not(following-sibling::*)]</xsl:text>
+						<xsl:text>[not(following-sibling::ccseq:*)]</xsl:text>
 					</xsl:if>
 					<xsl:if test="not(child::*) and not(self::*:var)">
-						<xsl:text>[not(child::*)]</xsl:text>
+						<xsl:text>[not(child::ccseq:*)]</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
 			</xsl:if>
@@ -244,13 +248,15 @@ Description
 
 
 	<xsl:template match="*:seq" mode="initial_enrichment_second_pass">
+  <xsl:message> second pass of seq </xsl:message>
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:if test="ancestor::lhs">
+      <xsl:message>Generating xpath </xsl:message>
 				<xsl:attribute name="xpath">
 					<xsl:text>$</xsl:text>
 					<xsl:value-of select="parent::*/@id"/>
-					<xsl:text>/child::*</xsl:text>
+					<xsl:text>/child::ccseq:*</xsl:text>  <!-- 22:15 13 Feb 2018 -->
 					<xsl:if test="preceding-sibling::*">
 						<!-- not the first  child -->
 						<xsl:text>[position() &gt; </xsl:text>
@@ -301,9 +307,10 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 		</xsl:copy>
 	</xsl:template>
-
+<!-- DEBUGGING ON 13 FEB 2018 COMMENT OUT THIS - getting in way of genertion of deep euqal test ???
 	<xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
 		<xsl:copy>  
+       <xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
 		</xsl:copy>
@@ -311,14 +318,17 @@ Description
 	
 		<xsl:template match="*[self::*:seq][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
 		<xsl:copy>  
+    	<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
 		</xsl:copy>
 	</xsl:template>
+  
+  -->
 
 
 	<!-- recursive step -->
-
+<!--
 	<xsl:template match="*"
 			mode="initial_enrichment_recursive"> 
 		<xsl:copy copy-namespaces="no">
@@ -326,6 +336,7 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_recursive"/>
 		</xsl:copy>
 	</xsl:template>
+  -->
 
 
 </xsl:transform>

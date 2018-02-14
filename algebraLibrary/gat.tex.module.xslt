@@ -6,7 +6,6 @@
     xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
   <xsl:strip-space elements="*"/> 
 
-
   <xsl:template match="/" mode="tex" >
     <xsl:text>
       \documentclass[10pt,a4paper,fleqn]{article}
@@ -55,7 +54,8 @@ Derived Rules\\
 
   <xsl:template match="/" mode="tex_rulestyle" >
     <xsl:text>
-      \documentclass[10pt,a4paper]{article}
+      \documentclass[10pt]{article}
+      \usepackage[a4paper,margin=1in,landscape]{geometry}
       \usepackage{mathtools}
       \usepackage{alltt}
       \usepackage{mnsymbol}
@@ -592,7 +592,7 @@ Derived Rules\\
 		<xsl:for-each select="decl|sequence">
 			<xsl:apply-templates select="." mode ="tex"/>
 			<xsl:if test="following-sibling::decl | following-sibling::sequence">
-				<xsl:text>,\ </xsl:text>
+				<xsl:text>,\, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
