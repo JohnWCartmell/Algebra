@@ -22,20 +22,20 @@
 		<xsl:text>&#xA;</xsl:text>
 		<xsl:value-of select="id"/> 
 		<xsl:text>.  </xsl:text>    
-		<xsl:for-each select="lhs">
+		<xsl:for-each select="tt-conclusion/lhs">
 			<xsl:apply-templates mode="text"/>
 		</xsl:for-each>
 		<xsl:text>{</xsl:text>
-		<xsl:for-each select="lhs">
+		<xsl:for-each select="tt-conclusion/lhs">
 			<xsl:apply-templates mode="number"/>
 		</xsl:for-each>
 		<xsl:text>}</xsl:text>
 		<xsl:text disable-output-escaping="yes"> => </xsl:text>
-	<xsl:for-each select="rhs">
+	<xsl:for-each select="tt-conclusion/rhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text>{</xsl:text>
-	<xsl:for-each select="rhs">
+	<xsl:for-each select="tt-conclusion/rhs">
 		<xsl:apply-templates mode="number"/>
 	</xsl:for-each>
 	<xsl:text>}</xsl:text>
@@ -46,23 +46,23 @@
 	<xsl:text>&#xA;</xsl:text>
 	<xsl:value-of select="id"/> 
 	<xsl:text>.  </xsl:text>    
-	<xsl:for-each select="lhs">
+	<xsl:for-each select="tt-conclusion/lhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text> = </xsl:text>
-	<xsl:for-each select="rhs">
+	<xsl:for-each select="tt-conclusion/rhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text>&#xA;</xsl:text>
 </xsl:template>
 
 <xsl:template match="*:var" mode="text">
-	<xsl:value-of select="."/>
+	<xsl:value-of select="gat:name"/>
 </xsl:template>
 
 <xsl:template match="*:seq" mode="text">
 	<xsl:text>.</xsl:text>
-	<xsl:value-of select="."/>
+	<xsl:value-of select="gat:name"/>
 	<xsl:text>.</xsl:text>
 </xsl:template>
 

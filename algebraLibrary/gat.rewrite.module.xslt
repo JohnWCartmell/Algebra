@@ -6,9 +6,24 @@
 		                  xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
 
 	<xsl:strip-space elements="*"/> 
+	
+	
+	<!--
+	<xsl:template name="normalise">
+        <xsl:message> Explicit call to normalise <xsl:value-of select="name()"/> . <xsl:value-of select="*/name()"/></xsl:message>
+		<xsl:copy>
+			<xsl:call-template name="recursive_rewrite">
+				<xsl:with-param name="document">
+					<xsl:apply-templates select="." mode="rewrite"/>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:copy>
+	</xsl:template>
+		-->
+		
 
 	<xsl:template match="*" mode="normalise">
-	    <xsl:message>copying <xsl:value-of select="name()"/> </xsl:message>
+	  <!--  <xsl:message>copying <xsl:value-of select="name()"/> </xsl:message>-->
 		<xsl:copy>
 		    <xsl:copy-of select="namespace::*"/>
 			<xsl:apply-templates mode="normalise"/>

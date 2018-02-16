@@ -14,10 +14,9 @@ DESCRIPTION
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
 
-
   <xsl:template match="o"  mode="text">
     <xsl:variable name="args" as="xs:string *">
-      <xsl:for-each select="*">
+      <xsl:for-each select="ccseq:*">
         <xsl:variable name="arg">
           <xsl:apply-templates select="." mode="text"/>
         </xsl:variable>
@@ -68,16 +67,37 @@ DESCRIPTION
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="p|id|a|b|c|d|e" mode="text">
+  <xsl:template match="a|b|c|d|e" mode="text">
     <xsl:value-of select="name()"/>
   </xsl:template>
+  
+    <xsl:template match="p" mode="text">
+    <xsl:text>p(</xsl:text>
+	    <xsl:apply-templates select="*[1]" mode="text"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="id" mode="text">
+    <xsl:text>id(</xsl:text>
+	    <xsl:apply-templates select="*[1]" mode="text"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+  
 
-  <xsl:template match="ob" mode="text">
+  <xsl:template match="Ob" mode="text">
     <xsl:text>ob</xsl:text>
   </xsl:template>  
 
-  <xsl:template match="hom" mode="text">
+  <xsl:template match="Hom" mode="text">
     <xsl:text>hom(</xsl:text>
+    <xsl:apply-templates select="*[1]" mode="text"/>
+    <xsl:text>,</xsl:text>
+    <xsl:apply-templates select="*[2]" mode="text"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+  
+    <xsl:template match="HomSeq" mode="text">
+    <xsl:text>homseq(</xsl:text>
     <xsl:apply-templates select="*[1]" mode="text"/>
     <xsl:text>,</xsl:text>
     <xsl:apply-templates select="*[2]" mode="text"/>

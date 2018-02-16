@@ -8,8 +8,9 @@
 
   <xsl:strip-space elements="*"/>
 
+  <xsl:include href="ccseq2txt.module.xslt" />
+  
   <!--
-  <xsl:include href="algebra2txt.module.xslt" />
   <xsl:include href="algebra2tex.module.xslt" />
   <xsl:include href="algebra2type.module.xslt" />
 --> 
@@ -17,6 +18,7 @@
   <xsl:include href="../../algebraLibrary/enrichedalgebra2.type_enrichment.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.rewrite.module.xslt"/>
+    <xsl:include href="../../algebraLibrary/gat.text.module.xslt"/>
 
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
@@ -42,7 +44,20 @@
     <xsl:copy>
       <xsl:apply-templates mode="copy"/>
       <gat:type>
-        <!-- add typechecking here ? -->
+        <!-- typechecking -->
+		<xsl:for-each select="ccseq:*[following-sibling::ccseq:*]">
+		   <xsl:variable name="cod_text">
+		        <xsl:apply-templates mode="text" select="gat:type/(Hom|HomSeq)/ccseq:*[2]"/>
+	       </xsl:variable>
+		   <xsl:variable name="dom_text">
+		        <xsl:apply-templates mode="text" select="following-sibling::ccseq:*[1]/gat:type/(Hom|HomSeq)/ccseq:*[1]"/>
+	       </xsl:variable>
+		   <xsl:if test="not($cod_text=$dom_text)">
+		       <xsl:message> Type error in subterms of o in rule <xsl:value-of select="ancestor::gat:rewriteRule/gat:id"/></xsl:message>
+		       <gat:type_error>domain of subterm <xsl:value-of select="count(preceding-sibling::ccseq:*) + 2"/> is '<xsl:value-of select="$dom_text"/> which is is not identical
+                                      to codomain of preceding subterm which is <xsl:value-of select="$cod_text"/></gat:type_error>		   
+		   </xsl:if>
+		</xsl:for-each>
         <Hom>
           <xsl:copy-of select="ccseq:*[1]/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[1]"/>
           <xsl:copy-of select="ccseq:*[last()]/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[2]"/>
@@ -74,7 +89,7 @@
       <gat:type>
         <!-- add typechecking here ? -->
         <Ob>
-          <xsl:copy-of select="ccseq:*[1]/gat:type/ccseq:Hom/ccseq:*[1]"/>
+          <xsl:copy-of select="ccseq:*[1]/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[1]"/>
         </Ob>
       </gat:type>
     </xsl:copy>
@@ -128,9 +143,9 @@
               <xsl:copy-of select="child::ccseq:*"/>
               <star>
                 <p>
-                  <xsl:copy-of select="$arg1type/ccseq:Hom/ccseq:*[2]"/>
+                  <xsl:copy-of select="$arg1type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]"/>
                 </p>
-                <xsl:copy-of select="$arg1type/ccseq:Hom/ccseq:*[2]"/>
+                <xsl:copy-of select="$arg1type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]"/>
               </star>
             </star>	
           </gat:term>
@@ -139,7 +154,7 @@
           <xsl:apply-templates mode="normalise" select="$codomain"/>
         </xsl:variable>
         <Hom>
-          <xsl:copy-of select="$arg1type/ccseq:Hom/ccseq:*[1]"/>
+          <xsl:copy-of select="$arg1type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[1]"/>
           <xsl:copy-of select="$codomain_term_normalised/gat:term/ccseq:*"/>  <!-- 19:37 13 feb 2018 add ccseq: -->
         </Hom>
       </gat:type>

@@ -147,11 +147,10 @@ DESCRIPTION
   </xsl:template>
 
   <xsl:template match="*:seq" mode="lhs">
-    <xsl:message>skipping seq in lhs</xsl:message>
-
+    <!--<xsl:message>skipping seq in lhs</xsl:message>-->
   </xsl:template>
 
-  <xsl:template match="*[not(self::*:seq)]" mode="lhs_generate_variables">
+  <xsl:template match="*[not(self::*:seq)][not(self::gat:type)]" mode="lhs_generate_variables">
     <xsl:element name="xsl:variable">
       <xsl:attribute name="name" select="@id"/>
       <xsl:attribute name="select">
@@ -164,7 +163,7 @@ DESCRIPTION
             <xsl:text>[ some $</xsl:text>
             <xsl:value-of select="@id"/>
             <xsl:text> in self::*, </xsl:text>
-            <xsl:apply-templates select="child::* [not(self::gat:*)] | following-sibling::*" 
+            <xsl:apply-templates select="child::* [not(self::gat:*)] | following-sibling::* [not(self::gat:required)]" 
                             mode="lhs"/>
             <xsl:text>$unit in ((1)) satisfies true()</xsl:text>
 
@@ -176,10 +175,21 @@ DESCRIPTION
       </xsl:attribute>
     </xsl:element>
     <xsl:apply-templates select="*[not(self::gat:*)]" mode="lhs_generate_variables"/>
+	<xsl:apply-templates select= "gat:type[gat:required]" mode="lhs_generate_variables"/>
   </xsl:template>
+  
+  <xsl:template match="gat:type" mode="lhs_generate_variables">
+    <xsl:element name="xsl:variable">
+      <xsl:attribute name="name" select="@id"/>
+      <xsl:attribute name="select">      
+            <xsl:value-of select="@context"/> 
+      </xsl:attribute>
+    </xsl:element>
+    <xsl:apply-templates select="*[not(self::gat:*)]" mode="lhs_generate_variables"/>
+  </xsl:template>
+  
 
   <xsl:template match="*:seq" mode="lhs_generate_variables">
-    <xsl:message>skipping seq in lhs_generate_variables</xsl:message>
   </xsl:template>
 
   <xsl:template match="*:var" mode="rhs">
@@ -211,9 +221,11 @@ DESCRIPTION
   </xsl:template>
 
   <xsl:template name="generate_var_deep_equals_tests">
-    <xsl:message>Entering generate_var_deep_equals_tests at a '<xsl:value-of select="name()"/>' element </xsl:message>
+    <!--<xsl:message>Entering generate_var_deep_equals_tests at a '<xsl:value-of select="name()"/>' element </xsl:message> -->
     <xsl:for-each select="(self::*|following-sibling::*)/descendant-or-self::*:var">
-      <xsl:if test="preceding::*:var[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
+	  <xsl:if test="not(ancestor::gat:type)"> <!-- added when gat:type added to source in some cases 14 Feb 2018 -->
+      <xsl:if test="preceding::*:var[not(ancestor::gat:type)]
+	                                [(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
         <xsl:call-template name="newline">
           <xsl:with-param name="level" select="0"/>
         </xsl:call-template> 
@@ -225,12 +237,14 @@ DESCRIPTION
         </xsl:for-each>
         <xsl:text>)</xsl:text>               
       </xsl:if>
+	  </xsl:if>
     </xsl:for-each>
   </xsl:template>
 
   <xsl:template name="generate_seq_deep_equals_tests">
     <xsl:for-each select="(self::*|following-sibling::*)/descendant-or-self::*:seq">
-      <xsl:if test="preceding::*:seq[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
+      <xsl:if test="preceding::*:seq [not(ancestor::gat:type)]
+	                                 [(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
         <xsl:call-template name="newline">
           <xsl:with-param name="level" select="0"/>
         </xsl:call-template> 
