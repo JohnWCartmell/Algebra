@@ -204,6 +204,9 @@
 
 	<xsl:template name="recursive_rewrite">
 		<xsl:param name="document"/>
+    <xsl:message>
+       entering recursive_rewrite <xsl:apply-templates select ="$document" mode="text"/>
+    </xsl:message>
 		<xsl:variable name ="next">
 			<xsl:for-each select="$document">
 				<xsl:apply-templates select="." mode="rewrite"/>

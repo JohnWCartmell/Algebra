@@ -113,7 +113,7 @@ DESCRIPTION
         <xsl:text>[ some </xsl:text>
         <xsl:apply-templates select="tt-conclusion/lhs/*" mode="lhs"/>
         <xsl:text>$unit in ((1)) satisfies true()</xsl:text>
-        <xsl:for-each select="lhs/*">
+        <xsl:for-each select="tt-conclusion/lhs/*">
           <xsl:call-template name="generate_var_deep_equals_tests"/>
           <xsl:call-template name="generate_seq_deep_equals_tests"/>
         </xsl:for-each>
@@ -196,7 +196,8 @@ DESCRIPTION
     <xsl:element name="xsl:apply-templates">
       <xsl:attribute name="select">
         <xsl:for-each select="ancestor::rewriteRule/tt-conclusion/lhs/descendant-or-self::*:var[name=current()/name][1]">
-          <xsl:value-of  select="@context"/>
+         <!-- <xsl:value-of  select="@context"/>  16 Feb 2018 -->
+         <xsl:value-of select="concat('$',@id)"/>
         </xsl:for-each>
       </xsl:attribute>
       <xsl:attribute name="mode" select="'rewrite'"/>

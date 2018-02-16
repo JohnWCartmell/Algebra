@@ -2,10 +2,142 @@
 <!-- updated 13 Feb 2018 -->
 
 <gat:algebra 
-		xmlns:ccseq ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
-		xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
-		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+    xmlns:ccseq ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
+    xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+    xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
+  <gat:term>
+    <o>
+          <seq><gat:name>g</gat:name></seq>
+    </o>
+  </gat:term>
+    
+    
+  <gat:term>
+    <p>
+      <star>
+        <o>
+          <o>
+            <seq><gat:name>g</gat:name></seq>
+            <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+          </o>
+          <p>
+            <var><gat:name>z</gat:name></var>
+          </p>
+        </o>
+        <var><gat:name>z</gat:name></var>
+      </star>
+    </p>
+  </gat:term>
+
+  <gat:term>
+    <o>
+      <var><gat:name>f</gat:name></var>
+      <s>
+        <o>
+          <seq><gat:name>g</gat:name></seq>
+          <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+        </o>
+      </s>
+    </o>
+  </gat:term>
+
+  <gat:term>
+    <star>
+      <o>
+        <o>
+          <var><gat:name>f</gat:name></var>
+          <s>
+            <o>
+              <seq><gat:name>g</gat:name></seq>
+              <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+            </o>
+          </s>
+        </o>
+        <p>
+          <star>
+            <o>
+              <o>
+                <seq><gat:name>g</gat:name></seq>
+                <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+              </o>
+              <p>
+                <var><gat:name>z</gat:name></var>
+              </p>
+            </o>
+            <var><gat:name>z</gat:name></var>
+          </star>
+        </p>
+      </o>
+      <star>
+        <o>
+          <o>
+            <seq><gat:name>g</gat:name></seq>
+            <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+          </o>
+          <p>
+            <var><gat:name>z</gat:name></var>
+          </p>
+        </o>
+        <var><gat:name>z</gat:name></var>
+      </star>
+
+    </star>
+  </gat:term>
+
+
+  <gat:term>
+    <o>
+      <o>
+        <var><gat:name>f</gat:name></var>
+        <s>
+          <o>
+            <seq><gat:name>g</gat:name></seq>
+            <gat:type><Hom><var><gat:name>y</gat:name></var><var><gat:name>z</gat:name></var></Hom></gat:type>
+          </o>
+        </s>
+      </o>
+    </o>
+  </gat:term>
+
+
+
+
+
+  <!--
+
+   <gat:term>
+    <o>
+      <var>
+        <gat:name>f</gat:name>
+        <gat:type>
+          <Hom>
+            <var>
+              <gat:name>x</gat:name>
+            </var>
+            <var>
+              <gat:name>y</gat:name>
+            </var>
+          </Hom>
+        </gat:type>
+      </var>
+      <id>
+        <var>
+          <gat:name>y</gat:name>
+          <gat:type>
+            <Ob>
+              <var>
+                <gat:name>y_p</gat:name>
+              </var>
+            </Ob>
+          </gat:type>
+        </var>
+      </id>
+      <var><gat:name>g</gat:name></var>
+    </o>
+  </gat:term>   
+    
+    
 	<gat:term>
 		<o>
 			<s>
@@ -30,7 +162,7 @@
 			<p>
 				<star>
 					<o>
-						<seq><gat:name>f</gat:name></seq> 
+						<o><seq><gat:name>f</gat:name></seq><gat:type><Hom><var><gat:name>x</gat:name></var><var>y</var></Hom></gat:type> </o>
 						<p><var><gat:name>y</gat:name></var></p> 
 					</o> 
 					<var><gat:name>y</gat:name></var>
@@ -320,7 +452,9 @@
 			</gat:type>
 		</star>
 	</gat:term>
-	<!--
+  
+  -->
+  <!--
   <gat:term>
     <star>
       <o>
@@ -357,7 +491,7 @@
   </gat:term>
 -->
 
-	<!--
+  <!--
     
     <gat:term>
     <o>
@@ -452,7 +586,7 @@
                            </q>
                            
                            -->
-	<!--
+  <!--
                            <gat:type>
                               <Hom>
                                  <var>
@@ -471,7 +605,7 @@
                               </Hom>
                            </gat:type>
                            -->
-	<!--
+  <!--
                            <p xmlns:xs="http://www.w3.org/2001/XMLSchema">
                               <var>
                                  <gat:name>z</gat:name>
@@ -505,7 +639,7 @@
     
     </gat:term>
     -->
-	<!--
+  <!--
   <gat:term>
     <o><var><name>f</name></var></o>
   </gat:term>
@@ -650,7 +784,7 @@
   </gat:term>
 -->
 
-	<!--
+  <!--
   <gat:term>
     <s>
       <o>
