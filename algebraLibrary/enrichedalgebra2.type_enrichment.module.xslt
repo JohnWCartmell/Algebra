@@ -40,7 +40,11 @@ Description
 		<xsl:copy>  
        <xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+			<!-- FEb 13 2018
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
+			-->
+						<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
+
 		</xsl:copy>
 	</xsl:template>
 	
@@ -48,7 +52,10 @@ Description
 		<xsl:copy>  
     	<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+			<!--
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
+			-->
+						<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
 		</xsl:copy>
 	</xsl:template>
   
@@ -84,7 +91,13 @@ Description
 		<xsl:copy>  
        <xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+			<!-- normalise the type -->
+		    <xsl:call-template name="recursive_rewrite">
+				<xsl:with-param name="document" select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type"/>
+			</xsl:call-template>
+			<!--
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
+			-->
 		</xsl:copy>
 	</xsl:template>
 	
@@ -92,13 +105,14 @@ Description
 		<xsl:copy>  
     	<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+					    <xsl:call-template name="recursive_rewrite">
+				<xsl:with-param name="document" select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type"/>
+			</xsl:call-template>
+			<!--
 			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
+			-->
 		</xsl:copy>
 	</xsl:template>
-  
-  
-  
-  
   
 
 

@@ -181,7 +181,7 @@
         <gat:type>
           <HomSeq>
             <var>v</var>
-            <var>w</var>
+            <star><var>f</var><star><var>g</var><var>y</var></star></star>
           </HomSeq>
         </gat:type>
       </gat:sequence>
@@ -207,7 +207,7 @@
         <gat:name>h_2</gat:name>
         <gat:type>
           <HomSeq>
-            <var>y_p</var>
+            <var>y</var>
             <var>z</var>
           </HomSeq>
         </gat:type>
@@ -341,7 +341,6 @@
           <HomSeq>
             <var>w</var>
             <star><var>f</var><var>z</var></star>
-            <var>x</var>
           </HomSeq>
         </gat:type>
       </gat:sequence>
@@ -444,7 +443,7 @@
         <o>
           <seq>h_1</seq>
           <s>
-            <var>f</var>
+            <var>f<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type></var>
           </s>
           <p> <star> <o> <var>f</var> <p><var>y</var></p> </o> <var>y</var></star> </p>
           <seq>h_2</seq>
@@ -453,6 +452,7 @@
       <gat:rhs>
         <o>
           <seq>h_1</seq>
+		  <id><var>x</var></id>
           <seq>h_2</seq>
         </o>
       </gat:rhs>
@@ -460,6 +460,68 @@
   </gat:rewriteRule>
 
 
+    <gat:rewriteRule>
+    <gat:id>10ps.id</gat:id>
+    <gat:context>
+      <gat:decl>
+        <gat:name>w</gat:name>
+        <gat:type>
+          <Ob><var>w_p</var></Ob>
+        </gat:type>
+      </gat:decl>
+      <gat:decl>
+        <gat:name>x</gat:name>
+        <gat:type>
+          <Ob><var>x_p</var></Ob>
+        </gat:type>
+      </gat:decl>
+      <gat:decl>
+        <gat:name>z</gat:name>
+        <gat:type>
+          <Ob><var>z_p</var></Ob>
+        </gat:type>
+      </gat:decl>
+      <gat:sequence>
+        <gat:name>h_1</gat:name>
+        <gat:type>
+          <HomSeq>
+            <var>w</var>
+            <var>x</var>
+          </HomSeq>
+        </gat:type>
+      </gat:sequence>
+      <gat:sequence>
+        <gat:name>h_2</gat:name>
+        <gat:type>
+          <HomSeq>
+            <var>x</var>
+            <var>z</var>
+          </HomSeq>
+        </gat:type>
+      </gat:sequence>
+    </gat:context>
+    <gat:tt-conclusion>
+      <gat:lhs>
+        <o>
+          <seq>h_1</seq>
+          <s>
+            <id><var>x</var></id>
+          </s>
+          <p> <star> <p><var>x</var></p> <var>x</var></star> </p>
+          <seq>h_2</seq>
+        </o>
+      </gat:lhs>
+      <gat:rhs>
+        <o>
+          <seq>h_1</seq>
+		  <id><var>x</var></id>
+          <seq>h_2</seq>
+        </o>
+      </gat:rhs>
+    </gat:tt-conclusion>
+  </gat:rewriteRule>
+  
+  
   <gat:rewriteRule>
     <gat:id>11pps</gat:id>
     <gat:context>
@@ -1265,7 +1327,7 @@
         <gat:type>
           <HomSeq>
             <star>
-              <var>g</var>
+              <seq>g</seq>
               <star><p><var>z</var></p><var>z</var></star>
             </star>
             <var>zz</var>
@@ -1380,7 +1442,7 @@
         <gat:type>
           <HomSeq>
             <star>
-              <var>g</var>
+              <seq>g</seq>
               <star><p><var>z</var></p><var>z</var></star>
             </star>
             <var>zz</var>

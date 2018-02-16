@@ -58,15 +58,15 @@ Description
 				</xsl:copy>
 			</xsl:for-each>
 		</xsl:variable>
-    <!--
+		<!--
 		<xsl:variable name="current_state">
     -->
-			<xsl:for-each select="$current_state">
-				<xsl:copy>
-					<xsl:apply-templates mode="initial_enrichment_third_pass"/>
-				</xsl:copy>
-			</xsl:for-each>
-      <!--
+		<xsl:for-each select="$current_state">
+			<xsl:copy>
+				<xsl:apply-templates mode="initial_enrichment_third_pass"/>
+			</xsl:copy>
+		</xsl:for-each>
+		<!--
 		</xsl:variable>
 		<xsl:call-template name="initial_enrichment_recursive">
 			<xsl:with-param name="interim" select="$current_state"/>
@@ -74,7 +74,7 @@ Description
     -->
 	</xsl:template>
 
-
+	<!--
 	<xsl:template name="initial_enrichment_recursive">
 		<xsl:param name="interim"/>
 		<xsl:variable name ="next">
@@ -87,7 +87,6 @@ Description
 		<xsl:variable name="result">
 			<xsl:choose>
 				<xsl:when test="not(deep-equal($interim,$next))">
-					<!-- CR-18553 -->
 					<xsl:message> changed in initial enrichment recursive</xsl:message>
 					<xsl:call-template name="initial_enrichment_recursive">
 						<xsl:with-param name="interim" select="$next"/>
@@ -100,7 +99,7 @@ Description
 			</xsl:choose>
 		</xsl:variable>  
 		<xsl:copy-of select="$result"/>
-	</xsl:template>
+	</xsl:template>-->
 
 	<xsl:template match="*"
 			mode="initial_enrichment_zero_pass"> 
@@ -151,7 +150,7 @@ Description
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id" select="concat(
-					.,'_',
+					gat:name,'_',
 					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::*:var[name=current()/name])+1
 					)"/>
 			</xsl:if>
@@ -163,7 +162,7 @@ Description
 		<xsl:copy>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="id" select="concat(
-					.,'_',
+					gat:name,'_',
 					count(ancestor-or-self::*[ancestor::lhs]/preceding-sibling::*/descendant-or-self::*:seq[name=current()/name])+1
 					)"/>
 			</xsl:if>
@@ -193,7 +192,7 @@ Description
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::*:seq)]" 
+	<xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::*:seq|self::gat:type)]" 
 			mode="initial_enrichment_second_pass">
 		<xsl:copy copy-namespaces="no">
 			<xsl:copy-of select="@*"/>
@@ -248,11 +247,11 @@ Description
 
 
 	<xsl:template match="*:seq" mode="initial_enrichment_second_pass">
-  <xsl:message> second pass of seq </xsl:message>
+		<!--<xsl:message> second pass of seq </xsl:message>-->
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:if test="ancestor::lhs">
-      <xsl:message>Generating xpath </xsl:message>
+				<!--<xsl:message>Generating xpath </xsl:message>-->
 				<xsl:attribute name="xpath">
 					<xsl:text>$</xsl:text>
 					<xsl:value-of select="parent::*/@id"/>
@@ -273,6 +272,20 @@ Description
 						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
 						<xsl:text>]</xsl:text>
 					</xsl:if>
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="initial_enrichment_second_pass"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="gat:type" mode="initial_enrichment_second_pass">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:if test="ancestor::lhs">
+				<xsl:attribute name="context">
+				    <xsl:text>$</xsl:text>
+				    <xsl:value-of select="parent::*/@id"/>
+					<xsl:text>/gat:type</xsl:text>
 				</xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="initial_enrichment_second_pass"/>
@@ -307,7 +320,7 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_third_pass"/>
 		</xsl:copy>
 	</xsl:template>
-<!-- DEBUGGING ON 13 FEB 2018 COMMENT OUT THIS - getting in way of genertion of deep euqal test ???
+	<!-- DEBUGGING ON 13 FEB 2018 COMMENT OUT THIS - getting in way of genertion of deep euqal test ???
 	<xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
 		<xsl:copy>  
        <xsl:copy-of select="@*"/>
@@ -328,7 +341,7 @@ Description
 
 
 	<!-- recursive step -->
-<!--
+	<!--
 	<xsl:template match="*"
 			mode="initial_enrichment_recursive"> 
 		<xsl:copy copy-namespaces="no">
