@@ -16,7 +16,7 @@ DESCRIPTION
 
   <xsl:template match="o"  mode="text">
     <xsl:variable name="args" as="xs:string *">
-      <xsl:for-each select="ccseq:*">
+      <xsl:for-each select="ccseq:*|gat:point">
         <xsl:variable name="arg">
           <xsl:apply-templates select="." mode="text"/>
         </xsl:variable>
@@ -85,7 +85,9 @@ DESCRIPTION
   
 
   <xsl:template match="Ob" mode="text">
-    <xsl:text>ob</xsl:text>
+    <xsl:text>ob(</xsl:text>
+    <xsl:apply-templates select="*[1]" mode="text"/>
+    <xsl:text>)</xsl:text>
   </xsl:template>  
 
   <xsl:template match="Hom" mode="text">

@@ -120,6 +120,8 @@
 	</xsl:for-each>
 </xsl:template>
 
+
+<!-- Moved to substitution module 
 <xsl:template name="applyTargetSubstitutions">
 	<xsl:param name="substitution"/>
 	<xsl:variable name="targetSubstitution">
@@ -135,6 +137,8 @@
 		<xsl:with-param name="substitutions" select="$targetSubstitution/*"/>
 	</xsl:apply-templates>
 </xsl:template>
+
+-->
 
 </xsl:transform>
 

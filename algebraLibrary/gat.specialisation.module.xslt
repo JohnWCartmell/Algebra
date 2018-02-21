@@ -1,9 +1,9 @@
 <xsl:transform version="2.0" 
-        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
-		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
-		                  xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
+    xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
+    xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
 
 
 
@@ -18,11 +18,29 @@
      specifying a variable <var>  and a <term> to be substituted for it
      or a <seq> and zero, one or more <term> elements to be substituted for it.          
   -->
+
+  <!-- Call Graph -->
+  <!-- "specialiseTerm"                           calls "proceedFromAllTargetSequenceBackMappings"
+                                                  and   "specialiseSubTermsFrom"
+       "proceedFromAllTargetSequenceBackMappings" calls "specialiseSubTermsFrom"
+       "specialiseSubTermsFrom"                   calls "head_substitutions"
+                                                  and   "specialiseSubTermsFrom"
+                                                  and   "applyTargetSubstitutions"
+       "head_substitutions"                       calls "specialiseTerm"
+                                                  and   "leading_subterm_specialisations"
+       "leading_subterm_specialisations"          calls "specialiseTerm"
+                                                  and   "leading_subterm_specialisations"
+     -->
+
   <xsl:template name="specialiseTerm">
     <xsl:param name="targetTerm" as="node()"/>
     <xsl:message>specialiseTerm <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
+    <xsl:message>specialiseTerm/name() <xsl:value-of select="name()" />
+    </xsl:message>
     <xsl:message> targetTerm <xsl:apply-templates select="$targetTerm" mode="text"/>
+    </xsl:message>
+    <xsl:message> targetTerm/name() <xsl:value-of select="$targetTerm/name()" />
     </xsl:message>
     <xsl:choose>
       <!-- 15 Feb 2017 switched order of these when branches -->
@@ -69,7 +87,7 @@
             </xsl:choose>
           </xsl:when>
           <xsl:when test="count($targetTerm/*)=0"> <!-- if get here then  count(./*) != 0 -->
-             <INCOMPATIBLE/>
+            <INCOMPATIBLE/>
           </xsl:when>
           <xsl:when test="$targetTerm/*[1][self::*:seq]">
             <xsl:call-template name="proceedFromAllTargetSequenceBackMappings">
@@ -176,7 +194,9 @@
   <xsl:template name="specialiseSubTermsFrom">
     <xsl:param name="targetTerm" as="node()"/>
     <xsl:param name="targetIndex" />
-    <xsl:message>   sSTF specialise subterms from <xsl:apply-templates select="." mode="text"/>
+    <xsl:message>   sSTF specialise subterms from outer: <xsl:apply-templates select="." mode="text"/>
+    </xsl:message>
+    <xsl:message>   sSTF outer tail /name()<xsl:value-of select="name()" />
     </xsl:message>
     <xsl:message>   sSTF target <xsl:apply-templates select="$targetTerm" mode="text"/>
     </xsl:message>
@@ -208,65 +228,71 @@
         <xsl:when test="count($head_substitution/tail/*) = 0">
           <!-- BANBURY -->
           <xsl:message> sSTF BANBURY: targetIndex <xsl:value-of select="$targetIndex"/> 
-                                 target child count <xsl:value-of select="count($targetTerm/*)"/>
+            target child count <xsl:value-of select="count($targetTerm/*)"/>
           </xsl:message>
           <xsl:if test="not($head_substitution/substitution[self::substitution])">
             <xsl:message> ***** return type assertion fails at BANBURY </xsl:message>
           </xsl:if>
           <xsl:if test="($targetIndex + $numberOfTargetChildrenConsumed &gt; count($targetTerm/* ))
-                        or (($targetIndex + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
-                             and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
-                           )">
+              or (($targetIndex + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
+              and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
+              )">
             <!-- need to have consumed all target term children or there to be just a seq remaining -->
+            <!-- actaully need a target substitution for the seq here - assigning it to empty-->
+            <xsl:syntax error see above
             <xsl:message> sSTF finished consumption </xsl:message>
             <xsl:copy-of select="$head_substitution/substitution"/>  
           </xsl:if>
         </xsl:when >
         <xsl:when test="count($head_substitution/tail/*) &gt; 0">  
-          <xsl:if test="($targetIndex + $numberOfTargetChildrenConsumed &lt; count($targetTerm/* ) + 1)
-                        or ( count($head_substitution/tail/*) = 1 and  $head_substitution/tail/*[self::*:seq]  )"> 
-            <!-- xxxxxxx  -->
-            <xsl:variable name="tailspecialised">
-              <xsl:for-each select="$head_substitution/tail"> 
-                <xsl:apply-templates mode="substitution">
-                  <xsl:with-param name="substitutions" select="$head_substitution/substitution/*"/>
-                  <!-- check this -->
-                </xsl:apply-templates>
-              </xsl:for-each>
-            </xsl:variable>
-            <xsl:message> sSTF tail specialised <xsl:apply-templates select="$tailspecialised/*" mode="text"/>
-            </xsl:message>
+          <xsl:choose>
+            <xsl:when test="($targetIndex + $numberOfTargetChildrenConsumed &lt; count($targetTerm/* ) + 1)
+                or ( count($head_substitution/tail/*) = 1 and  $head_substitution/tail/*[self::*:seq]  )"> 
+              <!-- xxxxxxx  -->
+              <xsl:variable name="tailspecialised">
+                <xsl:for-each select="$head_substitution/tail"> 
+                  <xsl:apply-templates mode="substitution">
+                    <xsl:with-param name="substitutions" select="$head_substitution/substitution/*"/>
+                    <!-- check this -->
+                  </xsl:apply-templates>
+                </xsl:for-each>
+              </xsl:variable>
+              <xsl:message> sSTF tail specialised <xsl:apply-templates select="$tailspecialised/*" mode="text"/>
+              </xsl:message>
 
-            <xsl:variable name="targetTermSpecialised">
-               <xsl:for-each select="$targetTerm/*">
+              <xsl:variable name="targetTermSpecialised">
+                <xsl:for-each select="$targetTerm/*">
                   <xsl:call-template name="applyTargetSubstitutions">
                     <xsl:with-param name="substitution" select="$head_substitution/substitution"/>  <!-- 13 April 2017 ??? add a * ??-->
                   </xsl:call-template>
-               </xsl:for-each>
-            </xsl:variable>
-            
-            
-            <xsl:variable name="tail_substitutions">
-              <xsl:for-each select="$tailspecialised">
-                <xsl:call-template name="specialiseSubTermsFrom">   
-                  <xsl:with-param name="targetTerm" select="$targetTermSpecialised"/>  <!-- 13 April 2017 -->
-                  <xsl:with-param name="targetIndex" select="$targetIndex+$numberOfTargetChildrenConsumed"/>
-                </xsl:call-template>
+                </xsl:for-each>
+              </xsl:variable>
+
+              <xsl:variable name="tail_substitutions">
+                <xsl:for-each select="$tailspecialised">
+                  <xsl:call-template name="specialiseSubTermsFrom">   
+                    <xsl:with-param name="targetTerm" select="$targetTermSpecialised"/>  <!-- 13 April 2017 -->
+                    <xsl:with-param name="targetIndex" select="$targetIndex+$numberOfTargetChildrenConsumed"/>
+                  </xsl:call-template>
+                </xsl:for-each>
+              </xsl:variable>
+              <xsl:for-each select="$tail_substitutions/*">
+                <xsl:if test="not(self::substitution)">
+                  <xsl:message> ***** type assertion substitution fails on tail </xsl:message>
+                </xsl:if>
+                <substitution>
+                  <xsl:copy-of select="$head_substitution/substitution/*"/>
+                  <xsl:copy-of select="./*"/>
+                </substitution>
               </xsl:for-each>
-            </xsl:variable>
-            <xsl:for-each select="$tail_substitutions/*">
-              <xsl:if test="not(self::substitution)">
-                <xsl:message> ***** type assertion substitution fails on tail </xsl:message>
-              </xsl:if>
-              <substitution>
-                <xsl:copy-of select="$head_substitution/substitution/*"/>
-                <xsl:copy-of select="./*"/>
-              </substitution>
-            </xsl:for-each>
-          </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:message>SHOULD WE BE WORRIED?</xsl:message>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:message>***** UNexpectedly got HERE </xsl:message>
+          <xsl:message terminate="y">***** UNexpectedly got HERE </xsl:message>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
@@ -278,62 +304,194 @@
      A head subterm of a term is the first subterm 
      plus, if the first subterm is a sequence, the second subterm also.
      "head_substitutions" finds all substitutions that can be made into
-     the head subterms of the current term to bring them to match a
+     the head subterms of the current term to bring them to match some
      sequence of subterms of the target term commencing from the target index.
      
      Returns zero one or more <head_substitution> elements.
      each <head_substitution> element contains
      a <substitution> element and a <tail> element and a <numberOfTargetChildrenConsumed> element.
      The <tail> element contains remaining subterms of the current term.
+     
+     21 Feb 2018 Add a postcondition:
+            <numberOfTargetChildrenConsumed>=count(<substitution>/<substitute>/<term>)
 -->
 
   <xsl:template name="head_substitutions">
     <xsl:param name="targetTerm"/>
     <xsl:param name="targetIndex"/>
-    <xsl:message>  hS  Dot  <xsl:apply-templates select="." mode="text"/>
+    <xsl:variable name="head_substitution_entry_number" select="generate-id()"/>
+    <xsl:variable name="subjectTerm_text"><xsl:apply-templates select="." mode="text"/></xsl:variable>
+    <xsl:variable name="targetTerm_text"><xsl:apply-templates select="$targetTerm" mode="text"/></xsl:variable>
+    <xsl:message>  hS  head_substitution entry number: <xsl:value-of select="$head_substitution_entry_number"/>
+    </xsl:message>
+    <xsl:message>  hS  subjectTerm   <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
     <xsl:message>  hS  targetTerm  <xsl:apply-templates select="$targetTerm" mode="text"/>
     </xsl:message>
     <xsl:message>  hS targetIndex  <xsl:value-of select="$targetIndex"/>
     </xsl:message>
-    <xsl:choose>
-      <xsl:when test="not(./*[1][self::*:seq]) and not($targetTerm/*[$targetIndex][self::*:seq])">
-        <xsl:message> hS branch 1 </xsl:message>
-        <!-- source is not  target is not seq -->
-        <xsl:variable name="substitutions">
-          <xsl:for-each select="./*[1]">  
-            <xsl:call-template name="specialiseTerm">
-              <xsl:with-param name="targetTerm" select="$targetTerm/*[$targetIndex]"/>
-            </xsl:call-template>
+    <xsl:variable name="head_substitutions" as="node()*">
+      <xsl:choose>
+        <xsl:when test="not(./*[1][self::*:seq]) and not($targetTerm/*[$targetIndex][self::*:seq])">
+          <xsl:message> hS branch 1 </xsl:message>
+          <!-- source is not  target is not seq -->
+          <xsl:variable name="substitutions">
+            <xsl:for-each select="./*[1]">  
+              <xsl:call-template name="specialiseTerm">
+                <xsl:with-param name="targetTerm" select="$targetTerm/*[$targetIndex]"/>
+              </xsl:call-template>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:variable name="tail" select="./*[position() &gt; 1]"/>
+          <xsl:message>  hS branch 1 tail is <xsl:apply-templates select="$tail" mode="text"/> 
+          </xsl:message>
+          <xsl:for-each select="$substitutions/*">
+            <xsl:if test="not(self::INCOMPATIBLE)">
+              <head_substitution>
+                <xsl:message>  hS name of DOT in constructor of head substitution (require 'substitution') is <xsl:value-of select="name()"/>
+                </xsl:message>
+                <xsl:copy-of select="."/>
+                <tail>
+                  <xsl:copy-of select="$tail"/>
+                </tail>
+                <numberOfTargetChildrenConsumed>1</numberOfTargetChildrenConsumed>
+              </head_substitution>
+            </xsl:if>
           </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="tail" select="./*[position() &gt; 1]"/>
-        <xsl:message>  hS branch 1 tail is <xsl:apply-templates select="$tail" mode="text"/> 
-        </xsl:message>
-        <xsl:for-each select="$substitutions/*">
-          <xsl:if test="not(self::INCOMPATIBLE)">
+        </xsl:when>
+
+        <xsl:when test="not(./*[1][self::*:seq]) and $targetTerm/*[$targetIndex][self::*:seq]">
+          <xsl:message> hS branch 2 </xsl:message>     
+          <xsl:for-each select="./*">
             <head_substitution>
-              <xsl:message>  hS name of DOT in constructor of head substitution (require 'substitution') is <xsl:value-of select="name()"/>
-              </xsl:message>
-              <xsl:copy-of select="."/>
+              <substitution>
+                <targetSubstitute>
+                  <placethree/>
+                  <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>
+                  <xsl:for-each select="self::* | preceding-sibling::*">
+                    <term>
+                      <xsl:copy-of select="."/>
+                    </term>
+                  </xsl:for-each>
+                </targetSubstitute>
+              </substitution>
+              <tail>
+                <xsl:copy-of  select="following-sibling::*"/>
+              </tail>
+              <numberOfTargetChildrenConsumed>
+                <xsl:value-of select="1"/>
+              </numberOfTargetChildrenConsumed>
+            </head_substitution>
+          </xsl:for-each>
+        </xsl:when>
+
+        <!-- XXXX
+         if there is a later seq in target we will reach it
+         therefore there will be lots of possibilities iterate through then all
+         calculating the substitution forward mapping and back mapping returning the head substitution
+         that we get lots of matches is not the question - the question is how many and what is left at the end
+         both can be returned from here         
+         separate out the when clauses
+         else if not
+         -->
+        <!-- current seq can map to any upto end of target-->
+
+
+        <xsl:when test="(./*[1][self::*:seq]) and count(./*) &gt; 1">
+          <xsl:message> Hs branch 3 </xsl:message>
+
+          <xsl:variable name="seq_sub_options">
+            <xsl:message> hS branch 3 about to call leading_subterm_specialisations</xsl:message>
+            <xsl:for-each select="./*[2]">
+              <xsl:call-template name="leading_subterm_specialisations">
+                <xsl:with-param name="targetTerm" select="$targetTerm"/>
+                <xsl:with-param name="targetIndex" select="$targetIndex"/>
+                <xsl:with-param name="skipped" select="(())" />
+              </xsl:call-template>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:variable name="tail" select="./*[position() &gt; 2]"/>
+          <xsl:message> hS branch 3 tail is <xsl:apply-templates select="$tail" mode="text"/> 
+          </xsl:message>
+          <xsl:variable name="seq" select="./*[1]"/>
+          <xsl:for-each select="$seq_sub_options/*">
+            <xsl:message> hS branch match name() is <xsl:value-of select="name()"/>
+            </xsl:message>
+            <head_substitution>
+              <substitution>
+                <substitute>     
+                  <xsl:copy-of select="$seq"/>
+                  <xsl:for-each select="skipped/*">
+                    <term>
+                      <xsl:copy-of select="."/>
+                    </term>
+                  </xsl:for-each>
+                </substitute>
+                <xsl:copy-of select="./substitution/*"/>
+              </substitution>
               <tail>
                 <xsl:copy-of select="$tail"/>
               </tail>
-              <numberOfTargetChildrenConsumed>1</numberOfTargetChildrenConsumed>
+              <numberOfTargetChildrenConsumed>
+                <xsl:value-of select="count(skipped/*)+1"/>
+              </numberOfTargetChildrenConsumed>
             </head_substitution>
-          </xsl:if>
-        </xsl:for-each>
-      </xsl:when>
-
-      <xsl:when test="not(./*[1][self::*:seq]) and $targetTerm/*[$targetIndex][self::*:seq]">
-        <xsl:message> hS branch 2 </xsl:message>     
-        <xsl:for-each select="./*">
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="(./*[1][self::*:seq]) and count(./*) = 1">
+          <xsl:message>hS TAIL seq found</xsl:message>
           <head_substitution>
             <substitution>
+              <substitute>     
+                <xsl:copy-of select="./*[1]"/>
+                <xsl:for-each select="$targetTerm/*[position() &gt; $targetIndex -1]">
+                  <term>
+                    <xsl:copy-of select="."/>
+                  </term>
+                </xsl:for-each>
+              </substitute>
+            </substitution>
+            <tail>
+            </tail>
+            <numberOfTargetChildrenConsumed>
+              <xsl:value-of select="count($targetTerm/*[position() &gt; $targetIndex -1])"/>
+            </numberOfTargetChildrenConsumed>
+          </head_substitution>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:message> ***** hS A FOURTH CASE ERROR </xsl:message>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:message> hS pre final case <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>  
+        then  <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::*:seq"/>
+      </xsl:message> 
+      <xsl:if test="./*[1][self::*:seq] and count(./*) &gt; 2 and $targetTerm/*[$targetIndex]/following-sibling::*:seq">
+        <xsl:message> hS final case</xsl:message> 
+        <xsl:variable name="indexofTargetSeq" 
+            as="xs:integer"
+            select = "count($targetTerm/*[$targetIndex]/following-sibling::*:seq[1]/preceding-sibling::*)+1"  
+            />         
+
+        <xsl:message> hS indexofTargetSeq <xsl:value-of select="$indexofTargetSeq"/>
+        </xsl:message> 
+        <xsl:variable name="dotseq">
+          <xsl:copy-of select="./*[1]"/>
+        </xsl:variable>      
+        <xsl:for-each select="./*[position() &gt; 1]">
+          <head_substitution>
+            <substitution>
+              <substitute>
+                <xsl:copy-of select="$dotseq"/>
+                <xsl:for-each select ="$targetTerm/*[(position() &gt; $targetIndex - 1)and (position() &lt; $indexofTargetSeq)]">
+                  <term>
+                    <xsl:copy-of select="."/>
+                  </term>
+                </xsl:for-each>
+              </substitute>
               <targetSubstitute>
-                <placethree/>
-                <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>
-                <xsl:for-each select="self::* | preceding-sibling::*">
+                <placefive/>
+                <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::*:seq[1]"/>
+                <xsl:for-each select="self::* | preceding-sibling::*[count(preceding-sibling::*) &gt; 0]"> 
                   <term>
                     <xsl:copy-of select="."/>
                   </term>
@@ -344,134 +502,56 @@
               <xsl:copy-of  select="following-sibling::*"/>
             </tail>
             <numberOfTargetChildrenConsumed>
-              <xsl:value-of select="1"/>
+              <xsl:value-of select="$indexofTargetSeq - $targetIndex + 2 "/> <!-- changed from +1 to + 2 on 21 Feb 2018 -->
             </numberOfTargetChildrenConsumed>
           </head_substitution>
         </xsl:for-each>
-      </xsl:when>
-
-      <!-- XXXX
-         if there is a later seq in target we will reach it
-         therefore there will be lots of possibilities iterate through then all
-         calculating the substitution forward mapping and back mapping returning the head substitution
-         that we get lots of matches is not the question - the question is how many and what is left at the end
-         both can be returned from here         
-         separate out the when clauses
-         else if not
-         -->
-      <!-- current seq can map to any upto end of target-->
-
-
-      <xsl:when test="(./*[1][self::*:seq]) and count(./*) &gt; 1">
-        <xsl:message> Hs branch 3 </xsl:message>
-
-        <xsl:variable name="seq_sub_options">
-          <xsl:message> hS branch 3 about to call leading_subterm_specialisations</xsl:message>
-          <xsl:for-each select="./*[2]">
-            <xsl:call-template name="leading_subterm_specialisations">
-              <xsl:with-param name="targetTerm" select="$targetTerm"/>
-              <xsl:with-param name="targetIndex" select="$targetIndex"/>
-              <xsl:with-param name="skipped" select="(())" />
-            </xsl:call-template>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="tail" select="./*[position() &gt; 2]"/>
-        <xsl:message> hS branch 3 tail is <xsl:apply-templates select="$tail" mode="text"/> 
-        </xsl:message>
-        <xsl:variable name="seq" select="./*[1]"/>
-        <xsl:for-each select="$seq_sub_options/*">
-          <xsl:message> hS branch match name() is <xsl:value-of select="name()"/>
-          </xsl:message>
-          <head_substitution>
-            <substitution>
-              <substitute>     
-                <xsl:copy-of select="$seq"/>
-                <xsl:for-each select="skipped/*">
-                  <term>
-                    <xsl:copy-of select="."/>
-                  </term>
-                </xsl:for-each>
-              </substitute>
-              <xsl:copy-of select="./substitution/*"/>
-            </substitution>
-            <tail>
-              <xsl:copy-of select="$tail"/>
-            </tail>
-            <numberOfTargetChildrenConsumed>
-              <xsl:value-of select="count(skipped/*)+1"/>
-            </numberOfTargetChildrenConsumed>
-          </head_substitution>
+      </xsl:if>
+    </xsl:variable>
+    <!-- having gathered the results we will inspect then and apply post conditions before returning them -->
+    <xsl:message>head substitution entry number: <xsl:value-of select="$head_substitution_entry_number"/>
+    </xsl:message>
+    <xsl:message>head substitution subject term: <xsl:apply-templates select="." mode="text"/>
+    </xsl:message>
+    <xsl:message>head substitution  targetTerm:  <xsl:apply-templates select="$targetTerm" mode="text"/>
+    </xsl:message>
+    <xsl:message>head substitution targetIndex:  <xsl:value-of select="$targetIndex"/>
+    </xsl:message>
+    <xsl:for-each select="$head_substitutions"> 
+      <xsl:variable name="result_no" select="position()"/>
+      <xsl:variable name="targetTail_text">
+        <xsl:apply-templates select="tail" mode="text"/>
+      </xsl:variable>
+      <xsl:message>   head substitution result number:<xsl:value-of select="$result_no"/> </xsl:message>
+      <xsl:message>   countOfVariablesSubstituted:<xsl:value-of select="count(substitution/substitute)"/></xsl:message>
+      <xsl:message>   countOfTargetTermsSubstitutedIntoOuter:<xsl:value-of select="count(substitution/substitute/term)"/></xsl:message>  
+      <xsl:message>   numberOfTargetChildrenConsumed:<xsl:value-of select="numberOfTargetChildrenConsumed"/></xsl:message>
+      <xsl:message>   targetTail:<xsl:value-of select="$targetTail_text"/></xsl:message>
+      <xsl:variable name="traceback" as="node()">
+        <traceback>
+          <head_substitution_entry_number><xsl:value-of select="$head_substitution_entry_number"/></head_substitution_entry_number>
+          <subjectTerm><xsl:value-of select="$subjectTerm_text"/></subjectTerm>
+          <targetTerm><xsl:value-of select="$targetTerm_text"/></targetTerm>
+          <targetIndex><xsl:value-of select="$targetIndex"/></targetIndex>
+          <result_number><xsl:value-of select="$result_no"/></result_number>
+          <countOfVariablesSubstituted><xsl:value-of select="count(substitution/substitute/term)"/></countOfVariablesSubstituted>
+          <countOfTargetTermsSubstitutedIntoOuter><xsl:value-of select="count(substitution/substitute/term)"/></countOfTargetTermsSubstitutedIntoOuter>
+          <numberOfTargetChildrenConsumed><xsl:value-of select="numberOfTargetChildrenConsumed"/></numberOfTargetChildrenConsumed>
+          <targetTail><xsl:value-of select="$targetTail_text"/></targetTail>
+        </traceback>
+      </xsl:variable>
+      <head_substitution>
+        <xsl:for-each select="substitution">
+          <substitution>
+            <xsl:copy-of select="$traceback"/>
+            <substitution_text><xsl:apply-templates select="substitute" mode="text"/></substitution_text>
+            <targetSubstitution_text><xsl:apply-templates select="targetSubstitute" mode="text"/></targetSubstitution_text>
+            <xsl:copy-of select="*"/>
+          </substitution>
         </xsl:for-each>
-      </xsl:when>
-      <xsl:when test="(./*[1][self::*:seq]) and count(./*) = 1">
-        <xsl:message>hS TAIL seq found</xsl:message>
-        <head_substitution>
-          <substitution>
-            <substitute>     
-              <xsl:copy-of select="./*[1]"/>
-              <xsl:for-each select="$targetTerm/*[position() &gt; $targetIndex -1]">
-                <term>
-                  <xsl:copy-of select="."/>
-                </term>
-              </xsl:for-each>
-            </substitute>
-          </substitution>
-          <tail>
-          </tail>
-          <numberOfTargetChildrenConsumed>
-            <xsl:value-of select="count($targetTerm/*[position() &gt; $targetIndex -1])"/>
-          </numberOfTargetChildrenConsumed>
-        </head_substitution>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:message> ***** hS A FOURTH CASE ERROR </xsl:message>
-      </xsl:otherwise>
-    </xsl:choose>
-    <xsl:message> hS pre final case <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>  then  <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::seq"/>
-    </xsl:message> 
-    <xsl:if test="./*[1][self::*:seq] and count(./*) &gt; 2 and $targetTerm/*[$targetIndex]/following-sibling::*:seq">
-      <xsl:message> hS final case</xsl:message> 
-      <xsl:variable name="indexofTargetSeq" 
-                    as="xs:integer"
-                    select = "count($targetTerm/*[$targetIndex]/following-sibling::*:seq[1]/preceding-sibling::*)+1"  
-      />         
-
-      <xsl:message> hS indexofTargetSeq <xsl:value-of select="$indexofTargetSeq"/>
-      </xsl:message> 
-      <xsl:variable name="dotseq">
-        <xsl:copy-of select="./*[1]"/>
-      </xsl:variable>      
-      <xsl:for-each select="./*[position() &gt; 1]">
-        <head_substitution>
-          <substitution>
-            <substitute>
-              <xsl:copy-of select="$dotseq"/>
-              <xsl:for-each select ="$targetTerm/*[(position() &gt; $targetIndex - 1)and (position() &lt; $indexofTargetSeq)]">
-                <term>
-                  <xsl:copy-of select="."/>
-                </term>
-              </xsl:for-each>
-            </substitute>
-            <targetSubstitute>
-              <placefive/>
-              <xsl:copy-of select="$targetTerm/*[$targetIndex]/following-sibling::*:seq[1]"/>
-              <xsl:for-each select="self::* | preceding-sibling::*[count(preceding-sibling::*) &gt; 0]"> 
-                <term>
-                  <xsl:copy-of select="."/>
-                </term>
-              </xsl:for-each>
-            </targetSubstitute>
-          </substitution>
-          <tail>
-            <xsl:copy-of  select="following-sibling::*"/>
-          </tail>
-          <numberOfTargetChildrenConsumed>
-            <xsl:value-of select="$indexofTargetSeq - $targetIndex + 1 "/>
-          </numberOfTargetChildrenConsumed>
-        </head_substitution>
-      </xsl:for-each>
-    </xsl:if>
-
+        <xsl:copy-of select="*[not(self::substitution)]"/>
+      </head_substitution>
+    </xsl:for-each>
   </xsl:template>
 
   <!-- leading_subterm_specialisations

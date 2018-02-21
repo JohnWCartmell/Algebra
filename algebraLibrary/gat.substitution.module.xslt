@@ -19,6 +19,33 @@
 </xsl:template>
 
 
+<xsl:template match="*:decl" mode="substitution">  
+	<xsl:param name="substitutions"/>
+	<xsl:choose>
+		<xsl:when test="some $var in $substitutions/substitute/*:var satisfies $var/name = ./name">
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:copy>
+				<xsl:apply-templates mode="copy"/>
+			</xsl:copy>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="*:sequence" mode="substitution">  
+	<xsl:param name="substitutions"/>
+	<xsl:choose>
+		<xsl:when test="some $seq in $substitutions/substitute/*:seq satisfies $seq/name = ./name">
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:copy>
+				<xsl:apply-templates mode="copy"/>
+			</xsl:copy>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+
 <xsl:template match="*:var" mode="substitution">  
 	<xsl:param name="substitutions"/>
 	<xsl:choose>
@@ -53,6 +80,23 @@
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
+
+<xsl:template name="applyTargetSubstitutions">
+	<xsl:param name="substitution"/>
+	<xsl:variable name="targetSubstitution">
+		<substitution>
+			<xsl:for-each select="$substitution/targetSubstitute">
+				<substitute>
+					<xsl:copy-of select="*"/>
+				</substitute>
+			</xsl:for-each>
+		</substitution>
+	</xsl:variable>
+	<xsl:apply-templates select="." mode="substitution">
+		<xsl:with-param name="substitutions" select="$targetSubstitution/*"/>
+	</xsl:apply-templates>
+</xsl:template>
+
 
 <xsl:template match="*" mode="copy">
 	<xsl:copy>

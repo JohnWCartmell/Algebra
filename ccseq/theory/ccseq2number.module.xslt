@@ -37,7 +37,7 @@ DESCRIPTION
     <xsl:choose>
       <xsl:when test="count(*) &gt; 0">
         <xsl:variable name="arg" as="xs:double *">
-          <xsl:apply-templates select="*" mode="number"/>
+          <xsl:apply-templates select="ccseq:*" mode="number"/>
         </xsl:variable>
         <xsl:value-of select="sum($arg)+1"/>
       </xsl:when>
@@ -67,33 +67,41 @@ DESCRIPTION
   </xsl:template>
 
   <xsl:template match="star" mode="number">
-    <xsl:variable name="arg1" as="xs:double">
-      <xsl:apply-templates select="*[1]" mode="number"/>
-    </xsl:variable>
-    <xsl:variable name="arg2" as="xs:double">
-      <xsl:apply-templates select="*[2]" mode="number"/>
-    </xsl:variable>
-    <xsl:value-of select="$arg1 + (2 * $arg2)"/>
-  </xsl:template>
-
-  <xsl:template match="s" mode="number">
-    <xsl:choose>
-      <xsl:when test="count(*)=1">
-        <xsl:variable name="arg" as="xs:double">
+      <xsl:choose>
+      <xsl:when test="count(*)=2">
+        <xsl:variable name="arg1" as="xs:double">
           <xsl:apply-templates select="*[1]" mode="number"/>
         </xsl:variable>
-        <xsl:value-of select="$arg + 1"/>
+        <xsl:variable name="arg2" as="xs:double">
+          <xsl:apply-templates select="*[2]" mode="number"/>
+        </xsl:variable>
+        <xsl:value-of select="$arg1 + $arg2"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:message>**********  s Term has error in number of args <xsl:copy-of select="."/>
+        <xsl:message>**********  star Term has error in number of args <xsl:copy-of select="."/>
         </xsl:message>
         <xsl:value-of select="0"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="p" mode="number">
-    <xsl:value-of select="1"/>
+  <xsl:template match="s|id|p" mode="number">
+    <xsl:choose>
+      <xsl:when test="count(ccseq:*)=1">
+        <xsl:variable name="arg" as="xs:double">
+          <xsl:apply-templates select="ccseq:*[1]" mode="number"/>
+        </xsl:variable>
+        <xsl:value-of select="$arg + 1"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message>**********  <xsl:value-of select="name()"/> term has error in number of args <xsl:copy-of select="."/>
+        </xsl:message>
+        <xsl:value-of select="0"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
+
+ 
+  
 
 </xsl:transform>

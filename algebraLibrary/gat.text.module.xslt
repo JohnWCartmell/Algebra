@@ -56,6 +56,24 @@
 	<xsl:text>&#xA;</xsl:text>
 </xsl:template>
 
+
+<xsl:template match="context" mode="text">
+  <xsl:text> </xsl:text>
+  <xsl:for-each select="*:decl | *:sequence">
+	   <xsl:apply-templates  select="." mode="text"/>
+     <xsl:if test="following-sibling::*:decl|following-sibling::*:sequence">
+         <xsl:text>, </xsl:text>
+     </xsl:if>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template match="*[self::*:decl|self::*:sequence]" mode="text">
+	<xsl:value-of select="gat:name"/>
+  <xsl:text>:</xsl:text>
+  <xsl:apply-templates select="gat:type/*" mode="text"/>
+</xsl:template>
+
+
 <xsl:template match="*:var" mode="text">
 	<xsl:value-of select="gat:name"/>
 </xsl:template>
@@ -66,11 +84,45 @@
 	<xsl:text>.</xsl:text>
 </xsl:template>
 
-<xsl:template match="point" mode="text">
+<xsl:template match="*:point" mode="text">
 	<xsl:text>[</xsl:text>
-	<xsl:apply-templates select="*[1]" mode="text"/>
+	<xsl:apply-templates select="*" mode="text"/>
 	<xsl:text>]</xsl:text>
 </xsl:template>
+
+<xsl:template match="substitution" mode="text">
+  <xsl:text>&#xA;</xsl:text>
+	<xsl:text>OUTER SUBSTITUTIONS:</xsl:text>
+	<xsl:apply-templates  select="substitute" mode="text"/>
+	<xsl:text></xsl:text>
+  	<xsl:text>&#xA;</xsl:text>
+  <xsl:text>INNER TARGET SUBSTITUTIONS:</xsl:text>
+	<xsl:apply-templates  select="targetSubstitute" mode="text"/>
+	<xsl:text></xsl:text>
+</xsl:template>
+
+
+<xsl:template match="*[self::substitute|self::targetSubstitute][child::*:var]" mode="text">
+  <xsl:text> (</xsl:text>
+  <xsl:apply-templates  select="*:var" mode="text"/>
+	<xsl:text disable-output-escaping="yes">-></xsl:text>
+	<xsl:apply-templates  select="gat:term/*" mode="text"/>
+  <xsl:text>) </xsl:text>
+</xsl:template>
+
+<xsl:template match="*[self::substitute|self::targetSubstitute][child::*:seq]" mode="text">
+  <xsl:text> (</xsl:text>
+  <xsl:apply-templates  select="*:seq" mode="text"/>
+	<xsl:text disable-output-escaping="yes">-> [</xsl:text>
+  <xsl:for-each select="gat:term">
+	   <xsl:apply-templates  mode="text"/>
+     <xsl:if test="following-sibling::gat:term">
+         <xsl:text>, </xsl:text>
+     </xsl:if>
+  </xsl:for-each>
+  <xsl:text>]) </xsl:text>
+</xsl:template>
+
 
 <xsl:template match="tail"  mode="text">
 	<xsl:variable name="args" as="xs:string *">
@@ -116,7 +168,6 @@
 			<xsl:text disable-output-escaping="yes">=></xsl:text>
 	    </xsl:when>
      </xsl:choose>
-
      <xsl:for-each select="rhs">
 	    <xsl:variable name="rhstype">
 			<xsl:apply-templates mode="type">

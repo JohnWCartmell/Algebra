@@ -61,3 +61,6 @@ ccseq/theory/temp/old/saferewrite.enriched.xml
 ccseq/theory/temp/saferewrite.enriched.xml
 ccseq/unitTests/testNormalisation/temp/normalisation.out.xml
 ccseq/unitTests/testNormalisation/temp/old.normalisation.out.xml
+algebraLibrary/old/gat.specialisation.module.xslt
+ccseq/unitTests/testSpecialiseTerm/temp/specialisation.out.xml
+out.txt
