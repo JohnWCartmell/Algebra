@@ -230,19 +230,30 @@
           <xsl:message> sSTF BANBURY: targetIndex <xsl:value-of select="$targetIndex"/> 
             target child count <xsl:value-of select="count($targetTerm/*)"/>
           </xsl:message>
+
           <xsl:if test="not($head_substitution/substitution[self::substitution])">
             <xsl:message> ***** return type assertion fails at BANBURY </xsl:message>
           </xsl:if>
-          <xsl:if test="($targetIndex + $numberOfTargetChildrenConsumed &gt; count($targetTerm/* ))
-              or (($targetIndex + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
-              and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
-              )">
-            <!-- need to have consumed all target term children or there to be just a seq remaining -->
-            <!-- actaully need a target substitution for the seq here - assigning it to empty-->
-            <xsl:syntax error see above
-            <xsl:message> sSTF finished consumption </xsl:message>
-            <xsl:copy-of select="$head_substitution/substitution"/>  
-          </xsl:if>
+          <xsl:choose>
+            <xsl:when test="($targetIndex + $numberOfTargetChildrenConsumed &gt; count($targetTerm/* ))">
+              <xsl:message> sSTF finished consumption branch one</xsl:message>
+              <xsl:copy-of select="$head_substitution/substitution"/>  
+            </xsl:when>
+            <xsl:when test="($targetIndex + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
+                and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
+                ">
+              <xsl:message> sSTF finished consumption branch two - insert targetSubstitution</xsl:message>
+              <xsl:for-each select="$head_substitution/substitution">
+                <substitution>
+                  <xsl:copy-of select="*"/>
+                  <targetSubstitute>
+                       <xsl:copy-of select="$targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed]"/>
+                       <!-- empty set of terms -->
+                  </targetSubstitute>
+                </substitution>
+              </xsl:for-each>            
+            </xsl:when>
+          </xsl:choose>
         </xsl:when >
         <xsl:when test="count($head_substitution/tail/*) &gt; 0">  
           <xsl:choose>
@@ -292,7 +303,7 @@
           </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:message terminate="y">***** UNexpectedly got HERE </xsl:message>
+          <xsl:message terminate="yes">***** UNexpectedly got HERE </xsl:message>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
