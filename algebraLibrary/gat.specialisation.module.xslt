@@ -5,7 +5,28 @@
     xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
     xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">
 
+ <!-- The entry point to these templates is "specialiseTerm". -->
 
+  <!-- Terminological Remark: specialiseTerm is invoked with a *subject* term as the 
+                            current context and is passed a *target* term parameter. 
+   -->                         
+  <!-- 21 Feb 2018 Improve the structure of the code by replacing as=node() for xslt
+       variables by as="element(<name>)" whereever it is possible.
+    -->
+  <!-- 21 Feb 2018 Separate all the subject and target substitutions into
+              <substitution>
+                       <subject>SUBSTITUTE*</subject>
+                       <target>SUBSTITUTE*</target>
+              </substitution>
+      where
+              SUBSTITUTE ::= <substitute>
+                                  <var>|<seq>
+                                       <gat:name>xxx</gat:name>
+                                  <gat:term>
+                                       ...
+                                  </gat:term>
+                             </substitute> 
+   -->                             
 
   <!-- 
      specialiseTerm 
@@ -33,7 +54,7 @@
      -->
 
   <xsl:template name="specialiseTerm">
-    <xsl:param name="targetTerm" as="node()"/>
+    <xsl:param name="targetTerm" as="element()"/>
     <xsl:message>specialiseTerm <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
     <xsl:message>specialiseTerm/name() <xsl:value-of select="name()" />
@@ -108,8 +129,8 @@
 
   <!-- proceedFromAllTargetSequenceBackMappings -->
   <xsl:template name="proceedFromAllTargetSequenceBackMappings">
-    <xsl:param name="targetTerm" as="node()"/>
-    <xsl:param name="targetIndex" />
+    <xsl:param name="targetTerm" as="element()"/>
+    <xsl:param name="targetIndex" as="xs:integer" />
     <xsl:message>pFATSBM dotTerm <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
     <xsl:message> pFATSBM targetTerm <xsl:apply-templates select="$targetTerm" mode="text"/>
@@ -192,13 +213,17 @@
        <substitution> elements.
   -->
   <xsl:template name="specialiseSubTermsFrom">
-    <xsl:param name="targetTerm" as="node()"/>
-    <xsl:param name="targetIndex" />
+    <xsl:param name="targetTerm" as="element()"/>
+    <xsl:param name="targetIndex" as="xs:integer"/>
     <xsl:message>   sSTF specialise subterms from outer: <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
     <xsl:message>   sSTF outer tail /name()<xsl:value-of select="name()" />
     </xsl:message>
     <xsl:message>   sSTF target <xsl:apply-templates select="$targetTerm" mode="text"/>
+    </xsl:message>
+    <xsl:message>   sSTF target /name() <xsl:value-of select="$targetTerm/name()" />
+    </xsl:message>
+       <xsl:message>   sSTF target/* /name() <xsl:value-of select="$targetTerm/*/name()" />
     </xsl:message>
     <xsl:message>   sSTF targetIndex <xsl:value-of select="$targetIndex"/>
     </xsl:message>
@@ -271,8 +296,8 @@
               <xsl:message> sSTF tail specialised <xsl:apply-templates select="$tailspecialised/*" mode="text"/>
               </xsl:message>
 
-              <xsl:variable name="targetTermSpecialised">
-                <xsl:for-each select="$targetTerm/*">
+              <xsl:variable name="targetTermSpecialised" as="element()">
+                <xsl:for-each select="$targetTerm">  <!-- 21 Feb 2018 Remove /* -->
                   <xsl:call-template name="applyTargetSubstitutions">
                     <xsl:with-param name="substitution" select="$head_substitution/substitution"/>  <!-- 13 April 2017 ??? add a * ??-->
                   </xsl:call-template>
@@ -328,8 +353,8 @@
 -->
 
   <xsl:template name="head_substitutions">
-    <xsl:param name="targetTerm"/>
-    <xsl:param name="targetIndex"/>
+    <xsl:param name="targetTerm" as="element()"/>
+    <xsl:param name="targetIndex" as="xs:integer"/>
     <xsl:variable name="head_substitution_entry_number" select="generate-id()"/>
     <xsl:variable name="subjectTerm_text"><xsl:apply-templates select="." mode="text"/></xsl:variable>
     <xsl:variable name="targetTerm_text"><xsl:apply-templates select="$targetTerm" mode="text"/></xsl:variable>
@@ -341,7 +366,7 @@
     </xsl:message>
     <xsl:message>  hS targetIndex  <xsl:value-of select="$targetIndex"/>
     </xsl:message>
-    <xsl:variable name="head_substitutions" as="node()*">
+    <xsl:variable name="head_substitutions" as="element(head_substitution)*">
       <xsl:choose>
         <xsl:when test="not(./*[1][self::*:seq]) and not($targetTerm/*[$targetIndex][self::*:seq])">
           <xsl:message> hS branch 1 </xsl:message>
@@ -540,7 +565,7 @@
       <xsl:message>   countOfTargetTermsSubstitutedIntoOuter:<xsl:value-of select="count(substitution/substitute/term)"/></xsl:message>  
       <xsl:message>   numberOfTargetChildrenConsumed:<xsl:value-of select="numberOfTargetChildrenConsumed"/></xsl:message>
       <xsl:message>   targetTail:<xsl:value-of select="$targetTail_text"/></xsl:message>
-      <xsl:variable name="traceback" as="node()">
+      <xsl:variable name="traceback" as="element(gat:traceback)">
         <traceback>
           <head_substitution_entry_number><xsl:value-of select="$head_substitution_entry_number"/></head_substitution_entry_number>
           <subjectTerm><xsl:value-of select="$subjectTerm_text"/></subjectTerm>
@@ -577,9 +602,9 @@
      -->
 
   <xsl:template name="leading_subterm_specialisations">
-    <xsl:param name="targetTerm"/>
-    <xsl:param name="targetIndex"/>
-    <xsl:param name="skipped" as="node()*"/>
+    <xsl:param name="targetTerm" as="element()"/>
+    <xsl:param name="targetIndex" as="xs:integer"/>
+    <xsl:param name="skipped" as="element()*"/>
 
     <xsl:message>lss Dot  <xsl:apply-templates select="." mode="text"/>
     </xsl:message>
@@ -587,6 +612,7 @@
     </xsl:message>
     <xsl:message>lss targetIndex  <xsl:value-of select="$targetIndex"/>
     </xsl:message>
+    <xsl:message>skipped/name()<xsl:value-of select="$skipped/name()"/></xsl:message>
 
     <xsl:variable name="headSpecialisations">   
       <xsl:call-template name="specialiseTerm">
