@@ -219,7 +219,7 @@
       </xsl:message>
       <xsl:variable name="head_substitution" select="."/>
       <xsl:if test="not($head_substitution/tail)">
-        <xsl:message> sSTF **** type error - tail assertion fails </xsl:message>
+        <xsl:message terminate="yes"> sSTF **** type error - tail assertion fails </xsl:message>
       </xsl:if>
       <xsl:variable name="numberOfTargetChildrenConsumed" as="xs:integer" select="numberOfTargetChildrenConsumed"/>
       <xsl:message>sSTF numberOfTargetChildrenConsumed <xsl:value-of select="$numberOfTargetChildrenConsumed"/>
@@ -232,7 +232,7 @@
           </xsl:message>
 
           <xsl:if test="not($head_substitution/substitution[self::substitution])">
-            <xsl:message> ***** return type assertion fails at BANBURY </xsl:message>
+            <xsl:message terminate="yes"> ***** return type assertion fails at BANBURY </xsl:message>
           </xsl:if>
           <xsl:choose>
             <xsl:when test="($targetIndex + $numberOfTargetChildrenConsumed &gt; count($targetTerm/* ))">
@@ -243,7 +243,7 @@
                 and ($targetTerm/*[$targetIndex + $numberOfTargetChildrenConsumed][self::*:seq])
                 ">
               <xsl:message> sSTF finished consumption branch two - insert targetSubstitution</xsl:message>
-              <xsl:for-each select="$head_substitution/substitution">
+              <xsl:for-each select="$head_substitution/substitution">  <!-- added 21 Feb 2018 -->
                 <substitution>
                   <xsl:copy-of select="*"/>
                   <targetSubstitute>
@@ -289,9 +289,9 @@
               </xsl:variable>
               <xsl:for-each select="$tail_substitutions/*">
                 <xsl:if test="not(self::substitution)">
-                  <xsl:message> ***** type assertion substitution fails on tail </xsl:message>
+                  <xsl:message terminate="yes"> ***** type assertion substitution fails on tail </xsl:message>
                 </xsl:if>
-                <substitution>
+                <substitution>               <!-- REMARK 22 Feb 2018 Shouldn't the tail substitution be applied to the head substitutions in a compose substitutions operation? -->
                   <xsl:copy-of select="$head_substitution/substitution/*"/>
                   <xsl:copy-of select="./*"/>
                 </substitution>
@@ -438,7 +438,8 @@
                     </term>
                   </xsl:for-each>
                 </substitute>
-                <xsl:copy-of select="./substitution/*"/>
+                <xsl:copy-of select="./substitution/*"/>  
+                                <!-- REMARK 21 Feb 2018 - shouldn't this substitution have additional substitute applied to it in a compose substitutions operation? -->
               </substitution>
               <tail>
                 <xsl:copy-of select="$tail"/>
@@ -470,7 +471,7 @@
           </head_substitution>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:message> ***** hS A FOURTH CASE ERROR </xsl:message>
+          <xsl:message terminate="yes"> ***** hS A FOURTH CASE ERROR </xsl:message>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:message> hS pre final case <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>  
@@ -490,7 +491,8 @@
         </xsl:variable>      
         <xsl:for-each select="./*[position() &gt; 1]">
           <head_substitution>
-            <substitution>
+            <substitution>   <!-- REMARK 21 Feb 2018 Could these forward and backward substitutes be interlinked - might one be applied to the other -->
+                             <!-- Could add defensive code to discover whether this is ever the case in practice -->
               <substitute>
                 <xsl:copy-of select="$dotseq"/>
                 <xsl:for-each select ="$targetTerm/*[(position() &gt; $targetIndex - 1)and (position() &lt; $indexofTargetSeq)]">
@@ -598,7 +600,7 @@
             <xsl:copy-of select="$skipped"/>
           </skipped>
           <xsl:if test="not(name()='substitution')">
-            <xsl:message> ****** Failed assert at 'substitutecheck' with <xsl:value-of select="name()"/>
+            <xsl:message terminate="yes"> ****** Failed assert at 'substitutecheck' with <xsl:value-of select="name()"/>
             </xsl:message>
           </xsl:if>
           <xsl:copy-of select="."/>
