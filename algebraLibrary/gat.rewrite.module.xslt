@@ -9,18 +9,6 @@
   <xsl:strip-space elements="*"/> 
 
 
-  <!--
-	<xsl:template name="normalise">
-        <xsl:message> Explicit call to normalise <xsl:value-of select="name()"/> . <xsl:value-of select="*/name()"/></xsl:message>
-		<xsl:copy>
-			<xsl:call-template name="recursive_rewrite">
-				<xsl:with-param name="document">
-					<xsl:apply-templates select="." mode="rewrite"/>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:copy>
-	</xsl:template>
-		-->
 
   <xsl:template match="*" mode="normalise">
     <!--  <xsl:message>copying <xsl:value-of select="name()"/> </xsl:message>-->
@@ -183,12 +171,6 @@
                     </term_specialised>
                   </inner>
                   <number><xsl:value-of select="position()"/></number>
-                  <!--
-                  <xsl:if test="not($innerTermSpecialisedText = $outerTermSpecialisedText)">
-                    <ERROR> OUT OF SPEC </ERROR>
-                    <xsl:copy-of select="$result"/>
-                  </xsl:if>
-                  -->
                   <xsl:if test="not($innerTermSpecialisedText = $innerSubtermOfOuterTermSpecialised_text)">
                     <ERROR> OUT OF SPEC </ERROR>
                     <xsl:copy-of select="$result"/>
@@ -389,21 +371,6 @@
     </xsl:choose>
   </xsl:template>
 
-  <!--
-  <xsl:template name="purify_and_get_instances_of" match="*">
-    <xsl:param name="targetTerm"/>
-    <xsl:variable name="outerTermPurified">
-      <xsl:apply-templates select="." mode="remove_gat_annotations"/>
-    </xsl:variable>
-    <xsl:variable name="targetTermPurified" as="node()">
-      <xsl:apply-templates select="$targetTerm" mode="remove_gat_annotations"/>
-    </xsl:variable>
-    <xsl:apply-templates select="$outerTermPurified" mode="get_instances_of">
-      <xsl:with-param name="targetTerm" select="$targetTermPurified"/>
-    </xsl:apply-templates>
-  </xsl:template>
-  
-  -->
 
   <!-- "get_instances_of" is an abbreviation of 
        "get all matching subtitutional instances of this and its a proper subterms"
@@ -437,32 +404,6 @@
           <point_id>
             <xsl:value-of select="$point_id"/>
           </point_id>
-          <!--
-          <xsl:variable name="lhs_as_pointedTerm">
-            <xsl:apply-templates select="$ancestor_lhs" mode="insert_point">
-              <xsl:with-param name="point_id" select="$point_id" />
-            </xsl:apply-templates>
-          </xsl:variable>
-          <xsl:message>lhs_as_pointed_term <xsl:copy-of select="$lhs_as_pointedTerm"/>
-          </xsl:message>
-          <xsl:variable name="lhs_specialised">
-            <xsl:apply-templates select="$ancestor_lhs" mode="substitution">
-              <xsl:with-param name="substitutions" select="."/>
-            </xsl:apply-templates>
-          </xsl:variable>
-          <xsl:variable name="pointed_lhs_specialised">
-            <xsl:apply-templates select="$lhs_as_pointedTerm" mode="substitution">
-              <xsl:with-param name="substitutions" select="."/>
-            </xsl:apply-templates>
-          </xsl:variable>
-          <lhs_specialised>
-            <xsl:copy-of select="$lhs_specialised"/>
-          </lhs_specialised>
-          <pointed_lhs_specialised>
-            <xsl:copy-of select="$pointed_lhs_specialised"/>
-          </pointed_lhs_specialised>
-          -->
-
         </result>
       </xsl:if>
     </xsl:for-each>
