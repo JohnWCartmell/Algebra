@@ -92,17 +92,17 @@
 
 <xsl:template match="substitution" mode="text">
   <xsl:text>&#xA;</xsl:text>
-	<xsl:text>OUTER SUBSTITUTIONS:</xsl:text>
-	<xsl:apply-templates  select="substitute" mode="text"/>
+	<xsl:text>subject  SUBSTITUTIONS:</xsl:text>
+	<xsl:apply-templates  select="subject/substitute" mode="text"/>
 	<xsl:text></xsl:text>
   	<xsl:text>&#xA;</xsl:text>
-  <xsl:text>INNER TARGET SUBSTITUTIONS:</xsl:text>
-	<xsl:apply-templates  select="targetSubstitute" mode="text"/>
+  <xsl:text>target SUBSTITUTIONS:</xsl:text>
+	<xsl:apply-templates  select="target/substitute" mode="text"/>
 	<xsl:text></xsl:text>
 </xsl:template>
 
 
-<xsl:template match="*[self::substitute|self::targetSubstitute][child::*:var]" mode="text">
+<xsl:template match="substitute[child::*:var]" mode="text">
   <xsl:text> (</xsl:text>
   <xsl:apply-templates  select="*:var" mode="text"/>
 	<xsl:text disable-output-escaping="yes">-></xsl:text>
@@ -110,7 +110,7 @@
   <xsl:text>) </xsl:text>
 </xsl:template>
 
-<xsl:template match="*[self::substitute|self::targetSubstitute][child::*:seq]" mode="text">
+<xsl:template match="substitute[child::*:seq]" mode="text">
   <xsl:text> (</xsl:text>
   <xsl:apply-templates  select="*:seq" mode="text"/>
 	<xsl:text disable-output-escaping="yes">-> [</xsl:text>

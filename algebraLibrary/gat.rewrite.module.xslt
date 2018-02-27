@@ -57,13 +57,13 @@
           <xsl:variable name="outerTermPurified" as="node()">
             <xsl:apply-templates select="$outerTerm" mode="remove_gat_annotations"/>
           </xsl:variable>
-          <xsl:variable name="results">
+          <xsl:variable name="results" as="element(result)*">
             <xsl:apply-templates select="$outerTermPurified" mode="get_instances_of">
               <xsl:with-param name="targetTerm" select="$innerTermPurified"/>
             </xsl:apply-templates>
           </xsl:variable>
-          <xsl:if test="count($results/*) != 0">
-            <xsl:for-each select="$results/result">
+          <xsl:for-each select="$results">
+            <!--
               <xsl:variable as="node()" name="targetSubstitution">
                 <substitution>
                   <xsl:for-each select="substitution/targetSubstitute">
@@ -73,218 +73,218 @@
                   </xsl:for-each>
                 </substitution>
               </xsl:variable>
-              <xsl:variable name="result" as="node()" select="."/>
-              <xsl:variable name="innerContextSubstituted" as="node()">
-                <xsl:for-each select="$innerContext">       <!-- SIMPLIFY -->
-                  <xsl:apply-templates select="." mode="substitution">
-                    <xsl:with-param name="substitutions" select="$targetSubstitution"/>
-                  </xsl:apply-templates>
-                </xsl:for-each>
-              </xsl:variable>             
-              <xsl:variable name="outerContextSubstituted" as="node()">
-                <xsl:for-each select="$outerContext">
-                  <xsl:apply-templates select="." mode="substitution">
-                    <xsl:with-param name="substitutions" select="$result/substitution"/>
-                  </xsl:apply-templates>
-                </xsl:for-each>
-              </xsl:variable>
-              <xsl:variable name="innerTermSpecialised">
-                <xsl:apply-templates select="$innerTerm" mode="substitution">  <!--,EXTRA NAV ? -->
-                  <xsl:with-param name="substitutions" select="$targetSubstitution"/> 
+              -->
+            <!--<xsl:variable name="result" as="node()" select="."/>-->
+             <xsl:message>substitution call three</xsl:message>
+             <xsl:message>name of sub <xsl:value-of select="substitution/name()"/></xsl:message>
+                          <xsl:message>name of target<xsl:value-of select="substitution/target/name()"/></xsl:message>
+            <xsl:variable name="innerContextSubstituted" as="node()">
+                <xsl:apply-templates select="$innerContext" mode="substitution">
+                  <xsl:with-param name="substitutions" select="substitution/target"/>  <!-- feel need for this to say target/substitution -->
                 </xsl:apply-templates>
-              </xsl:variable>
-              <xsl:variable name="innerTermSpecialisedText">
-                <xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
-              </xsl:variable>
-              <xsl:variable name="outerTermSpecialised">
-                <xsl:apply-templates select="$outerTerm" mode="substitution">  <!--,EXTRA NAV ? -->
-                  <xsl:with-param name="substitutions" select="$result/substitution"/> 
+            </xsl:variable>             
+            <xsl:variable name="outerContextSubstituted" as="node()">
+                <xsl:apply-templates select="$outerContext" mode="substitution">
+                  <xsl:with-param name="substitutions" select="substitution/subject"/>
                 </xsl:apply-templates>
-              </xsl:variable>
-              <xsl:variable name="outerTermSpecialisedText">
-                <xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
-              </xsl:variable>
-              <xsl:message> $result/point_id <xsl:value-of select="$result/point_id"/> </xsl:message>
-              <xsl:variable name="outerTerm_as_pointed_term">
-                <xsl:apply-templates select="$outerTermPurified" mode="insert_point">
-                  <xsl:with-param name="point_id" select="$result/point_id" />
-                </xsl:apply-templates>
-              </xsl:variable>
-              <xsl:message>outerTerm_as_pointed_term <xsl:copy-of select="$outerTerm_as_pointed_term"/>
-              </xsl:message>
-              <xsl:variable name="pointed_outerTerm_specialised" as="node()">
-                <xsl:apply-templates select="$outerTerm_as_pointed_term" mode="substitution">
-                  <xsl:with-param name="substitutions" select="$result/substitution"/>
-                </xsl:apply-templates>
-              </xsl:variable>
-              <xsl:variable name="innerSubtermOfOuterTermSpecialised" as="node()">
-                <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="extract_subterm_at_point"/>
-              </xsl:variable>  
-              <xsl:variable name="innerSubtermOfOuterTermSpecialised_text">
-                <xsl:apply-templates select="$innerSubtermOfOuterTermSpecialised" mode="text"/>
-              </xsl:variable>              
-              <gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
-                <from>
-                  <outer>
-                    <id><xsl:value-of select="$outer_rule_id"/></id>
-                    <term><xsl:apply-templates select="$outerTerm" mode="text"/></term>
-                    <context>
-                      <!-- <xsl:copy-of select="$outerContext"/> -->
-                      <xsl:apply-templates select="$outerContext" mode="text"/>
-                    </context>
-                    <substitution> 
-                      <xsl:apply-templates  select="substitution/substitute" mode="text"/>
-                    </substitution>
-                    <contextsubstituted>
-                      <!--<xsl:copy-of select="$outerContextSubstituted"/>-->  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex -->
-                      <xsl:apply-templates select="$outerContextSubstituted" mode="text"/>  
-                    </contextsubstituted>
-                    <term_specialised>
-                      <!--<xsl:copy-of select="$outerTermSpecialised"/>-->
-                      <xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
-                    </term_specialised>
-                    <pointed_term_specialised>
-                      <!--<xsl:copy-of select="$pointed_outerTerm_specialised"/>-->
-                      <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="text"/>
-                    </pointed_term_specialised>
-                    <point_subterm>
-                         <xsl:value-of select="$innerSubtermOfOuterTermSpecialised_text"/>
-                    </point_subterm>
-                  </outer>
-                  <inner>
-                    <id><xsl:value-of select="$inner_rule_id"/></id>
-                    <term><xsl:apply-templates select="$innerTerm" mode="text"/></term>                   
-                    <context>
-                      <!-- <xsl:copy-of select="$innerContext"/> -->
-                      <xsl:apply-templates select="$innerContext" mode="text"/>
-                    </context>
-                    <substitution>
-                      <xsl:apply-templates  select="substitution/targetSubstitute" mode="text"/>
-                    </substitution>
-                    <contextsubstituted>
-                      <!--<xsl:copy-of select="$innerContextSubstituted"/>-->
-                      <xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
-                    </contextsubstituted>
-                    <term_specialised>
-                      <!--<xsl:copy-of select="$innerTermSpecialised"/>-->
-                      <xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
-                    </term_specialised>
-                  </inner>
-                  <number><xsl:value-of select="position()"/></number>
-                  <xsl:if test="not($innerTermSpecialisedText = $innerSubtermOfOuterTermSpecialised_text)">
-                    <ERROR> OUT OF SPEC </ERROR>
-                    <xsl:copy-of select="$result"/>
-                  </xsl:if>              
-                </from>
-                <context>
-                  <xsl:value-of select="context"/> <!-- THIS IS TWO PART CONTEXTS PUT TOGETHER AND, MAYBE, SORTED. -->
-                </context>
+            </xsl:variable>
+            <xsl:variable name="innerTermSpecialised">
+                              <xsl:message>substitution call five</xsl:message>
+              <xsl:apply-templates select="$innerTerm" mode="substitution">  
+                <xsl:with-param name="substitutions" select="substitution/target"/> 
+              </xsl:apply-templates>
+            </xsl:variable>
+            <xsl:variable name="innerTermSpecialisedText">
+              <xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
+            </xsl:variable>
+            <xsl:variable name="outerTermSpecialised">
+              <xsl:apply-templates select="$outerTerm" mode="substitution">  <!--,EXTRA NAV ? -->
+                <xsl:with-param name="substitutions" select="substitution/subject"/> 
+              </xsl:apply-templates>
+            </xsl:variable>
+            <xsl:variable name="outerTermSpecialisedText">
+              <xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
+            </xsl:variable>
+            <xsl:message> result/point_id <xsl:value-of select="point_id"/> </xsl:message>
+            <xsl:variable name="outerTerm_as_pointed_term">
+              <xsl:apply-templates select="$outerTermPurified" mode="insert_point">
+                <xsl:with-param name="point_id" select="point_id" />
+              </xsl:apply-templates>
+            </xsl:variable>
+            <xsl:message>outerTerm_as_pointed_term <xsl:copy-of select="$outerTerm_as_pointed_term"/>
+            </xsl:message>
+            <xsl:variable name="pointed_outerTerm_specialised" as="node()">
+              <xsl:apply-templates select="$outerTerm_as_pointed_term" mode="substitution">
+                <xsl:with-param name="substitutions" select="substitution/subject"/>
+              </xsl:apply-templates>
+            </xsl:variable>
+            <xsl:variable name="innerSubtermOfOuterTermSpecialised" as="node()">
+              <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="extract_subterm_at_point"/>
+            </xsl:variable>  
+            <xsl:variable name="innerSubtermOfOuterTermSpecialised_text">
+              <xsl:apply-templates select="$innerSubtermOfOuterTermSpecialised" mode="text"/>
+            </xsl:variable>              
+            <gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
+              <from>
+                <outer>
+                  <id><xsl:value-of select="$outer_rule_id"/></id>
+                  <term><xsl:apply-templates select="$outerTerm" mode="text"/></term>
+                  <context>
+                    <!-- <xsl:copy-of select="$outerContext"/> -->
+                    <xsl:apply-templates select="$outerContext" mode="text"/>
+                  </context>
+                  <substitution> 
+                    <xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
+                  </substitution>
+                  <contextsubstituted>
+                    <!--<xsl:copy-of select="$outerContextSubstituted"/>-->  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex -->
+                    <xsl:apply-templates select="$outerContextSubstituted" mode="text"/>  
+                  </contextsubstituted>
+                  <term_specialised>
+                    <!--<xsl:copy-of select="$outerTermSpecialised"/>-->
+                    <xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
+                  </term_specialised>
+                  <pointed_term_specialised>
+                    <!--<xsl:copy-of select="$pointed_outerTerm_specialised"/>-->
+                    <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="text"/>
+                  </pointed_term_specialised>
+                  <point_subterm>
+                    <xsl:value-of select="$innerSubtermOfOuterTermSpecialised_text"/>
+                  </point_subterm>
+                </outer>
+                <inner>
+                  <id><xsl:value-of select="$inner_rule_id"/></id>
+                  <term><xsl:apply-templates select="$innerTerm" mode="text"/></term>                   
+                  <context>
+                    <!-- <xsl:copy-of select="$innerContext"/> -->
+                    <xsl:apply-templates select="$innerContext" mode="text"/>
+                  </context>
+                  <substitution>
+                    <xsl:apply-templates  select="substitution/target/substitute" mode="text"/>
+                  </substitution>
+                  <contextsubstituted>
+                    <!--<xsl:copy-of select="$innerContextSubstituted"/>-->
+                    <xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
+                  </contextsubstituted>
+                  <term_specialised>
+                    <!--<xsl:copy-of select="$innerTermSpecialised"/>-->
+                    <xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
+                  </term_specialised>
+                </inner>
+                <number><xsl:value-of select="position()"/></number>
+                <xsl:if test="not($innerTermSpecialisedText = $innerSubtermOfOuterTermSpecialised_text)">
+                  <ERROR> OUT OF SPEC </ERROR>
+                  <xsl:copy-of select="."/> <!-- for diagnostic purposes -->
+                </xsl:if>              
+              </from>
+              <context>
+                <xsl:value-of select="context"/> <!-- THIS IS TWO PART CONTEXTS PUT TOGETHER AND, MAYBE, SORTED. -->
+              </context>
 
-                <!--COPY the ancestor term with the result substitutions and mark application_node_id -->
-                <top_of_diamond>
-                  <!--<xsl:copy-of select="$pointed_outerTerm_specialised"/>-->
-                  <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="text"/>
-                </top_of_diamond>
-                <xsl:message> Top of diamond <xsl:copy-of select="$pointed_outerTerm_specialised"/>
-                </xsl:message>
-                <xsl:if test="false()" >
-                  <!--outerTerm-->
-                  <xsl:variable name="left_reduction">
-                    <term>
-                      <xsl:for-each select="lhs_specialised/*">
-                        <xsl:call-template name="apply_named_rule">
-                          <xsl:with-param name="ruleid" select="$outer_rule_id"/>
-                        </xsl:call-template> 
-                      </xsl:for-each>
-                    </term>
-                  </xsl:variable>
-                  <leftreduction>
-                    <xsl:apply-templates select="$left_reduction" mode="text"/>
-                  </leftreduction>
-                  <!-- inner Term -->
-                  <xsl:variable name="right_reduction">
-                    <term>
-                      <xsl:for-each select="pointed_lhs_specialised">
-                        <xsl:message>Inner rule is <xsl:value-of select="$inner_rule_id"/>
-                        </xsl:message>
-                        <xsl:apply-templates mode="innerReduction">
-                          <xsl:with-param name="rule_id" select="$inner_rule_id"/>
-                        </xsl:apply-templates> 
-                      </xsl:for-each>
-                    </term>
-                  </xsl:variable>
-                  <rightreduction>
-                    <xsl:apply-templates select="$right_reduction" mode="text"/>
-                  </rightreduction>
-                  <!-- Normalise left hand side -->
-                  <xsl:variable name="leftReductionNormalised">
-                    <xsl:call-template name="recursive_rewrite">
-                      <xsl:with-param name="document">
-                        <xsl:apply-templates select="$left_reduction" mode="rewrite"/>
-                      </xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:variable name="leftReductionNormalisedText">
-                    <xsl:apply-templates select="$leftReductionNormalised" mode="text"/>
-                  </xsl:variable>
-                  <xsl:variable name="lhscost" as="xs:double">
-                    <xsl:apply-templates select="$leftReductionNormalised" mode="number"/>
-                  </xsl:variable>
-                  <!-- Normailise right hand side -->
-                  <xsl:message>normalise rhs reduction</xsl:message>
-                  <xsl:variable name="rightReductionNormalised">
-                    <xsl:call-template name="recursive_rewrite">
-                      <xsl:with-param name="document">
-                        <xsl:apply-templates select="$right_reduction" mode="rewrite"/>
-                      </xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:variable name="rightReductionNormalisedText">
-                    <xsl:apply-templates select="$rightReductionNormalised" mode="text"/>
-                  </xsl:variable>
-                  <xsl:variable name="rhscost" as="xs:double">
-                    <xsl:apply-templates select="$rightReductionNormalised" mode="number"/>
-                  </xsl:variable>
-                  <!-- OUTPUT -->
-                  <leftReductionNormalised>
-                    <xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
-                      <xsl:copy-of select="$leftReductionNormalised"/>
-                    </xsl:if>
-                    <gat:text>
-                      <xsl:value-of select="$leftReductionNormalisedText"/>
-                      <xsl:text>{</xsl:text>
-                      <xsl:value-of select="$lhscost"/>
-                      <xsl:text>}</xsl:text>
-                    </gat:text>
-                  </leftReductionNormalised>
-                  <rightReductionNormalised>
-                    <xsl:if test="not($leftReductionNormalisedText = $rightReductionNormalisedText)">
-                      <xsl:copy-of select="$rightReductionNormalised"/>
-                    </xsl:if>                    
-                    <gat:text>
-                      <xsl:value-of select="$rightReductionNormalisedText"/>
-                      <xsl:text>{</xsl:text>
-                      <xsl:value-of select="$rhscost"/>
-                      <xsl:text>}</xsl:text>
-                    </gat:text>
-                  </rightReductionNormalised>
+              <!--COPY the ancestor term with the result substitutions and mark application_node_id -->
+              <top_of_diamond>
+                <!--<xsl:copy-of select="$pointed_outerTerm_specialised"/>-->
+                <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="text"/>
+              </top_of_diamond>
+              <xsl:message> Top of diamond <xsl:copy-of select="$pointed_outerTerm_specialised"/>
+              </xsl:message>
+              <xsl:if test="false()" >
+                <!--outerTerm-->
+                <xsl:variable name="left_reduction">
+                  <term>
+                    <xsl:for-each select="lhs_specialised/*">
+                      <xsl:call-template name="apply_named_rule">
+                        <xsl:with-param name="ruleid" select="$outer_rule_id"/>
+                      </xsl:call-template> 
+                    </xsl:for-each>
+                  </term>
+                </xsl:variable>
+                <leftreduction>
+                  <xsl:apply-templates select="$left_reduction" mode="text"/>
+                </leftreduction>
+                <!-- inner Term -->
+                <xsl:variable name="right_reduction">
+                  <term>
+                    <xsl:for-each select="pointed_lhs_specialised">
+                      <xsl:message>Inner rule is <xsl:value-of select="$inner_rule_id"/>
+                      </xsl:message>
+                      <xsl:apply-templates mode="innerReduction">
+                        <xsl:with-param name="rule_id" select="$inner_rule_id"/>
+                      </xsl:apply-templates> 
+                    </xsl:for-each>
+                  </term>
+                </xsl:variable>
+                <rightreduction>
+                  <xsl:apply-templates select="$right_reduction" mode="text"/>
+                </rightreduction>
+                <!-- Normalise left hand side -->
+                <xsl:variable name="leftReductionNormalised">
+                  <xsl:call-template name="recursive_rewrite">
+                    <xsl:with-param name="document">
+                      <xsl:apply-templates select="$left_reduction" mode="rewrite"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="leftReductionNormalisedText">
+                  <xsl:apply-templates select="$leftReductionNormalised" mode="text"/>
+                </xsl:variable>
+                <xsl:variable name="lhscost" as="xs:double">
+                  <xsl:apply-templates select="$leftReductionNormalised" mode="number"/>
+                </xsl:variable>
+                <!-- Normailise right hand side -->
+                <xsl:message>normalise rhs reduction</xsl:message>
+                <xsl:variable name="rightReductionNormalised">
+                  <xsl:call-template name="recursive_rewrite">
+                    <xsl:with-param name="document">
+                      <xsl:apply-templates select="$right_reduction" mode="rewrite"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="rightReductionNormalisedText">
+                  <xsl:apply-templates select="$rightReductionNormalised" mode="text"/>
+                </xsl:variable>
+                <xsl:variable name="rhscost" as="xs:double">
+                  <xsl:apply-templates select="$rightReductionNormalised" mode="number"/>
+                </xsl:variable>
+                <!-- OUTPUT -->
+                <leftReductionNormalised>
                   <xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
-                    <NON-CONFLUENT/>
-                    <xsl:if test="$lhscost=$rhscost">
-                      <STALEMATE/>
-                    </xsl:if>
-                    <xsl:if test="$lhscost &lt; $rhscost">
-                      <RIGHT-TO-LEFT/>
-                    </xsl:if>
-                    <xsl:if test="$rhscost &lt; $lhscost">
-                      <LEFT-TO-RIGHT/>
-                    </xsl:if>
-                    <xsl:message>*************  NON CONFLUENT ************</xsl:message>
+                    <xsl:copy-of select="$leftReductionNormalised"/>
                   </xsl:if>
+                  <gat:text>
+                    <xsl:value-of select="$leftReductionNormalisedText"/>
+                    <xsl:text>{</xsl:text>
+                    <xsl:value-of select="$lhscost"/>
+                    <xsl:text>}</xsl:text>
+                  </gat:text>
+                </leftReductionNormalised>
+                <rightReductionNormalised>
+                  <xsl:if test="not($leftReductionNormalisedText = $rightReductionNormalisedText)">
+                    <xsl:copy-of select="$rightReductionNormalised"/>
+                  </xsl:if>                    
+                  <gat:text>
+                    <xsl:value-of select="$rightReductionNormalisedText"/>
+                    <xsl:text>{</xsl:text>
+                    <xsl:value-of select="$rhscost"/>
+                    <xsl:text>}</xsl:text>
+                  </gat:text>
+                </rightReductionNormalised>
+                <xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
+                  <NON-CONFLUENT/>
+                  <xsl:if test="$lhscost=$rhscost">
+                    <STALEMATE/>
+                  </xsl:if>
+                  <xsl:if test="$lhscost &lt; $rhscost">
+                    <RIGHT-TO-LEFT/>
+                  </xsl:if>
+                  <xsl:if test="$rhscost &lt; $lhscost">
+                    <LEFT-TO-RIGHT/>
+                  </xsl:if>
+                  <xsl:message>*************  NON CONFLUENT ************</xsl:message>
                 </xsl:if>
-              </gat:diamond>
-            </xsl:for-each> <!-- end outer term -->
-          </xsl:if>
+              </xsl:if>
+            </gat:diamond>
+          </xsl:for-each> <!-- end outer term -->
         </xsl:for-each> <!-- end inner term -->
       </xsl:for-each>
     </xsl:copy>
@@ -435,8 +435,8 @@
   <xsl:template match="*" mode="extract_subterm_at_point">
     <xsl:apply-templates select="*[not(self::*:var|self::*:seq)]" mode="extract_subterm_at_point"/>
   </xsl:template>
-  
-   <xsl:template match="point" mode="extract_subterm_at_point">
+
+  <xsl:template match="point" mode="extract_subterm_at_point">
     <xsl:copy-of select="*"/>
   </xsl:template>
 

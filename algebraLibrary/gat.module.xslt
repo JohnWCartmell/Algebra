@@ -66,15 +66,20 @@
 								<xsl:message>count $substitution/* <xsl:value-of select="count($substitution/*)"/>
 								</xsl:message>
 								<xsl:apply-templates mode="substitution">
-									<xsl:with-param name="substitutions" select="$substitution"/>
+									<xsl:with-param name="substitutions" select="$substitution/subject"/>  <!-- edited but not tested after restructure of substitution 23 Feb 2018 -->
 								</xsl:apply-templates>
 							</xsl:for-each>
 						</specialisedTerm>
 						<specialisedTarget>
 							<xsl:for-each select="$target/*">
+                <!-- was 
 								<xsl:call-template name="applyTargetSubstitutions">
 									<xsl:with-param name="substitution" select="$substitution"/>
 								</xsl:call-template>
+                but now -->
+                <xsl:apply-templates mode="substitution">
+									<xsl:with-param name="substitutions" select="$substitution/target"/>
+								</xsl:apply-templates>
 							</xsl:for-each>
 						</specialisedTarget>
 					</result>
