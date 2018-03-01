@@ -80,18 +80,18 @@
                           <xsl:message>name of target<xsl:value-of select="substitution/target/name()"/></xsl:message>
             <xsl:variable name="innerContextSubstituted" as="node()">
                 <xsl:apply-templates select="$innerContext" mode="substitution">
-                  <xsl:with-param name="substitutions" select="substitution/target"/>  <!-- feel need for this to say target/substitution -->
+                  <xsl:with-param name="substitutions" select="substitution"/>  
                 </xsl:apply-templates>
             </xsl:variable>             
             <xsl:variable name="outerContextSubstituted" as="node()">
                 <xsl:apply-templates select="$outerContext" mode="substitution">
-                  <xsl:with-param name="substitutions" select="substitution/subject"/>
+                  <xsl:with-param name="substitutions" select="substitution"/>
                 </xsl:apply-templates>
             </xsl:variable>
             <xsl:variable name="innerTermSpecialised">
                               <xsl:message>substitution call five</xsl:message>
               <xsl:apply-templates select="$innerTerm" mode="substitution">  
-                <xsl:with-param name="substitutions" select="substitution/target"/> 
+                <xsl:with-param name="substitutions" select="substitution"/> 
               </xsl:apply-templates>
             </xsl:variable>
             <xsl:variable name="innerTermSpecialisedText">
@@ -99,7 +99,7 @@
             </xsl:variable>
             <xsl:variable name="outerTermSpecialised">
               <xsl:apply-templates select="$outerTerm" mode="substitution">  <!--,EXTRA NAV ? -->
-                <xsl:with-param name="substitutions" select="substitution/subject"/> 
+                <xsl:with-param name="substitutions" select="substitution"/> 
               </xsl:apply-templates>
             </xsl:variable>
             <xsl:variable name="outerTermSpecialisedText">
@@ -115,7 +115,7 @@
             </xsl:message>
             <xsl:variable name="pointed_outerTerm_specialised" as="node()">
               <xsl:apply-templates select="$outerTerm_as_pointed_term" mode="substitution">
-                <xsl:with-param name="substitutions" select="substitution/subject"/>
+                <xsl:with-param name="substitutions" select="substitution"/>
               </xsl:apply-templates>
             </xsl:variable>
             <xsl:variable name="innerSubtermOfOuterTermSpecialised" as="node()">

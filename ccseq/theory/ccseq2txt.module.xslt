@@ -14,7 +14,7 @@ DESCRIPTION
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
 
-  <xsl:template match="o"  mode="text">
+  <xsl:template match="o|f"  mode="text">
     <xsl:variable name="args" as="xs:string *">
       <xsl:for-each select="ccseq:*|gat:point">
         <xsl:variable name="arg">

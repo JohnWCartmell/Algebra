@@ -33,7 +33,7 @@
 </xsl:template>
 
 <xsl:template match="/" mode="testspecialisation">
-	<xsl:for-each select="test/termpair">
+	<xsl:for-each select="algebra/termpair">
 		<example>
 			<super>
 				<xsl:apply-templates select="super/*" mode="text"/>
@@ -51,10 +51,10 @@
 				</xsl:for-each>
 			</xsl:variable>
 			<results>
-				<xsl:variable name="super" select="super"/>
-				<xsl:variable name="target" select="target"/>
+				<xsl:variable name="super" as="element()" select="super"/>
+				<xsl:variable name="target" as="element()" select="target"/>
 				<xsl:for-each select="$specialisations/substitution">
-					<xsl:variable name="substitution" select="."/>
+					<xsl:variable name="substitution" select="." as="element(substitution)" />
 					<xsl:message> substitution name <xsl:value-of select="$substitution/name()"/>
 					</xsl:message> 
 					<result>
@@ -66,19 +66,19 @@
 								<xsl:message>count $substitution/* <xsl:value-of select="count($substitution/*)"/>
 								</xsl:message>
 								<xsl:apply-templates mode="substitution">
-									<xsl:with-param name="substitutions" select="$substitution/subject"/>  <!-- edited but not tested after restructure of substitution 23 Feb 2018 -->
+									<xsl:with-param name="substitutions" select="$substitution"/>  
 								</xsl:apply-templates>
 							</xsl:for-each>
 						</specialisedTerm>
 						<specialisedTarget>
-							<xsl:for-each select="$target/*">
+							<xsl:for-each select="$target">
                 <!-- was 
 								<xsl:call-template name="applyTargetSubstitutions">
 									<xsl:with-param name="substitution" select="$substitution"/>
 								</xsl:call-template>
                 but now -->
-                <xsl:apply-templates mode="substitution">
-									<xsl:with-param name="substitutions" select="$substitution/target"/>
+                                 <xsl:apply-templates mode="substitution">
+									<xsl:with-param name="substitutions" select="$substitution"/>
 								</xsl:apply-templates>
 							</xsl:for-each>
 						</specialisedTarget>
