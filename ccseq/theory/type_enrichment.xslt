@@ -15,13 +15,22 @@
   <xsl:include href="algebra2type.module.xslt" />
 --> 
   <xsl:include href="temp/rewrite.module.xslt" />
-  <xsl:include href="../../algebraLibrary/enrichedalgebra2.type_enrichment.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.rewrite.module.xslt"/>
     <xsl:include href="../../algebraLibrary/gat.text.module.xslt"/>
 
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
+  
+  <xsl:template match="/">
+    <xsl:for-each select="gat:algebra">
+      <xsl:copy>
+        <xsl:copy-of select="namespace::*"/>
+        <xsl:apply-templates select="gat:*" mode="type_enrich"/>
+      </xsl:copy>
+    </xsl:for-each>
+  </xsl:template>
+  
 
   <xsl:template match="id[not(gat:type)][child::ccseq:*/gat:type]" 
       mode="initial_enrichment_recursive">

@@ -43,18 +43,18 @@
         <xsl:variable name="innerRuleWithVblsChanged">
           <xsl:apply-templates select="." mode="postfix_variable_names"/>
         </xsl:variable>
-        <xsl:variable name="innerTerm" as="node()" select="$innerRuleWithVblsChanged/rewriteRule/tt-conclusion/lhs/*"/>       
-        <xsl:variable name="innerTermPurified" as="node()">
+        <xsl:variable name="innerTerm" as="element()" select="$innerRuleWithVblsChanged/rewriteRule/tt-conclusion/lhs/*"/>       
+        <xsl:variable name="innerTermPurified" as="element()">
           <xsl:apply-templates select="$innerTerm" mode="remove_gat_annotations"/>
         </xsl:variable>
-        <xsl:variable name="innerContext" as="node()" select="$innerRuleWithVblsChanged/rewriteRule/context"/>
+        <xsl:variable name="innerContext" as="element(context)" select="$innerRuleWithVblsChanged/rewriteRule/context"/>
 
         <xsl:for-each select="../rewriteRule/tt-conclusion/lhs/*">  <!-- consider each possible outer rewrite rule -->
-          <xsl:variable name="lhs" as="node()" select=".."/>
-          <xsl:variable name="outerContext" as="node()" select="../../../context"/>
+          <xsl:variable name="lhs" as="element(lhs)" select=".."/>
+          <xsl:variable name="outerContext" as="element(context)" select="../../../context"/>
           <xsl:variable name="outer_rule_id" select="concat($algebra_name,../../../id)"/>
-          <xsl:variable name="outerTerm" as="node()" select="."/>
-          <xsl:variable name="outerTermPurified" as="node()">
+          <xsl:variable name="outerTerm" as="element()" select="."/>
+          <xsl:variable name="outerTermPurified" as="element()">
             <xsl:apply-templates select="$outerTerm" mode="remove_gat_annotations"/>
           </xsl:variable>
           <xsl:variable name="results" as="element(result)*">
@@ -75,21 +75,20 @@
               </xsl:variable>
               -->
             <!--<xsl:variable name="result" as="node()" select="."/>-->
-             <xsl:message>substitution call three</xsl:message>
-             <xsl:message>name of sub <xsl:value-of select="substitution/name()"/></xsl:message>
-                          <xsl:message>name of target<xsl:value-of select="substitution/target/name()"/></xsl:message>
-            <xsl:variable name="innerContextSubstituted" as="node()">
-                <xsl:apply-templates select="$innerContext" mode="substitution">
-                  <xsl:with-param name="substitutions" select="substitution"/>  
-                </xsl:apply-templates>
+            <xsl:message>substitution call three</xsl:message>
+            <xsl:message>name of sub <xsl:value-of select="substitution/name()"/></xsl:message>
+            <xsl:message>name of target<xsl:value-of select="substitution/target/name()"/></xsl:message>
+            <xsl:variable name="innerContextSubstituted" as="element(context)">
+              <xsl:apply-templates select="$innerContext" mode="substitution">
+                <xsl:with-param name="substitutions" select="substitution"/>  
+              </xsl:apply-templates>
             </xsl:variable>             
-            <xsl:variable name="outerContextSubstituted" as="node()">
-                <xsl:apply-templates select="$outerContext" mode="substitution">
-                  <xsl:with-param name="substitutions" select="substitution"/>
-                </xsl:apply-templates>
+            <xsl:variable name="outerContextSubstituted" as="element(context)">
+              <xsl:apply-templates select="$outerContext" mode="substitution">
+                <xsl:with-param name="substitutions" select="substitution"/>
+              </xsl:apply-templates>
             </xsl:variable>
             <xsl:variable name="innerTermSpecialised">
-                              <xsl:message>substitution call five</xsl:message>
               <xsl:apply-templates select="$innerTerm" mode="substitution">  
                 <xsl:with-param name="substitutions" select="substitution"/> 
               </xsl:apply-templates>
@@ -113,17 +112,38 @@
             </xsl:variable>
             <xsl:message>outerTerm_as_pointed_term <xsl:copy-of select="$outerTerm_as_pointed_term"/>
             </xsl:message>
-            <xsl:variable name="pointed_outerTerm_specialised" as="node()">
+            <xsl:variable name="pointed_outerTerm_specialised" as="element()">
               <xsl:apply-templates select="$outerTerm_as_pointed_term" mode="substitution">
                 <xsl:with-param name="substitutions" select="substitution"/>
               </xsl:apply-templates>
             </xsl:variable>
-            <xsl:variable name="innerSubtermOfOuterTermSpecialised" as="node()">
+            <xsl:variable name="innerSubtermOfOuterTermSpecialised" as="element()">
               <xsl:apply-templates select="$pointed_outerTerm_specialised" mode="extract_subterm_at_point"/>
             </xsl:variable>  
             <xsl:variable name="innerSubtermOfOuterTermSpecialised_text">
               <xsl:apply-templates select="$innerSubtermOfOuterTermSpecialised" mode="text"/>
-            </xsl:variable>              
+            </xsl:variable>   
+            <xsl:variable name="diamondContext" as="element(context)">
+              <context>
+                <!--
+                <xsl:copy-of select="($innerContextSubstituted|$outerContextSubstituted)/*[(some $var in $pointed_outerTerm_specialised/descendant::*:var satisfies $var/name = ./name)]"/>
+                -->
+                <xsl:call-template name="merge_declarations">
+                  <xsl:with-param name="result_declarations_so_far" select="()"/>
+                  <xsl:with-param name="lhs_declarations" select="$outerContextSubstituted/*[(some $var_or_seq 
+                                                                                                in $pointed_outerTerm_specialised/descendant::*[self::*:var|self::*:seq]
+                                                                                                satisfies $var_or_seq/name = ./name)]"/>
+                  <xsl:with-param name="rhs_declarations" select="$innerContextSubstituted/*[(some $var_or_seq 
+                                                                                                in $pointed_outerTerm_specialised/descendant::*[self::*:var|self::*:seq] 
+                                                                                                satisfies $var_or_seq/name = ./name)]"/>
+                </xsl:call-template>
+              </context>
+              </xsl:variable>
+              <xsl:variable name="topOfDiamond_typeEnriched">
+              xxxx
+              
+              </xsl:variable>
+
             <gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
               <from>
                 <outer>
@@ -178,7 +198,7 @@
                 </xsl:if>              
               </from>
               <context>
-                <xsl:value-of select="context"/> <!-- THIS IS TWO PART CONTEXTS PUT TOGETHER AND, MAYBE, SORTED. -->
+                <xsl:apply-templates select="$diamondContext" mode="text"/> <!-- THIS IS TWO PART CONTEXTS PUT TOGETHER AND, MAYBE, SORTED. -->
               </context>
 
               <!--COPY the ancestor term with the result substitutions and mark application_node_id -->
@@ -298,6 +318,48 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template name="merge_declarations">
+    <xsl:param name="result_declarations_so_far" as="element()*"/>
+    <xsl:param name="lhs_declarations" as="element()*"/>
+    <xsl:param name="rhs_declarations" as="element()*"/>
+    <xsl:variable name="next_from_lhs" as="element()?">
+      <xsl:copy-of select="$lhs_declarations[not(some $var_or_seq in ($lhs_declarations|$rhs_declarations)/type satisfies $var_or_seq/name = ./name)][1]"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$next_from_lhs">
+        <xsl:variable name="result_next" as="element()*">
+          <xsl:copy-of select="$result_declarations_so_far"/>
+          <xsl:copy-of select="$next_from_lhs"/>
+        </xsl:variable>
+        <xsl:call-template name="merge_declarations">
+          <xsl:with-param name="result_declarations_so_far" select="$result_next"/>
+          <xsl:with-param name="lhs_declarations" select="$lhs_declarations[not(name=$next_from_lhs/name)]"/>
+          <xsl:with-param name="rhs_declarations" select="$rhs_declarations"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="next_from_rhs" as="element()?">
+          <xsl:copy-of select="$rhs_declarations[not(some $var_or_seq in ($lhs_declarations|$rhs_declarations)/type satisfies $var_or_seq/name = ./name)][1]"/>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$next_from_rhs">
+            <xsl:variable name="result_next" as="element()*">
+              <xsl:copy-of select="$result_declarations_so_far"/>
+              <xsl:copy-of select="$next_from_rhs"/>
+            </xsl:variable>
+            <xsl:call-template name="merge_declarations">
+              <xsl:with-param name="result_declarations_so_far" select="$result_next"/>
+              <xsl:with-param name="lhs_declarations" select="$lhs_declarations"/>
+              <xsl:with-param name="rhs_declarations" select="$rhs_declarations[not(name=$next_from_rhs/name)]"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy-of select="$result_declarations_so_far"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <xsl:template match="*" mode="postfix_variable_names">
     <xsl:copy>
