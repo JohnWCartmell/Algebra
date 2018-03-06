@@ -8,28 +8,12 @@
 
   <xsl:strip-space elements="*"/>
 
-  <xsl:include href="ccseq2txt.module.xslt" />
-  
-  <!--
-  <xsl:include href="algebra2tex.module.xslt" />
-  <xsl:include href="algebra2type.module.xslt" />
---> 
-  <xsl:include href="temp/rewrite.module.xslt" />
-  <xsl:include href="../../algebraLibrary/gat.module.xslt"/>
-  <xsl:include href="../../algebraLibrary/gat.rewrite.module.xslt"/>
-    <xsl:include href="../../algebraLibrary/gat.text.module.xslt"/>
-
+<!--
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
   
-  <xsl:template match="/">
-    <xsl:for-each select="gat:algebra">
-      <xsl:copy>
-        <xsl:copy-of select="namespace::*"/>
-        <xsl:apply-templates select="gat:*" mode="type_enrich"/>
-      </xsl:copy>
-    </xsl:for-each>
-  </xsl:template>
+  -->
+  
   
 
   <xsl:template match="id[not(gat:type)][child::ccseq:*/gat:type]" 
@@ -63,7 +47,7 @@
 	       </xsl:variable>
 		   <xsl:if test="not($cod_text=$dom_text)">
 		       <xsl:message> Type error in subterms of o in rule <xsl:value-of select="ancestor::gat:rewriteRule/gat:id"/></xsl:message>
-		       <gat:type_error>domain of subterm <xsl:value-of select="count(preceding-sibling::ccseq:*) + 2"/> is '<xsl:value-of select="$dom_text"/> which is is not identical
+		       <gat:type_error>domain of subterm <xsl:value-of select="count(preceding-sibling::ccseq:*) + 2"/> is <xsl:value-of select="$dom_text"/> which is is not identical
                                       to codomain of preceding subterm which is <xsl:value-of select="$cod_text"/></gat:type_error>		   
 		   </xsl:if>
 		</xsl:for-each>
@@ -112,7 +96,7 @@
       <gat:type>
         <!-- add typechecking here ? -->
         <!-- to normalise we just need to normalise the domain -->
-        <xsl:variable name="domain">
+        <xsl:variable name="domain" as="element(gat:term)">
           <gat:term>
             <star>
               <xsl:copy-of select="ccseq:*[1]"/>
@@ -120,12 +104,12 @@
             </star>
           </gat:term>
         </xsl:variable>
-        <xsl:variable name="domain_term_normalised">
+        <xsl:variable name="domain_term_normalised" as="element(gat:term)">
           <xsl:apply-templates mode="normalise" select="$domain"/>
         </xsl:variable>
         <Hom>
-          <xsl:copy-of select="$domain_term_normalised/gat:term/ccseq:*"/>   <!-- tuesday 13 Fevb 19:43 -->
-          <xsl:copy-of select="ccseq:*[2]"/>
+          <xsl:copy-of select="$domain_term_normalised/ccseq:*"/>   <!-- tuesday 13 Fevb 19:43 -->
+          <xsl:copy-of select="ccseq:*[2]"/>  
         </Hom>
       </gat:type>
     </xsl:copy>

@@ -14,7 +14,7 @@
   <xsl:include href="algebra2type.module.xslt" />
 --> 
 
-	<xsl:include href="../../algebraLibrary/rules2.initial_enrichment.module.xslt"/>
+	<xsl:include href="../../algebraLibrary/algebra2.initial_enrichment.module.xslt"/>
 
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -22,6 +22,7 @@
 	<xsl:template match="id[not(gat:type)][child::cat:*/gat:type]" 
 			mode="initial_enrichment_recursive">
 		<xsl:copy>
+		<xsl:message> Adding gat:type to id </xsl:message>
 			<xsl:apply-templates mode="copy"/>
 			<gat:type>
 				<!-- add typecheck here that childtype is an instance of "Ob" -->
@@ -48,15 +49,12 @@
 		</xsl:copy>
 	</xsl:template>
 
-	
-
 	<xsl:template match="*" mode="copy">
 		<xsl:copy copy-namespaces="no">
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="copy"/>
 		</xsl:copy>
 	</xsl:template>
-
 
 </xsl:transform>
 

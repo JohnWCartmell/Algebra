@@ -15,8 +15,8 @@ Description
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
 
-  <!-- call thirdpass before recursive enrichment     -->
-  <!--   + thirdpass adds types                       -->
+  <!-- call fourthpass before recursive enrichment     -->
+  <!--   + fourthpass adds types                       -->
   <!--   + recursive enrichment normalises the types  -->
 
   <!-- module would begin here -->
@@ -26,7 +26,7 @@ Description
     <xsl:variable name="current_state">
       <xsl:for-each select="$document">
         <xsl:copy>
-          <xsl:apply-templates mode="initial_enrichment_third_pass"/>
+          <xsl:apply-templates mode="initial_enrichment_fourth_pass"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>
@@ -37,66 +37,57 @@ Description
    now is -->
 
   <xsl:template match="*" mode="type_enrich">
-    <xsl:variable name="current_state">
+  <xsl:message>Type enriching</xsl:message>
+  <!--
+    <xsl:variable name="current_state" as="element()">
       <xsl:copy>
-        <xsl:apply-templates mode="initial_enrichment_third_pass"/>
+        <xsl:apply-templates mode="initial_enrichment_fourth_pass"/>
       </xsl:copy>
     </xsl:variable>
+	-->
     <xsl:call-template name="initial_enrichment_recursive">
-      <xsl:with-param name="interim" select="$current_state"/>
+      <xsl:with-param name="interim" select="."/>
     </xsl:call-template>
   </xsl:template>
 
 
-
-
-  <!-- NEED call thirdpass before recusrive enrichment -->
-  <xsl:template match="*" mode="initial_enrichment_third_pass">
+<!--
+  <xsl:template match="*" mode="initial_enrichment_fourth_pass">
     <xsl:copy copy-namespaces="no">
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="initial_enrichment_third_pass"/>
+      <xsl:apply-templates mode="initial_enrichment_fourth_pass"/>
     </xsl:copy>
   </xsl:template>
+  
+  -->
 
-
-
-
-  <xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
+  <!-- fix to problem of 5th March 2018 - move that which was fourth pass into recursive pass -->
+  <xsl:template match="*[self::*:var][not(gat:type)]" mode="initial_enrichment_recursive" priority="100">
     <xsl:copy>  
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="initial_enrichment_third_pass"/>
-      <!-- FEb 13 2018
-			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
-			-->
-      <xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/decl[name=current()/name]/type" />
+      <xsl:apply-templates mode="initial_enrichment_recursive"/>
+      <xsl:copy-of select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/decl[name=current()/name]/type" />
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="*[self::*:seq][not(gat:type)]" mode="initial_enrichment_third_pass" priority="100">
+  <xsl:template match="*[self::*:seq][not(gat:type)]" mode="initial_enrichment_recursive" priority="100">
     <xsl:copy>  
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="initial_enrichment_third_pass"/>
-      <!--
-			<xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
-			-->
-      <xsl:copy-of select="(ancestor::rewriteRule|ancestor::equation|ancestor::example)/context/sequence[name=current()/name]/type" />
+      <xsl:apply-templates mode="initial_enrichment_recursive"/>
+      <xsl:copy-of select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/sequence[name=current()/name]/type" />
     </xsl:copy>
   </xsl:template>
-
-
-
-
 
   <xsl:template name="initial_enrichment_recursive">
-    <xsl:param name="interim"/>
-    <xsl:variable name ="next">
+    <xsl:param name="interim" as="element()"/>
+    <xsl:variable name ="next" as="element()">
       <xsl:for-each select="$interim">
         <xsl:copy>
           <xsl:apply-templates mode="initial_enrichment_recursive"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:variable name="result">
+    <xsl:variable name="result" as="element()">
       <xsl:choose>
         <xsl:when test="not(deep-equal($interim,$next))">
           <!-- CR-18553 -->
@@ -114,7 +105,6 @@ Description
     <xsl:copy-of select="$result"/>
   </xsl:template>
 
-
   <xsl:template match="*"
       mode="initial_enrichment_recursive"> 
     <xsl:copy copy-namespaces="no">
@@ -122,6 +112,5 @@ Description
       <xsl:apply-templates mode="initial_enrichment_recursive"/>
     </xsl:copy>
   </xsl:template>
-
 
 </xsl:transform>

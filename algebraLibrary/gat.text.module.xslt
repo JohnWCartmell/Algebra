@@ -22,20 +22,20 @@
 		<xsl:text>&#xA;</xsl:text>
 		<xsl:value-of select="id"/> 
 		<xsl:text>.  </xsl:text>    
-		<xsl:for-each select="tt-conclusion/lhs">
+		<xsl:for-each select="tt-rule/tt-conclusion/lhs">
 			<xsl:apply-templates mode="text"/>
 		</xsl:for-each>
 		<xsl:text>{</xsl:text>
-		<xsl:for-each select="tt-conclusion/lhs">
+		<xsl:for-each select="tt-rule/tt-conclusion/lhs">
 			<xsl:apply-templates mode="number"/>
 		</xsl:for-each>
 		<xsl:text>}</xsl:text>
 		<xsl:text disable-output-escaping="yes"> => </xsl:text>
-	<xsl:for-each select="tt-conclusion/rhs">
+	<xsl:for-each select="tt-rule/tt-conclusion/rhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text>{</xsl:text>
-	<xsl:for-each select="tt-conclusion/rhs">
+	<xsl:for-each select="tt-rule/tt-conclusion/rhs">
 		<xsl:apply-templates mode="number"/>
 	</xsl:for-each>
 	<xsl:text>}</xsl:text>
@@ -46,11 +46,11 @@
 	<xsl:text>&#xA;</xsl:text>
 	<xsl:value-of select="id"/> 
 	<xsl:text>.  </xsl:text>    
-	<xsl:for-each select="tt-conclusion/lhs">
+	<xsl:for-each select="tt-rule/tt-conclusion/lhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text> = </xsl:text>
-	<xsl:for-each select="tt-conclusion/rhs">
+	<xsl:for-each select="tt-rule/tt-conclusion/rhs">
 		<xsl:apply-templates mode="text"/>
 	</xsl:for-each>
 	<xsl:text>&#xA;</xsl:text>
@@ -179,6 +179,25 @@
 		<xsl:apply-templates select="$rhstype" mode="text"/>
 	</xsl:for-each>
 </xsl:template>
+
+	<xsl:template match="*" mode="text_report_errors">    
+		<xsl:apply-templates select="*" mode="text_report_errors"/>	 	
+	</xsl:template>
+
+	<xsl:template match="*[parent::T-rule|parent::tT-rule|parent::tt-rule|parent::TT-rule][self::lhs|self::rhs|self::term|self::type][descendant::type_error]" 
+	              mode="text_report_errors">
+		<xsl:value-of select="name()"/> 
+		<xsl:text> has error(s):
+		</xsl:text>
+		<xsl:apply-templates select="*" mode="text_report_errors"/>
+	</xsl:template>
+	
+	<xsl:template match="gat:type_error" mode="text_report_errors">
+		<xsl:value-of select="."/> 
+		<xsl:text>
+
+		</xsl:text>
+	</xsl:template>
 
 
 </xsl:transform>

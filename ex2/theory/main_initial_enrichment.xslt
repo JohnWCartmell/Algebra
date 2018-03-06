@@ -14,7 +14,7 @@
   <xsl:include href="algebra2type.module.xslt" />
 --> 
 
-	<xsl:include href="../../algebraLibrary/rules2.initial_enrichment.module.xslt"/>
+	<xsl:include href="../../algebraLibrary/algebra2.initial_enrichment.module.xslt"/>
 
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 

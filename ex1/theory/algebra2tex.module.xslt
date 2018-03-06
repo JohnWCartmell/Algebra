@@ -9,10 +9,10 @@ DESCRIPTION
 <xsl:transform version="2.0" 
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		xmlns:ex1               ="http://www.entitymodelling.org/theory/exampleone"
+		xmlns:ex1               ="http://www.entitymodelling.org/theory/gat-exampleone"
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
-		xpath-default-namespace="http://www.entitymodelling.org/theory/exampleone" 	   
-		xmlns="http://www.entitymodelling.org/theory/exampleone" >
+		xpath-default-namespace="http://www.entitymodelling.org/theory/gat-exampleone" 	   
+		xmlns="http://www.entitymodelling.org/theory/gat-exampleone" >
 
 	<xsl:template match="gat:lhs|gat:rhs|gat:term" mode="tex">	
 		<xsl:text>\ofT{</xsl:text>

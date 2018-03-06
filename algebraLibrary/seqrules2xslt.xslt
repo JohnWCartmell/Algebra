@@ -109,11 +109,11 @@ DESCRIPTION
         <xsl:call-template name="newline">
           <xsl:with-param name="level" select="0"/>
         </xsl:call-template> 
-        <xsl:value-of select="tt-conclusion/lhs/*/name()"/>  
+        <xsl:value-of select="tt-rule/tt-conclusion/lhs/*/name()"/>  
         <xsl:text>[ some </xsl:text>
-        <xsl:apply-templates select="tt-conclusion/lhs/*" mode="lhs"/>
+        <xsl:apply-templates select="tt-rule/tt-conclusion/lhs/*" mode="lhs"/>
         <xsl:text>$unit in ((1)) satisfies true()</xsl:text>
-        <xsl:for-each select="tt-conclusion/lhs/*">
+        <xsl:for-each select="tt-rule/tt-conclusion/lhs/*">
           <xsl:call-template name="generate_var_deep_equals_tests"/>
           <xsl:call-template name="generate_seq_deep_equals_tests"/>
         </xsl:for-each>
@@ -124,10 +124,10 @@ DESCRIPTION
         <xsl:value-of select="../name"/>
         <xsl:value-of select="id"/>
       </xsl:element>
-      <xsl:for-each select="tt-conclusion/lhs/*[1]">
+      <xsl:for-each select="tt-rule/tt-conclusion/lhs/*[1]">
         <xsl:apply-templates select="." mode="lhs_generate_variables"/>
       </xsl:for-each>
-      <xsl:apply-templates select="tt-conclusion/rhs/*" mode="rhs"/>
+      <xsl:apply-templates select="tt-rule/tt-conclusion/rhs/*" mode="rhs"/>
     </xsl:element>
   </xsl:template>
 
@@ -195,7 +195,7 @@ DESCRIPTION
   <xsl:template match="*:var" mode="rhs">
     <xsl:element name="xsl:apply-templates">
       <xsl:attribute name="select">
-        <xsl:for-each select="ancestor::rewriteRule/tt-conclusion/lhs/descendant-or-self::*:var[name=current()/name][1]">
+        <xsl:for-each select="ancestor::rewriteRule/tt-rule/tt-conclusion/lhs/descendant-or-self::*:var[name=current()/name][1]">
          <!-- <xsl:value-of  select="@context"/>  16 Feb 2018 -->
          <xsl:value-of select="concat('$',@id)"/>
         </xsl:for-each>
@@ -207,7 +207,7 @@ DESCRIPTION
   <xsl:template match="*:seq" mode="rhs">
     <xsl:element name="xsl:apply-templates">
       <xsl:attribute name="select">
-        <xsl:for-each select="ancestor::rewriteRule/tt-conclusion/lhs/descendant-or-self::*:seq[current()/name=name][1]">
+        <xsl:for-each select="ancestor::rewriteRule/tt-rule/tt-conclusion/lhs/descendant-or-self::*:seq[current()/name=name][1]">
           <xsl:value-of  select="@xpath"/>
         </xsl:for-each>
       </xsl:attribute>
@@ -275,9 +275,9 @@ DESCRIPTION
           <xsl:attribute name="test">
             <!-- XXX 11 April 2017 -->
             <xsl:if test="not(self::*:var)"> 
-              <xsl:value-of select="tt-conclusion/lhs/*/name()"/>  
+              <xsl:value-of select="tt-rule/tt-conclusion/lhs/*/name()"/>  
             </xsl:if>
-            <xsl:apply-templates select="tt-conclusion/lhs/*" mode="lhs">
+            <xsl:apply-templates select="tt-rule/tt-conclusion/lhs/*" mode="lhs">
               <xsl:with-param name="level" select="0"/>
             </xsl:apply-templates>
           </xsl:attribute>

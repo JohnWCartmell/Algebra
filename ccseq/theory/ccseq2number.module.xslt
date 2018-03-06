@@ -16,8 +16,10 @@ DESCRIPTION
 
 
 
-  <xsl:template match="term" mode="number"> 
-    <xsl:apply-templates mode="number"/>	   
+		
+  <xsl:template match="gat:term" mode="number"> 
+  <xsl:message> costing a term </xsl:message>
+    <xsl:apply-templates select="ccseq:*[1]" mode="number"/>	   
   </xsl:template>
 
   <xsl:template match="var" mode="number">
@@ -28,7 +30,7 @@ DESCRIPTION
     <xsl:value-of select="1"/>
   </xsl:template>
 
-  <xsl:template match="point" mode="number">
+  <xsl:template match="gat:point" mode="number">
     <xsl:apply-templates select="*[1]" mode="number"/>
   </xsl:template>
 

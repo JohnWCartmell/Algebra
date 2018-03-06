@@ -266,7 +266,6 @@
     </xsl:copy>
   </xsl:template>
 
-
   <xsl:template match="*" mode="copy">
     <xsl:copy>
       <xsl:apply-templates mode="copy"/>
