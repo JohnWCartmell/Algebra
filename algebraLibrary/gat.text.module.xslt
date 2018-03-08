@@ -193,7 +193,7 @@
 	</xsl:template>
 	
 	<xsl:template match="gat:type_error" mode="text_report_errors">
-		<xsl:value-of select="."/> 
+		<xsl:value-of select="description"/> 
 		<xsl:text>
 
 		</xsl:text>

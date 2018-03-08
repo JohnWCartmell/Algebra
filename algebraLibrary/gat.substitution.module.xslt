@@ -17,11 +17,17 @@
   <xsl:template match="*" mode="substitution">
     <xsl:param name="substitutions" as="element(substitution)"/>
     <xsl:copy>
-      <xsl:apply-templates mode="substitution">
+      <xsl:apply-templates  mode="substitution">
         <xsl:with-param name="substitutions" select="$substitutions"/>
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
+  
+    <xsl:template match="type_error" mode="substitution">
+    <xsl:param name="substitutions" as="element(substitution)"/>
+      <!-- no action -->
+  </xsl:template>
+  
 
   <xsl:template match="*:decl" mode="substitution">  
     <xsl:param name="substitutions" as="element(substitution)"/>
@@ -47,7 +53,7 @@
       <xsl:otherwise>
         <xsl:copy>
           <xsl:copy-of select="name"/>
-          <xsl:apply-templates select="type" mode="substitition">
+          <xsl:apply-templates select="type" mode="substitution">
             <xsl:with-param name="substitutions" select="$substitutions"/>
           </xsl:apply-templates>          
         </xsl:copy>
@@ -64,7 +70,9 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy>
-          <xsl:apply-templates mode="copy"/>
+          <xsl:apply-templates mode="substitution">
+            <xsl:with-param name="substitutions" select="$substitutions"/>
+          </xsl:apply-templates> 
         </xsl:copy>
       </xsl:otherwise>
     </xsl:choose>
@@ -80,7 +88,9 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy>
-          <xsl:apply-templates mode="copy"/>
+          <xsl:apply-templates mode="substitution">
+            <xsl:with-param name="substitutions" select="$substitutions"/>
+          </xsl:apply-templates> 
         </xsl:copy>
       </xsl:otherwise>
     </xsl:choose>

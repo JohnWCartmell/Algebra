@@ -147,7 +147,7 @@ DESCRIPTION
   </xsl:template>
 
   <xsl:template match="*:seq" mode="lhs">
-    <!--<xsl:message>skipping seq in lhs</xsl:message>-->
+   <!-- no action -->
   </xsl:template>
 
   <xsl:template match="*[not(self::*:seq)][not(self::gat:type)]" mode="lhs_generate_variables">
@@ -175,7 +175,7 @@ DESCRIPTION
       </xsl:attribute>
     </xsl:element>
     <xsl:apply-templates select="*[not(self::gat:*)]" mode="lhs_generate_variables"/>
-	<xsl:apply-templates select= "gat:type[gat:required]" mode="lhs_generate_variables"/>
+	  <xsl:apply-templates select= "gat:type[gat:required]" mode="lhs_generate_variables"/>
   </xsl:template>
   
   <xsl:template match="gat:type" mode="lhs_generate_variables">

@@ -552,6 +552,8 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
+  
+ 
 
 	<gat:rewriteRule>
 		<gat:id>10ps</gat:id>
@@ -616,7 +618,7 @@
 						<s>
 							<var>f<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type></var>
 						</s>
-						<p> <star> <o> <var>f</var> <p><var>y</var></p> </o> <var>y</var></star> </p>
+						<p> <star> <o> <var>f<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type></var> <p><var>y</var></p> </o> <var>y</var></star> </p>
 						<seq>h_2</seq>
 					</o>
 				</gat:lhs>
@@ -630,7 +632,7 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
-
+<!--
 	<gat:rewriteRule>
 		<gat:id>10pss</gat:id>
 		<gat:tt-rule>
@@ -671,10 +673,10 @@
 				<gat:sequence>
 					<gat:name>f</gat:name>
 					<gat:type>
-						<Hom>
+						<HomSeq>
 							<var>x</var>
 							<var>y</var>
-						</Hom>
+						</HomSeq>
 					</gat:type>
 				</gat:sequence>
 				<gat:sequence>
@@ -693,11 +695,10 @@
 						<seq>h_1</seq>
 						<s>
 							<o>
-								<seq>f</seq>
-								<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type>
+								<seq>f<gat:type><HomSeq><var>x</var><var>y</var></HomSeq><gat:required/></gat:type></seq>
 							</o>
 						</s>
-						<p> <star> <o> <seq>f</seq> <p><var>y</var></p> </o> <var>y</var></star> </p>
+						<p> <star> <o> <seq>f<gat:type><HomSeq><var>x</var><var>y</var></HomSeq><gat:required/></gat:type></seq> <p><var>y</var></p> </o> <var>y</var></star> </p>
 						<seq>h_2</seq>
 					</o>
 				</gat:lhs>
@@ -712,6 +713,7 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
+  -->
 
 	<gat:rewriteRule>
 		<gat:id>10ps.id</gat:id>

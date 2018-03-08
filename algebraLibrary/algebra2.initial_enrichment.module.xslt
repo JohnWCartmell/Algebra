@@ -78,7 +78,6 @@ Description
 	</xsl:template>
 
 	<xsl:template match="*[self::*:var|self::*:seq][not(name)]" mode="initial_enrichment_zero_pass">
-	<xsl:message>Adding name to varlike in zero pass</xsl:message>
 		<xsl:copy>
 			<gat:name><xsl:value-of select="text()"/></gat:name>
 			<xsl:apply-templates select="*[not(text())]" mode="initial_enrichment_zero_pass"/>
@@ -103,8 +102,9 @@ Description
   -->
 
 	<!-- Can we change this match condition to *[not(self::gat:*|self::*.var|self::*.seq]  ???-->
-	<!--was
-  <xsl:template match="*[not(self::algebra|self::name|self::id|self::lhs|self::rhs|self::term|self::*:var|self::*:seq)]" mode="initial_enrichment_first_pass">
+	<!--
+  the gat:required tag is a tag to instruct that the type of a variable is going to be needed in the rhs of a rule.
+  For such types an id attribute needs be generated
   now -->
 	<xsl:template match="*[not(self::gat:*|self::*:var|self::*:seq) or self::gat:type[child::gat:required]]" mode="initial_enrichment_first_pass">
 		<xsl:copy>

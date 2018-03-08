@@ -7,13 +7,13 @@
 
 	<xsl:strip-space elements="*"/> 
 
-
+<!--
 	<xsl:include href="gat.specialisation.module.xslt"/>
 	<xsl:include href="gat.text.module.xslt"/>
 	<xsl:include href="gat.tex.module.xslt"/>
 	<xsl:include href="gat.substitution.module.xslt"/>
 	<xsl:include href="gat.type_enrichment.module.xslt"/>
-
+-->
 
 	<!-- A specialisation of a term is a substitutional instance -->
 
