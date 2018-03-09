@@ -17,6 +17,10 @@
 	<xsl:template match="term" mode="text"> 
 		<xsl:apply-templates mode="text"/>	   
 	</xsl:template>
+	
+	<xsl:template match="type[illformed]" mode="text"> 
+		Ill-formed expression.	   
+	</xsl:template>
 
 	<xsl:template match="rewriteRule" mode="text">
 		<xsl:text>&#xA;</xsl:text>

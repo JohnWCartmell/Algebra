@@ -178,8 +178,13 @@ Description
 						<xsl:when test="preceding-sibling::*[not(self::*:seq)]">
 							<!-- not the first non seq child -->
 							<xsl:text>$</xsl:text>
-							<xsl:value-of select="preceding-sibling::*[not(self::*:seq)]/@id"/>
-							<xsl:text>/following-sibling::*[1]</xsl:text>
+							<xsl:value-of select="preceding-sibling::*[not(self::*:seq)][1]/@id"/> <!-- 8th March 2018 ***what is this many-valued?? -->
+							                                                                    <!-- need to take the closest non-seq preceeding sibling -->
+																								<!-- therefore [1] added - not actualy texted currently -->
+							<xsl:text>/following-sibling::*</xsl:text>
+							<xsl:if test="preceding-sibling::*[1][not(self::*:seq)]">  <!-- made conditional 8th March 2018 -->
+							    <xsl:text>[1]</xsl:text>
+					        </xsl:if>
 							<xsl:if test="not(self::*:var)">
 								<xsl:text>[self::</xsl:text>
 								<xsl:value-of select="name()"/>
@@ -232,19 +237,20 @@ Description
 					<xsl:text>$</xsl:text>
 					<xsl:value-of select="parent::*/@id"/>
 					<xsl:text>/child::ccseq:*</xsl:text>  <!-- 22:15 13 Feb 2018 -->
-					<xsl:if test="preceding-sibling::*">
-						<!-- not the first  child -->
-						<xsl:text>[position() &gt; </xsl:text>
-						<xsl:text>$</xsl:text>
-						<xsl:value-of select="preceding-sibling::*[1]/@id"/>
-						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
-						<xsl:text>]</xsl:text>
-					</xsl:if>
+
 					<xsl:if test="following-sibling::*[not(self::gat:type)]">
 						<!-- not the last  child -->
 						<xsl:text>[position() &lt; </xsl:text>
 						<xsl:text>$</xsl:text>
 						<xsl:value-of select="following-sibling::*[1]/@id"/>
+						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
+						<xsl:text>]</xsl:text>
+					</xsl:if>
+					<xsl:if test="preceding-sibling::*">
+						<!-- not the first  child -->
+						<xsl:text>[position() &gt; </xsl:text>
+						<xsl:text>$</xsl:text>
+						<xsl:value-of select="preceding-sibling::*[1]/@id"/>
 						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
 						<xsl:text>]</xsl:text>
 					</xsl:if>

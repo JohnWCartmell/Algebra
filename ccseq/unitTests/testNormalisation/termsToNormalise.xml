@@ -6,158 +6,42 @@
 		xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
 		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
-	<gat:term>
+
+	<gat:term>	
 		<o>
-			<!--
-			<id xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<var>
-					<gat:name xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory">x'</gat:name>
-				</var>
-			</id>
-			-->
 			<s>
-				<var>
-					<gat:name>f</gat:name>
-					<gat:type>
-						<Hom>
-							<var>
-								<gat:name>x</gat:name>
-								<gat:type>
-									<Ob>
-										<var>
-											<gat:name>x_p</gat:name>
-										</var>
-									</Ob>
-								</gat:type>
-							</var>
-							<var>
-								<gat:name>y</gat:name>
-								<gat:type>
-									<Ob>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Ob>
-								</gat:type>
-							</var>
-						</Hom>
-					</gat:type>
-				</var>
-				<gat:type>
-					<Hom>
-						<var>
-							<gat:name>x</gat:name>
-							<gat:type>
-								<Ob>
-									<var>
-										<gat:name>x_p</gat:name>
-									</var>
-								</Ob>
-							</gat:type>
-						</var>
-						<star>
-							<o>
+				<o>
+					<var>
+						<gat:name>f</gat:name>
+						<gat:type>
+							<Hom>
 								<var>
-									<gat:name>f</gat:name>
+									<gat:name>x</gat:name>
 									<gat:type>
-										<Hom>
+										<Ob>
 											<var>
-												<gat:name>x</gat:name>
-												<gat:type>
-													<Ob>
-														<var>
-															<gat:name>x_p</gat:name>
-														</var>
-													</Ob>
-												</gat:type>
+												<gat:name>x_p</gat:name>
 											</var>
-											<var>
-												<gat:name>y</gat:name>
-												<gat:type>
-													<Ob>
-														<var>
-															<gat:name>y_p</gat:name>
-														</var>
-													</Ob>
-												</gat:type>
-											</var>
-										</Hom>
+										</Ob>
 									</gat:type>
 								</var>
-								<p xmlns:xs="http://www.w3.org/2001/XMLSchema">
-									<var>
-										<gat:name>y</gat:name>
-										<gat:type>
-											<Ob>
-												<var>
-													<gat:name>y_p</gat:name>
-												</var>
-											</Ob>
-										</gat:type>
-									</var>
+								<var>
+									<gat:name>y</gat:name>
 									<gat:type>
-										<Hom>
-											<var>
-												<gat:name>y</gat:name>
-												<gat:type>
-													<Ob>
-														<var>
-															<gat:name>y_p</gat:name>
-														</var>
-													</Ob>
-												</gat:type>
-											</var>
+										<Ob>
 											<var>
 												<gat:name>y_p</gat:name>
 											</var>
-										</Hom>
+										</Ob>
 									</gat:type>
-								</p>
-								<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-									<Hom>
-										<var>
-											<gat:name>x</gat:name>
-											<gat:type>
-												<Ob>
-													<var>
-														<gat:name>x_p</gat:name>
-													</var>
-												</Ob>
-											</gat:type>
-										</var>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Hom>
-								</gat:type>
-							</o>
-							<var>
-								<gat:name>y</gat:name>
-								<gat:type>
-									<Ob>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Ob>
-								</gat:type>
-							</var>
-							<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-								<Ob>
-									<var>
-										<gat:name>x</gat:name>
-										<gat:type>
-											<Ob>
-												<var>
-													<gat:name>x_p</gat:name>
-												</var>
-											</Ob>
-										</gat:type>
-									</var>
-								</Ob>
-							</gat:type>
-						</star>
-					</Hom>
-				</gat:type>
+								</var>
+							</Hom>
+						</gat:type>
+					</var>
+					<seq>
+						<gat:name>h_2</gat:name>
+					</seq>
+				</o>
 			</s>
 			<p>
 				<star>
@@ -189,170 +73,23 @@
 								</Hom>
 							</gat:type>
 						</var>
+						<seq>
+							<gat:name>h_2</gat:name>
+						</seq>
 						<p>
 							<var>
-								<gat:name>y</gat:name>
-								<gat:type>
-									<Ob>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Ob>
-								</gat:type>
+								<gat:name>z</gat:name>
 							</var>
-							<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-								<Hom>
-									<var>
-										<gat:name>y</gat:name>
-										<gat:type>
-											<Ob>
-												<var>
-													<gat:name>y_p</gat:name>
-												</var>
-											</Ob>
-										</gat:type>
-									</var>
-									<var>
-										<gat:name>y_p</gat:name>
-									</var>
-								</Hom>
-							</gat:type>
 						</p>
-						<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<Hom>
-								<var>
-									<gat:name>x</gat:name>
-								</var>
-								<var>
-									<gat:name>y_p</gat:name>
-								</var>
-							</Hom>
-						</gat:type>
 					</o>
-					<var>
-						<gat:name>y</gat:name>
-						<gat:type>
-							<Ob>
-								<var>
-									<gat:name>y_p</gat:name>
-								</var>
-							</Ob>
-						</gat:type>
-					</var>
-					<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<Ob>
-							<var>
-								<gat:name>x</gat:name>
-							</var>
-						</Ob>
-					</gat:type>
-				</star>
-				<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<Hom>
-						<star>
-							<o>
-								<var>
-									<gat:name>f</gat:name>
-									<gat:type>
-										<Hom>
-											<var>
-												<gat:name>x</gat:name>
-											</var>
-											<var>
-												<gat:name>y</gat:name>
-											</var>
-										</Hom>
-									</gat:type>
-								</var>
-								<p>
-									<var>
-										<gat:name>y</gat:name>
-										<gat:type>
-											<Ob>
-												<var>
-													<gat:name>y_p</gat:name>
-												</var>
-											</Ob>
-										</gat:type>
-									</var>
-									<gat:type>
-										<Hom>
-											<var>
-												<gat:name>y</gat:name>
-												<gat:type>
-													<Ob>
-														<var>
-															<gat:name>y_p</gat:name>
-														</var>
-													</Ob>
-												</gat:type>
-											</var>
-											<var>
-												<gat:name>y_p</gat:name>
-											</var>
-										</Hom>
-									</gat:type>
-								</p>
-								<gat:type>
-									<Hom>
-										<var>
-											<gat:name>x</gat:name>
-										</var>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Hom>
-								</gat:type>
-							</o>
-							<var>
-								<gat:name>y</gat:name>
-								<gat:type>
-									<Ob>
-										<var>
-											<gat:name>y_p</gat:name>
-										</var>
-									</Ob>
-								</gat:type>
-							</var>
-							<gat:type>
-								<Ob>
-									<var>
-										<gat:name>x</gat:name>
-									</var>
-								</Ob>
-							</gat:type>
-						</star>
-						<var>
-							<gat:name>x</gat:name>
-						</var>
-					</Hom>
-				</gat:type>
-			</p>
-			<seq>
-				<gat:name>h_2</gat:name>
-				<gat:type>
-					<HomSeq>
-						<var>
-							<gat:name>x</gat:name>
-						</var>
-						<var>
-							<gat:name>z</gat:name>
-						</var>
-					</HomSeq>
-				</gat:type>
-			</seq>
-			<gat:type xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<Hom>
-					<var>
-						<gat:name>w</gat:name>
-					</var>
 					<var>
 						<gat:name>z</gat:name>
 					</var>
-				</Hom>
-			</gat:type>
+				</star>
+			</p>
 		</o>
 	</gat:term>
+
 
 	<!--
 	<gat:term>
@@ -1522,7 +1259,7 @@
   </gat:term>
 -->
 
-	<!--
+<!--
   <gat:term>
     <s>
       <o>
@@ -1544,6 +1281,5 @@
       </o>
     </s>
   </gat:term>
-
 -->
 </gat:algebra>

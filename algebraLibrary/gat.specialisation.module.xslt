@@ -482,8 +482,14 @@
         </xsl:when>
 
         <xsl:when test="not(./*[1][self::*:seq]) and $targetTerm/*[$targetIndex][self::*:seq]">
-          <xsl:message>      hS branch 2 </xsl:message>     
-          <xsl:for-each select="./*">
+          <xsl:message>      hS branch 2 - target subterm is a seq</xsl:message>  
+		  <xsl:variable name="targetseq" as="element()" select="$targetTerm/*[$targetIndex]"/>
+          <xsl:for-each select="./*[not(some $subjectsubterm 
+		                                   in (descendant-or-self::*:seq | preceding-sibling::*/descendant-or-self::*:seq) 
+		                                   satisfies $subjectsubterm/name=$targetseq/name
+										)
+							       ]
+		                       ">
             <head_substitution>
               <substitution>
                 <subject>
@@ -491,7 +497,7 @@
                 <target>
                   <substitute>
                     <placethree/>
-                    <xsl:copy-of select="$targetTerm/*[$targetIndex]"/>
+                    <xsl:copy-of select="$targetseq"/>
                     <xsl:for-each select="self::* | preceding-sibling::*">
                       <term>
                         <xsl:copy-of select="."/>
@@ -739,7 +745,7 @@
 
     <!-- The following condition needs to be beefed up to conditionally use -or-self NOT CLEAR that reqd info for test is present though 
           or is it length of skippped that we use ? -->
-    <xsl:if test="not(some $targetseq in $targetTerm/*[$targetIndex]/descendant::*:seq satisfies $targetseq/name=$seq_name_to_avoid)"> 
+    <xsl:if test="not(some $targetseq in $targetTerm/*[$targetIndex]/descendant-or-self::*:seq satisfies $targetseq/name=$seq_name_to_avoid)"> 
       <xsl:variable name="headSpecialisations" as="element()*">   <!--  one or more (<substitution> or <INCOMPATIBLE/>) -->
         <xsl:call-template name="specialiseTerm">
           <xsl:with-param name="targetTerm" select="$targetTerm/*[$targetIndex]"/>
