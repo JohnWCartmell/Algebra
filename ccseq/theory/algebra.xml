@@ -86,6 +86,7 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
+	<!-- replaced by 2sv2 8th March 2018
 	<gat:rewriteRule>
 		<gat:id>2s</gat:id>
 		<gat:tt-rule>
@@ -163,7 +164,89 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
+	-->
 
+	<gat:rewriteRule>
+		<gat:id>2sv2</gat:id>
+		<gat:tt-rule>
+			<gat:context>
+				<gat:decl>
+					<gat:name>w</gat:name>
+					<gat:type>
+						<Ob><var>w_p</var></Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>x</gat:name>
+					<gat:type>
+						<Ob><var>x_p</var></Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>y</gat:name>
+					<gat:type>
+						<Ob><var>y_p</var></Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>z</gat:name>
+					<gat:type>
+						<Ob><var>z_p</var></Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>f</gat:name>
+					<gat:type>
+						<Hom>
+							<var>w</var>
+							<var>x</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:sequence>
+					<gat:name>h_1</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var>x</var>
+							<var>y</var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+
+				<gat:sequence>
+					<gat:name>h_2</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var>y</var>
+							<var>z</var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+			</gat:context>
+			<gat:tt-conclusion>
+				<gat:lhs>
+					<o>	
+						<var>f</var>
+						<seq>h_1</seq>
+						<id>
+							<var>y</var>
+						</id>
+						<seq>h_2</seq>
+					</o>
+				</gat:lhs>
+				<gat:rhs>
+					<o>
+						<var>f</var>
+						<seq>h_1</seq>
+						<seq>h_2</seq>
+					</o>
+				</gat:rhs>
+			</gat:tt-conclusion>
+		</gat:tt-rule>
+	</gat:rewriteRule>
+
+
+	<!-- replace by 3sp 8th March 2018 
 	<gat:rewriteRule>
 		<gat:id>3s</gat:id>
 		<gat:tt-rule>
@@ -216,6 +299,72 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
+-->
+
+	<gat:rewriteRule>
+		<gat:id>3sv2</gat:id>
+		<gat:tt-rule>
+			<gat:context>
+				<gat:sequence>
+					<gat:name>f_1</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var><gat:name>x_0</gat:name></var>
+							<var><gat:name>x_1</gat:name></var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+				<gat:decl>
+					<gat:name>f</gat:name>
+					<gat:type>
+						<Hom>
+							<var><gat:name>x_1</gat:name></var>
+							<var><gat:name>x_2</gat:name></var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:sequence>
+					<gat:name>f_2</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var><gat:name>x_2</gat:name></var>
+							<var><gat:name>x_3</gat:name></var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+				<gat:sequence>
+					<gat:name>f_3</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var><gat:name>x_3</gat:name></var>
+							<var><gat:name>x_4</gat:name></var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+			</gat:context>
+			<gat:tt-conclusion>
+				<gat:lhs>
+					<o>
+						<seq>f_1</seq>
+						<o>
+							<var>f</var>
+							<seq>f_2</seq>
+						</o>
+						<seq>f_3</seq>
+					</o>
+				</gat:lhs>
+				<gat:rhs>
+					<o>
+						<seq>f_1</seq>
+						<var>f</var>
+						<seq>f_2</seq>
+						<seq>f_3</seq>
+					</o>
+				</gat:rhs>
+			</gat:tt-conclusion>
+		</gat:tt-rule>
+	</gat:rewriteRule>
+
 
 	<gat:rewriteRule>
 		<gat:id>3sp</gat:id>
@@ -552,8 +701,8 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
-  
- 
+
+
 
 	<gat:rewriteRule>
 		<gat:id>10ps</gat:id>
@@ -632,7 +781,7 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
-<!--
+
 	<gat:rewriteRule>
 		<gat:id>10pss</gat:id>
 		<gat:tt-rule>
@@ -661,6 +810,12 @@
 						<Ob><var>z_p</var></Ob>
 					</gat:type>
 				</gat:decl>
+				<gat:decl>
+					<gat:name>zz</gat:name>
+					<gat:type>
+						<Ob><var>zz_p</var></Ob>
+					</gat:type>
+				</gat:decl>
 				<gat:sequence>
 					<gat:name>h_1</gat:name>
 					<gat:type>
@@ -670,21 +825,30 @@
 						</HomSeq>
 					</gat:type>
 				</gat:sequence>
-				<gat:sequence>
+				<gat:decl>
 					<gat:name>f</gat:name>
 					<gat:type>
-						<HomSeq>
+						<Hom>
 							<var>x</var>
 							<var>y</var>
-						</HomSeq>
+						</Hom>
 					</gat:type>
-				</gat:sequence>
+				</gat:decl>
 				<gat:sequence>
 					<gat:name>h_2</gat:name>
 					<gat:type>
 						<HomSeq>
-							<var>x</var>
+							<var>y</var>
 							<var>z</var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+				<gat:sequence>
+					<gat:name>h_3</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var>x</var>
+							<var>zz</var>
 						</HomSeq>
 					</gat:type>
 				</gat:sequence>
@@ -695,25 +859,30 @@
 						<seq>h_1</seq>
 						<s>
 							<o>
-								<seq>f<gat:type><HomSeq><var>x</var><var>y</var></HomSeq><gat:required/></gat:type></seq>
+								<var>f<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type></var>
+								<seq>h_2</seq>
 							</o>
 						</s>
-						<p> <star> <o> <seq>f<gat:type><HomSeq><var>x</var><var>y</var></HomSeq><gat:required/></gat:type></seq> <p><var>y</var></p> </o> <var>y</var></star> </p>
-						<seq>h_2</seq>
+						<p> <star> <o> <var>f<gat:type><Hom><var>x</var><var>y</var></Hom><gat:required/></gat:type></var>
+									<seq>h_2</seq> <p><var>z</var></p> 
+								</o> 
+								<var>z</var></star> 
+						</p>
+						<seq>h_3</seq>
 					</o>
 				</gat:lhs>
 				<gat:rhs>
 					<o>
 						<seq>h_1</seq>
 						<id><var>x</var></id>
-						<seq>h_2</seq>
+						<seq>h_3</seq>
 					</o>
 				</gat:rhs>
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
-  -->
+
 
 	<gat:rewriteRule>
 		<gat:id>10ps.id</gat:id>
