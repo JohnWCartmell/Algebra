@@ -190,6 +190,9 @@ Description
 								<xsl:value-of select="name()"/>
 								<xsl:text>]</xsl:text>
 							</xsl:if>
+              <xsl:if test="self::*:var">
+								<xsl:text>[not(self::*:seq)]</xsl:text>  <!-- added 12 March 2018 -->
+							</xsl:if>
 						</xsl:when>
 						<xsl:when test="not(preceding-sibling::*)">
 							<!-- the first  child -->
@@ -243,7 +246,7 @@ Description
 						<xsl:text>[position() &lt; </xsl:text>
 						<xsl:text>$</xsl:text>
 						<xsl:value-of select="following-sibling::*[1]/@id"/>
-						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
+						<xsl:text>/count(preceding-sibling::ccseq:*) + 1</xsl:text>
 						<xsl:text>]</xsl:text>
 					</xsl:if>
 					<xsl:if test="preceding-sibling::*">
@@ -251,7 +254,7 @@ Description
 						<xsl:text>[position() &gt; </xsl:text>
 						<xsl:text>$</xsl:text>
 						<xsl:value-of select="preceding-sibling::*[1]/@id"/>
-						<xsl:text>/count(preceding-sibling::*) + 1</xsl:text>
+						<xsl:text>/count(preceding-sibling::ccseq:*) + 1</xsl:text>
 						<xsl:text>]</xsl:text>
 					</xsl:if>
 				</xsl:attribute>

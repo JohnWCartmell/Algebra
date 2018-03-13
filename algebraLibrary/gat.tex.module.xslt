@@ -352,9 +352,11 @@
 		</xsl:text>
 		<xsl:apply-templates select="*" mode="tex_report_errors"/>
 	</xsl:template>
+  
+
 	
 	<xsl:template match="gat:type_error" mode="tex_report_errors">
-		<xsl:value-of select="."/> 
+		<xsl:value-of select="gat:description"/> 
 		<xsl:text>
 
 		</xsl:text>

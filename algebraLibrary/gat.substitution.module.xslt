@@ -17,17 +17,18 @@
   <xsl:template match="*" mode="substitution">
     <xsl:param name="substitutions" as="element(substitution)"/>
     <xsl:copy>
+      <xsl:copy-of select="@*"/>
       <xsl:apply-templates  mode="substitution">
         <xsl:with-param name="substitutions" select="$substitutions"/>
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
-  
-    <xsl:template match="type_error" mode="substitution">
+
+  <xsl:template match="type_error" mode="substitution">
     <xsl:param name="substitutions" as="element(substitution)"/>
-      <!-- no action -->
+    <!-- no action -->
   </xsl:template>
-  
+
 
   <xsl:template match="*:decl" mode="substitution">  
     <xsl:param name="substitutions" as="element(substitution)"/>
@@ -98,9 +99,11 @@
 
   <xsl:template match="substitute" mode="substitution">
     <xsl:param name="substitutions" as="element(substitution)"/>
+    <!--
     <xsl:message>substituting <xsl:value-of select="$substitutions/name()"/> <xsl:apply-templates select="$substitutions" mode="text"/>
       into substitute of <xsl:value-of select="(*:seq|*:var)/name()"/> <xsl:value-of select="(*:seq|*:var)/name"/> 
       which is <xsl:apply-templates select="." mode="text"/></xsl:message>
+    -->
 
     <xsl:if test="some $varlike in $substitutions/(subject|target)/substitute/(*:var|*:seq) satisfies  (    ($varlike/name = (*:seq|*:var)/name) 
         and 
@@ -230,9 +233,7 @@
 
   <xsl:template match="substitution" mode="compose_substitutions">
     <xsl:param name="head_substitution" as="element(substitution)"/> <!-- changed param name to head_substitution because not symetric -->
-    <xsl:message>Composing substitutions
-      =======================
-    </xsl:message>	
+    <xsl:message>              Composing substitutions </xsl:message>	
     <xsl:message>              dot substitution subject  <xsl:apply-templates select="./subject" mode="text"/></xsl:message>
     <xsl:message>              dot substitution target  <xsl:apply-templates select="./target" mode="text"/></xsl:message>
     <xsl:message>              head substitution subject <xsl:apply-templates select="$head_substitution/subject" mode="text"/></xsl:message>
@@ -244,19 +245,16 @@
         </xsl:apply-templates>
       </xsl:copy>
     </xsl:variable>
-    <xsl:message>Result composed substitution=====
-      <xsl:apply-templates select="$result_substitution" mode="text"/>
-      ========================================
-    </xsl:message>
+    <xsl:message>              Result composed substitution </xsl:message>
+    <xsl:message>                   subject: <xsl:apply-templates select="$result_substitution/subject" mode="text"/> </xsl:message>
+    <xsl:message>                  target: <xsl:apply-templates select="$result_substitution/target" mode="text"/> </xsl:message>
     <xsl:copy-of select="$result_substitution"/>
   </xsl:template>
 
+
   <xsl:template match="subject" mode="compose_substitutionsxxxx">
     <xsl:param name="substitution" as="element(substitution)"/> 
-    <xsl:message>      Composing substitution subjects</xsl:message>
-    <!--<xsl:message>              subject substitutes is <xsl:apply-templates select="." mode="text"/></xsl:message>
-		<xsl:message>              substitution is <xsl:apply-templates select="$substitution/*" mode="text"/></xsl:message>
-		-->
+
     <xsl:copy>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$substitution"/>
@@ -267,7 +265,7 @@
 
   <xsl:template match="target" mode="compose_substitutionsxxxx">
     <xsl:param name="substitution" as="element(substitution)"/> 
-    <xsl:message>      Composing substitution targets</xsl:message>
+
     <xsl:copy>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$substitution"/>

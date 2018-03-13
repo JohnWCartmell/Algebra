@@ -195,6 +195,9 @@
 		</xsl:text>
 		<xsl:apply-templates select="*" mode="text_report_errors"/>
 	</xsl:template>
+  
+  <xsl:template match="need-equal" mode="text_report_errors">    		 	
+	</xsl:template>
 	
 	<xsl:template match="gat:type_error" mode="text_report_errors">
 		<xsl:value-of select="description"/> 
