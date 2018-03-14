@@ -88,11 +88,15 @@
       mode="initial_enrichment_recursive">
     <xsl:copy>
       <xsl:copy-of select="@*"/> 
-      <xsl:apply-templates mode="copy_tidily"/>
+      <xsl:apply-templates mode="copy_tidily"/>	  
+	    <xsl:variable name="domain_term_normalised" as="element()">
+          <xsl:apply-templates mode="normalise" select="ccseq:*"/>
+        </xsl:variable>
+		<xsl:message>domain of p term normalised is <xsl:apply-templates select="$domain_term_normalised" mode="text"/> </xsl:message>
       <gat:type>
         <!-- add typecheck here that childtype is an instance of "Ob" -->
         <Hom>
-          <xsl:copy-of select="ccseq:*"/>
+          <xsl:copy-of select="$domain_term_normalised"/>
           <xsl:copy-of select="ccseq:*/gat:type/ccseq:Ob/ccseq:*"/>  <!-- WARNING -not sure we can rely on this being here -->
         </Hom>
       </gat:type>
@@ -138,9 +142,12 @@
         <xsl:if test="$domain_term_normalised/*[self::gat:term]">
           <xsl:message terminate="yes">Gotcha, you <xsl:value-of select="$domain_term_normalised/*/name()"/>!</xsl:message>
         </xsl:if>
+		<xsl:variable name="codomain_term_normalised" as="element()">
+          <xsl:apply-templates mode="normalise" select="ccseq:*[2]"/>
+        </xsl:variable>
         <Hom>
           <xsl:copy-of select="$domain_term_normalised/ccseq:*"/>   <!-- tuesday 13 Fevb 19:43 -->
-          <xsl:copy-of select="ccseq:*[2]"/>  
+          <xsl:copy-of select="$codomain_term_normalised"/>  
         </Hom>
       </gat:type>
     </xsl:copy>
