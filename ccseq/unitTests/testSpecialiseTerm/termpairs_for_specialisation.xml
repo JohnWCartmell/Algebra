@@ -5,60 +5,53 @@
     xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
     xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
-  o(.h_1.,f,.h_2.,id(y),.h_3.)
-  o(.h_1'.,o(.h_2'.),.h_3'.,f',.h_4'.)
-
-  <gat:termpair>
+   <gat:termpair>
     <gat:subject>
       <o>
-        <seq><gat:name>h_1</gat:name></seq>
-        <var><gat:name>f</gat:name></var>        
-        <seq><gat:name>h_2</gat:name></seq>
-        <id>
-            <var><gat:name>y</gat:name></var>
-        </id>
-        <seq><gat:name>h_3</gat:name></seq>
+        <seq>
+          <gat:name>h_1</gat:name>
+        </seq> 
       </o>
     </gat:subject>
     <gat:target>
       <o>
-        <o>
-          <seq><gat:name>h_2'</gat:name></seq>
-        </o>
-        <seq><gat:name>h_3'</gat:name></seq>
-        <var><gat:name>f'</gat:name></var>	
+        <seq>
+          <gat:name>g_1</gat:name>
+        </seq> 
       </o>
     </gat:target>
   </gat:termpair>
+  
+  <!-- test for symetry -->
+  <gat:termpair>
+    <gat:subject>
+      <o>
+	    <!--<c/>-->
+        <seq>
+          <gat:name>h_1</gat:name>
+        </seq> 
+        <a/>
+        <seq>
+          <gat:name>h_2</gat:name>
+        </seq>
+      </o>
+    </gat:subject>
+    <gat:target>
+      <o>
+	    <!--<c/>-->
+        <seq>
+          <gat:name>g_1</gat:name>
+        </seq> 
+        <a/>
+        <seq>
+          <gat:name>g_2</gat:name>
+        </seq>
+      </o>
+    </gat:target>
+  </gat:termpair>
+  
 
 
-  <hidden>
-    <gat:termpair>
-      <gat:subject>
-        <o>
-
-          <seq><gat:name>h_1</gat:name></seq>       
-          <o>
-            <seq><gat:name>h_2</gat:name></seq>
-            <var><gat:name>f</gat:name></var>
-            <seq><gat:name>h_3</gat:name></seq>
-          </o>   
-          <seq><gat:name>h_4</gat:name></seq>					
-        </o>
-      </gat:subject>
-      <gat:target>
-        <o>
-          <o>
-            <seq><gat:name>h_2'</gat:name></seq>
-          </o>
-          <seq><gat:name>h_3'</gat:name></seq>
-          <var><gat:name>f'</gat:name></var>	
-        </o>
-      </gat:target>
-    </gat:termpair>
-
-
-    <!--<hidden>-->
     <!-- Design to recreate circularity bug -->
     <gat:termpair>
       <gat:subject>
@@ -340,7 +333,6 @@
         </a>
       </gat:target>
     </gat:termpair>
-  </hidden>
 
 
 </gat:algebra>
