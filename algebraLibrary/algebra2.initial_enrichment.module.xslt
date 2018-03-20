@@ -198,7 +198,7 @@ Description
 							<!-- the first  child -->
 							<xsl:text>$</xsl:text>
 							<xsl:value-of select="parent::*/@id"/>
-							<xsl:text>/child::*[1]</xsl:text>
+							<xsl:text>/child::ccseq:*[1]</xsl:text>
 							<xsl:choose>
 								<xsl:when test="self::*:var">                         <!-- this leg added 16 Feb 2018 -->
 									<xsl:text>[not(self::seq)]</xsl:text>
@@ -215,7 +215,7 @@ Description
 							<xsl:text>$</xsl:text>
 							<xsl:value-of select="parent::*/@id"/>
 							<xsl:text>/child::</xsl:text>
-							<xsl:value-of select="if (self::*:var) then '*[not(self::seq)]' else name()"/>  <!-- 16 Feb 2018 added [not(self::seq)] -->
+							<xsl:value-of select="if (self::*:var) then 'ccseq:*[not(self::seq)]' else name()"/>  <!-- 16 Feb 2018 added [not(self::seq)] -->
 						</xsl:when>
 					</xsl:choose>
 					<xsl:if test="not(following-sibling::*) and not(parent::lhs)">
