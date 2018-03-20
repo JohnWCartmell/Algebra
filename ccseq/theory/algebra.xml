@@ -91,7 +91,7 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
-	<hidden>
+	
 		<gat:rewriteRule>
 			<gat:id>5</gat:id>
 			<gat:tt-rule>
@@ -1852,6 +1852,6 @@
 				</gat:tt-conclusion>
 			</gat:tt-rule>
 		</gat:rewriteRule>
-	</hidden>
+
 
 </gat:algebra>
