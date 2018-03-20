@@ -188,7 +188,7 @@
 		<xsl:apply-templates select="*" mode="text_report_errors"/>	 	
 	</xsl:template>
 
-	<xsl:template match="*[parent::T-rule|parent::tT-rule|parent::tt-rule|parent::TT-rule][self::lhs|self::rhs|self::term|self::type][descendant::type_error]" 
+	<xsl:template match="*[parent::T-rule|parent::tT-rule|parent::tt-rule|parent::TT-rule][self::lhs|self::rhs|self::term|self::type][descendant::type_error|descendant::illformed]" 
 	              mode="text_report_errors">
 		<xsl:value-of select="name()"/> 
 		<xsl:text> has error(s):
@@ -205,7 +205,13 @@
 
 		</xsl:text>
 	</xsl:template>
-
+	
+	<xsl:template match="gat:illformed" mode="text_report_errors">
+	    <xsl:text>subterm </xsl:text>
+		<xsl:value-of select="../../name()"/> 
+		<xsl:text> is ill-formed.
+		</xsl:text>
+	</xsl:template>
 
 </xsl:transform>
 
