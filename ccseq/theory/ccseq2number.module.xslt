@@ -19,6 +19,7 @@ DESCRIPTION
 		
   <xsl:template match="gat:term" mode="number"> 
   <xsl:message> costing a term </xsl:message>
+  <!-- <xsl:message><xsl:copy-of select="."/> </xsl:message>-->
     <xsl:apply-templates select="ccseq:*[1]" mode="number"/>	   
   </xsl:template>
 
@@ -30,14 +31,10 @@ DESCRIPTION
     <xsl:value-of select="1"/>
   </xsl:template>
 
-  <xsl:template match="gat:point" mode="number">
-    <xsl:apply-templates select="*[1]" mode="number"/>
-  </xsl:template>
-
 
   <xsl:template match="o"  mode="number">
     <xsl:choose>
-      <xsl:when test="count(*) &gt; 0">
+      <xsl:when test="count(ccseq:*) &gt; 0">
         <xsl:variable name="arg" as="xs:double *">
           <xsl:apply-templates select="ccseq:*" mode="number"/>
         </xsl:variable>
@@ -51,12 +48,12 @@ DESCRIPTION
 
   <xsl:template match="q" mode="number">
     <xsl:choose>
-      <xsl:when test="count(*)=2">
+      <xsl:when test="count(ccseq:*)=2">
         <xsl:variable name="arg1" as="xs:double">
-          <xsl:apply-templates select="*[1]" mode="number"/>
+          <xsl:apply-templates select="ccseq:*[1]" mode="number"/>
         </xsl:variable>
         <xsl:variable name="arg2" as="xs:double">
-          <xsl:apply-templates select="*[2]" mode="number"/>
+          <xsl:apply-templates select="ccseq:*[2]" mode="number"/>
         </xsl:variable>
         <xsl:value-of select="$arg1 + $arg2"/>
       </xsl:when>
@@ -70,7 +67,7 @@ DESCRIPTION
 
   <xsl:template match="star" mode="number">
       <xsl:choose>
-      <xsl:when test="count(*)=2">
+      <xsl:when test="count(ccseq:*)=2">
         <xsl:variable name="arg1" as="xs:double">
           <xsl:apply-templates select="*[1]" mode="number"/>
         </xsl:variable>
