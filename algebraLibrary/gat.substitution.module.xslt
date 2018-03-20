@@ -173,16 +173,10 @@
 
   <xsl:template match="*" mode="insert_target_substitute">
     <xsl:param name="substitute" as="element(substitute)"/> 
-    <!--
-		<xsl:message>Inserting target substitute of var named <xsl:value-of select="$substitute/*:var/*:name"/></xsl:message>
+  
+		<xsl:message>Inserting target substitute of var/seq named <xsl:value-of select="$substitute/*/*:name"/></xsl:message>
 		<xsl:message>Explanation substitute is <xsl:copy-of select="$substitute"/> </xsl:message>
-				<xsl:if test="$substitute/*:var/name ='z'">	   
-		<xsl:message>Bingo: Inserting target z 
-		             term <xsl:apply-templates select="$substitute/term/*"/> 
-					 in context <xsl:value-of select="name()"/> 
-		</xsl:message>
-		</xsl:if>
-		-->
+
     <xsl:copy>
       <xsl:apply-templates mode="insert_target_substitute">
         <xsl:with-param name="substitute" select="$substitute"/>
@@ -210,12 +204,7 @@
 
   <xsl:template match="subject" mode="insert_target_substitute">
     <xsl:param name="substitute" as="element(substitute)"/> 
-    <xsl:if test="$substitute/*:var/name ='z'">	   
-      <xsl:message>Bingo: Inserting target z 
-        term <xsl:apply-templates select="$substitute/term/*"/> 
-        applying to subject substitution <xsl:apply-templates select="." mode="text"/> 
-      </xsl:message>
-    </xsl:if>
+
     <xsl:copy>
       <xsl:variable name="target_sub" as="element(substitution)">
         <substitution>

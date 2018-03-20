@@ -1,338 +1,344 @@
 <!-- test for specialisation -->
 
 <gat:algebra 
-    xmlns:ccseq ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
-    xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
-    xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+		xmlns:ccseq ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
+		xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
+		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
-   <gat:termpair>
-    <gat:subject>
-      <o>
-        <seq>
-          <gat:name>h_1</gat:name>
-        </seq> 
-      </o>
-    </gat:subject>
-    <gat:target>
-      <o>
-        <seq>
-          <gat:name>g_1</gat:name>
-        </seq> 
-      </o>
-    </gat:target>
-  </gat:termpair>
-  
-  <!-- test for symetry -->
-  <gat:termpair>
-    <gat:subject>
-      <o>
-	    <!--<c/>-->
-        <seq>
-          <gat:name>h_1</gat:name>
-        </seq> 
-        <a/>
-        <seq>
-          <gat:name>h_2</gat:name>
-        </seq>
-      </o>
-    </gat:subject>
-    <gat:target>
-      <o>
-	    <!--<c/>-->
-        <seq>
-          <gat:name>g_1</gat:name>
-        </seq> 
-        <a/>
-        <seq>
-          <gat:name>g_2</gat:name>
-        </seq>
-      </o>
-    </gat:target>
-  </gat:termpair>
-  
+<hidden>
+		<gat:termpair>
+			<gat:subject>
+				<o>
+					<seq>
+						<gat:name>h_1</gat:name>
+					</seq>
+					<a/>		
+				</o>
+			</gat:subject>
+			<gat:target>
+				<o>
+					<seq>
+						<gat:name>g_1</gat:name>
+					</seq>
+					<a/>		
+				</o>
+			</gat:target>
+		</gat:termpair>
+</hidden>
 
 
-    <!-- Design to recreate circularity bug -->
-    <gat:termpair>
-      <gat:subject>
-        <f>
-          <s>
-            <o>
-              <var><gat:name>x</gat:name></var>
-            </o>
-          </s>
-          <p>
-            <var><gat:name>x</gat:name></var>
-          </p>  
-        </f>
-      </gat:subject>
-      <gat:target>
-        <f>
-          <s>
-            <var><gat:name>y</gat:name></var>
-          </s>
-          <p>
-            <var><gat:name>y</gat:name></var>
-          </p>  
-        </f>
-      </gat:target>
-    </gat:termpair>
+		<!-- test for symetry -->
+		<gat:termpair>
+			<gat:subject>
+				<o>
+					<!--<c/>-->
+					<seq>
+						<gat:name>h_1</gat:name>
+					</seq> 
+					<a/>
+					<seq>
+						<gat:name>h_2</gat:name>
+					</seq>
+				</o>
+			</gat:subject>
+			<gat:target>
+				<o>
+					<!--<c/>-->
+					<seq>
+						<gat:name>g_1</gat:name>
+					</seq> 
+					<a/>
+					<seq>
+						<gat:name>g_2</gat:name>
+					</seq>
+				</o>
+			</gat:target>
+		</gat:termpair>
+
+	<hidden>
+		<!-- Design to recreate circularity bug -->
+		<gat:termpair>
+			<gat:subject>
+				<f>
+					<s>
+						<o>
+							<var><gat:name>x</gat:name></var>
+						</o>
+					</s>
+					<p>
+						<var><gat:name>x</gat:name></var>
+					</p>  
+				</f>
+			</gat:subject>
+			<gat:target>
+				<f>
+					<s>
+						<var><gat:name>y</gat:name></var>
+					</s>
+					<p>
+						<var><gat:name>y</gat:name></var>
+					</p>  
+				</f>
+			</gat:target>
+		</gat:termpair>
 
 
-    <!-- a bug for a while in ccseq -->
-    <gat:termpair>
-      <gat:subject>
-        <f>	
-          <seq><gat:name>s0</gat:name></seq>	
-          <f><var><gat:name>f</gat:name></var><star><var><gat:name>g</gat:name></var><var><gat:name>y</gat:name></var></star></f>	
-          <f><var><gat:name>g</gat:name></var><var><gat:name>y</gat:name></var></f>				
-          <seq><gat:name>s2</gat:name></seq>								
-        </f>
-      </gat:subject>
-      <gat:target>
-        <f>	<seq><gat:name>s0'</gat:name></seq>
-          <f><var><gat:name>f'</gat:name></var><star><var><gat:name>g'</gat:name></var><var><gat:name>y'</gat:name></var></star></f>		
-          <f><var><gat:name>g'</gat:name></var><var><gat:name>y'</gat:name></var></f>		
-          <seq><gat:name>s2'</gat:name></seq>								
-        </f>
-      </gat:target>
-    </gat:termpair>
+		<!-- a bug for a while in ccseq -->
+		<gat:termpair>
+			<gat:subject>
+				<f>	
+					<seq><gat:name>s0</gat:name></seq>	
+					<f><var><gat:name>f</gat:name></var><star><var><gat:name>g</gat:name></var><var><gat:name>y</gat:name></var></star></f>	
+					<f><var><gat:name>g</gat:name></var><var><gat:name>y</gat:name></var></f>				
+					<seq><gat:name>s2</gat:name></seq>								
+				</f>
+			</gat:subject>
+			<gat:target>
+				<f>	<seq><gat:name>s0'</gat:name></seq>
+					<f><var><gat:name>f'</gat:name></var><star><var><gat:name>g'</gat:name></var><var><gat:name>y'</gat:name></var></star></f>		
+					<f><var><gat:name>g'</gat:name></var><var><gat:name>y'</gat:name></var></f>		
+					<seq><gat:name>s2'</gat:name></seq>								
+				</f>
+			</gat:target>
+		</gat:termpair>
 
 
-    <!-- Designed to debug problem case from ccseq -->
-    <gat:termpair>
-      <gat:subject>
-        <f>				
-          <seq><gat:name>s</gat:name></seq>				
-          <b/>				
-        </f>
-      </gat:subject>
-      <gat:target>
-        <f>
-          <var><gat:name>x</gat:name></var>
-          <var><gat:name>x</gat:name></var>
-        </f>
-      </gat:target>
-    </gat:termpair>
+		<!-- Designed to debug problem case from ccseq -->
+		<gat:termpair>
+			<gat:subject>
+				<f>				
+					<seq><gat:name>s</gat:name></seq>				
+					<b/>				
+				</f>
+			</gat:subject>
+			<gat:target>
+				<f>
+					<var><gat:name>x</gat:name></var>
+					<var><gat:name>x</gat:name></var>
+				</f>
+			</gat:target>
+		</gat:termpair>
 
-    <!-- actaul failing from ccseq (second solution fails) then simplified -->
-    <gat:termpair>
-      <gat:subject>
-        <o>
-          <seq>
-            <gat:name>h_1</gat:name>
-          </seq>
-          <q>
-            <a/>
-            <star >
-              <var >
-                <gat:name>g</gat:name>
-              </var>
-              <var >
-                <gat:name>y</gat:name>
-              </var>
-            </star>
-          </q>
-        </o>
-      </gat:subject>
-      <gat:target>
-        <o> 
-          <var >
-            <gat:name>z</gat:name>
-          </var>
-          <q>
-            <a/>
-            <var>
-              <gat:name>z</gat:name>
-            </var>
-          </q>	
-        </o>
-      </gat:target>
-    </gat:termpair>
-
-
-
-
-    <!-- Test 1 of Monday 26 February -->
-    <gat:termpair>
-      <gat:subject>
-        <a>
-          <var><gat:name>x</gat:name></var>
-          <var><gat:name>x</gat:name></var>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <b>
-            <var><gat:name>y</gat:name></var>
-          </b>
-          <b>
-            <var><gat:name>z</gat:name></var>
-          </b>
-        </a>
-      </gat:target>
-    </gat:termpair>
+		<!-- actaul failing from ccseq (second solution fails) then simplified -->
+		<gat:termpair>
+			<gat:subject>
+				<o>
+					<seq>
+						<gat:name>h_1</gat:name>
+					</seq>
+					<q>
+						<a/>
+						<star >
+							<var >
+								<gat:name>g</gat:name>
+							</var>
+							<var >
+								<gat:name>y</gat:name>
+							</var>
+						</star>
+					</q>
+				</o>
+			</gat:subject>
+			<gat:target>
+				<o> 
+					<var >
+						<gat:name>z</gat:name>
+					</var>
+					<q>
+						<a/>
+						<var>
+							<gat:name>z</gat:name>
+						</var>
+					</q>	
+				</o>
+			</gat:target>
+		</gat:termpair>
 
 
 
-    <!-- Test 1 made deeper ???????????????BEtter think about this -->
-    <gat:termpair>
-      <gat:subject>
-        <a>
-          <e>
-            <var><gat:name>x</gat:name></var>
-          </e>
-          <e>
-            <var><gat:name>x</gat:name></var>
-          </e>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <e>
-            <b>
-              <var><gat:name>y</gat:name></var>
-            </b>
-          </e>
-          <e>
-            <b>
-              <var><gat:name>z</gat:name></var>
-            </b>
-          </e>
-        </a>
-      </gat:target>
-    </gat:termpair> 
 
-
-    <!-- Test 2 of Monday 26th February -->
-
-    <gat:termpair>
-      <gat:subject>
-        <a>
-          <b>
-            <var><gat:name>x</gat:name></var>
-          </b>
-          <b>
-            <c>
-              <var><gat:name>y</gat:name></var>
-            </c>
-          </b>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <var><gat:name>z</gat:name></var>
-          <var><gat:name>z</gat:name></var>
-        </a>
-      </gat:target>
-    </gat:termpair>
+		<!-- Test 1 of Monday 26 February -->
+		<gat:termpair>
+			<gat:subject>
+				<a>
+					<var><gat:name>x</gat:name></var>
+					<var><gat:name>x</gat:name></var>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<b>
+						<var><gat:name>y</gat:name></var>
+					</b>
+					<b>
+						<var><gat:name>z</gat:name></var>
+					</b>
+				</a>
+			</gat:target>
+		</gat:termpair>
 
 
 
-    <!-- Test 2; - 2 made deeper -->
-
-    <gat:termpair>
-      <gat:subject>
-        <a> 
-          <e>
-            <b>
-              <var>
-                <gat:name>x</gat:name>
-              </var>
-            </b>
-          </e>
-          <e>
-            <b>
-              <c>
-                <var>
-                  <gat:name>y</gat:name>
-                </var>
-              </c>
-            </b>
-          </e>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <e>
-            <var>
-              <gat:name>z</gat:name>
-            </var>
-          </e>
-          <e>
-            <var>
-              <gat:name>z</gat:name>
-            </var>
-          </e>
-        </a>
-      </gat:target>
-    </gat:termpair>
+		<!-- Test 1 made deeper ???????????????BEtter think about this -->
+		<gat:termpair>
+			<gat:subject>
+				<a>
+					<e>
+						<var><gat:name>x</gat:name></var>
+					</e>
+					<e>
+						<var><gat:name>x</gat:name></var>
+					</e>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<e>
+						<b>
+							<var><gat:name>y</gat:name></var>
+						</b>
+					</e>
+					<e>
+						<b>
+							<var><gat:name>z</gat:name></var>
+						</b>
+					</e>
+				</a>
+			</gat:target>
+		</gat:termpair> 
 
 
-    <!-- Test 3 of Monday 26th February  -->
+		<!-- Test 2 of Monday 26th February -->
 
-    <gat:termpair>
-      <gat:subject>
-        <a>
-          <b>
-            <var><gat:name>x</gat:name></var>
-          </b>
-          <var><gat:name>x</gat:name></var>
-          <b>
-            <c>
-              <var><gat:name>y</gat:name></var>
-            </c>
-          </b>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <var><gat:name>z</gat:name></var>
-          <c>
-            <e/>
-          </c>
-          <var><gat:name>z</gat:name></var>
-        </a>
-      </gat:target>
-    </gat:termpair>
+		<gat:termpair>
+			<gat:subject>
+				<a>
+					<b>
+						<var><gat:name>x</gat:name></var>
+					</b>
+					<b>
+						<c>
+							<var><gat:name>y</gat:name></var>
+						</c>
+					</b>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<var><gat:name>z</gat:name></var>
+					<var><gat:name>z</gat:name></var>
+				</a>
+			</gat:target>
+		</gat:termpair>
 
 
-    <!-- Test 3' - dual of Test 3  -->
 
-    <gat:termpair>
-      <gat:subject>
-        <a>
-          <var>
-            <gat:name>z</gat:name>
-          </var>
-          <c>
-            <e/>
-          </c>
-          <var>
-            <gat:name>z</gat:name>
-          </var>
-        </a>
-      </gat:subject>
-      <gat:target>
-        <a>
-          <b>
-            <var>
-              <gat:name>x</gat:name>
-            </var>
-          </b>
-          <var>
-            <gat:name>x</gat:name>
-          </var>
-          <b>
-            <c>
-              <var>
-                <gat:name>y</gat:name>
-              </var>
-            </c>
-          </b>
-        </a>
-      </gat:target>
-    </gat:termpair>
+		<!-- Test 2; - 2 made deeper -->
+
+		<gat:termpair>
+			<gat:subject>
+				<a> 
+					<e>
+						<b>
+							<var>
+								<gat:name>x</gat:name>
+							</var>
+						</b>
+					</e>
+					<e>
+						<b>
+							<c>
+								<var>
+									<gat:name>y</gat:name>
+								</var>
+							</c>
+						</b>
+					</e>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<e>
+						<var>
+							<gat:name>z</gat:name>
+						</var>
+					</e>
+					<e>
+						<var>
+							<gat:name>z</gat:name>
+						</var>
+					</e>
+				</a>
+			</gat:target>
+		</gat:termpair>
+
+
+		<!-- Test 3 of Monday 26th February  -->
+
+		<gat:termpair>
+			<gat:subject>
+				<a>
+					<b>
+						<var><gat:name>x</gat:name></var>
+					</b>
+					<var><gat:name>x</gat:name></var>
+					<b>
+						<c>
+							<var><gat:name>y</gat:name></var>
+						</c>
+					</b>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<var><gat:name>z</gat:name></var>
+					<c>
+						<e/>
+					</c>
+					<var><gat:name>z</gat:name></var>
+				</a>
+			</gat:target>
+		</gat:termpair>
+
+
+		<!-- Test 3' - dual of Test 3  -->
+
+		<gat:termpair>
+			<gat:subject>
+				<a>
+					<var>
+						<gat:name>z</gat:name>
+					</var>
+					<c>
+						<e/>
+					</c>
+					<var>
+						<gat:name>z</gat:name>
+					</var>
+				</a>
+			</gat:subject>
+			<gat:target>
+				<a>
+					<b>
+						<var>
+							<gat:name>x</gat:name>
+						</var>
+					</b>
+					<var>
+						<gat:name>x</gat:name>
+					</var>
+					<b>
+						<c>
+							<var>
+								<gat:name>y</gat:name>
+							</var>
+						</c>
+					</b>
+				</a>
+			</gat:target>
+		</gat:termpair>
+
+	</hidden>
 
 
 </gat:algebra>
