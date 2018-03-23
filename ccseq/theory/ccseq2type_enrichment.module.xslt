@@ -32,7 +32,7 @@
 
 
 	<xsl:template match="o[not(gat:type)][child::ccseq:*]
-			[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
+		[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
 			mode="initial_enrichment_recursive" priority="10">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -50,11 +50,17 @@
 	   -->
 				<!-- typechecking -->
 				<xsl:for-each select="ccseq:*[following-sibling::ccseq:*]">
+					<xsl:variable name="cod" as="element()">
+						<xsl:copy-of select="gat:type/(Hom|HomSeq)/ccseq:*[2]"/>
+					</xsl:variable>
+					<xsl:variable name="dom" as="element()">
+						<xsl:copy-of select="following-sibling::ccseq:*[1]/gat:type/(Hom|HomSeq)/ccseq:*[1]"/>
+					</xsl:variable>
 					<xsl:variable name="cod_text">
-						<xsl:apply-templates mode="text" select="gat:type/(Hom|HomSeq)/ccseq:*[2]"/>
+						<xsl:apply-templates mode="text" select="$cod"/>
 					</xsl:variable>
 					<xsl:variable name="dom_text">
-						<xsl:apply-templates mode="text" select="following-sibling::ccseq:*[1]/gat:type/(Hom|HomSeq)/ccseq:*[1]"/>
+						<xsl:apply-templates mode="text" select="$dom"/>
 					</xsl:variable>
 					<xsl:if test="$cod_text=''" >
 						<xsl:message> No cod text for type <xsl:copy-of select="gat:type"/> </xsl:message>
@@ -73,8 +79,15 @@
 								</gat:rhs>
 							</gat:need-equal>
 							<gat:description>
-								domain of subterm <xsl:value-of select="count(preceding-sibling::ccseq:*) + 2"/> is <xsl:value-of select="$dom_text"/> which is is not identical
-								to codomain of preceding subterm which is <xsl:value-of select="$cod_text"/></gat:description>
+								<gat:text>domain of subterm <xsl:value-of select="count(preceding-sibling::ccseq:*) + 2"/> is </gat:text>
+								<gat:term>
+									<xsl:copy-of select="$dom"/> 
+								</gat:term>
+								<gat:text> which is is not identical to codomain of preceding subterm which is </gat:text>
+								<gat:term>
+									<xsl:copy-of select="$cod"/>
+								</gat:term>
+							</gat:description>
 						</gat:type_error>    
 
 					</xsl:if>
@@ -93,8 +106,8 @@
 
 	<!-- from codomian of previous -->
 	<xsl:template match="o/o[not(gat:type)]
-			[not(child::ccseq:*)]
-			[preceding-sibling::*[1]/gat:type]"   
+		[not(child::ccseq:*)]
+		[preceding-sibling::*[1]/gat:type]"   
 			mode="initial_enrichment_recursive" priority="9" >
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -107,12 +120,12 @@
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
-	
-		
-		<!-- from domian of next -->
+
+
+	<!-- from domian of next -->
 	<xsl:template match="o/o[not(gat:type)]
-			[not(child::ccseq:*)]
-			[following-sibling::ccseq:*[1]/gat:type]"   
+		[not(child::ccseq:*)]
+		[following-sibling::ccseq:*[1]/gat:type]"   
 			mode="initial_enrichment_recursive" priority="8">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -125,12 +138,12 @@
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
-	
-	
+
+
 	<!-- from domain of parent -->
 	<xsl:template match="o[gat:type]/o[not(gat:type)]
-			[not(child::ccseq:*)]
-			[not(preceding-sibling::*)]"   
+		[not(child::ccseq:*)]
+		[not(preceding-sibling::*)]"   
 			mode="initial_enrichment_recursive" priority="7">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -143,11 +156,11 @@
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
-	
+
 	<!-- from codomain of parent -->
 	<xsl:template match="o[gat:type]/o[not(gat:type)]
-			[not(child::ccseq:*)]
-			[not(following-sibling::ccseq:*)]"   
+		[not(child::ccseq:*)]
+		[not(following-sibling::ccseq:*)]"   
 			mode="initial_enrichment_recursive" priority="6">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -160,11 +173,11 @@
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
-	
-		<!-- from domain of type expression when at top level -->
+
+	<!-- from domain of type expression when at top level -->
 	<xsl:template match="gat:term/o[not(gat:type)]
-			[not(child::ccseq:*)]
-			[not(following-sibling::ccseq:*)]"   
+		[not(child::ccseq:*)]
+		[not(following-sibling::ccseq:*)]"   
 			mode="initial_enrichment_recursive" priority="5">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -177,8 +190,8 @@
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
-	
-	
+
+
 
 	<xsl:template match="p[not(gat:type)][child::ccseq:*/gat:type]" 
 			mode="initial_enrichment_recursive">
@@ -201,7 +214,7 @@
 
 
 	<xsl:template match="star[not(gat:type)]
-			[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
+		[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
 			mode="initial_enrichment_recursive">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
@@ -216,7 +229,7 @@
 	</xsl:template>
 
 	<xsl:template match="q[not(gat:type)]
-			[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
+		[every $subterm in child::ccseq:* satisfies $subterm/gat:type]" 
 			mode="initial_enrichment_recursive">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>

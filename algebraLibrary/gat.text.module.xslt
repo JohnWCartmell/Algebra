@@ -88,10 +88,8 @@
 	<xsl:text>.</xsl:text>
 </xsl:template>
 
-<xsl:template match="*:point" mode="text">
-	<xsl:text>[</xsl:text>
-	<xsl:apply-templates select="*" mode="text"/>
-	<xsl:text>]</xsl:text>
+<xsl:template match="gat:point" mode="text">
+	<xsl:text>**INSERT HERE**</xsl:text>
 </xsl:template>
 
 <xsl:template match="substitution" mode="text">
@@ -200,11 +198,17 @@
 	</xsl:template>
 	
 	<xsl:template match="gat:type_error" mode="text_report_errors">
-		<xsl:value-of select="description"/> 
-		<xsl:text>
-
-		</xsl:text>
+		<xsl:apply-templates select="*" mode="text_report_errors"/>
 	</xsl:template>
+	
+	<xsl:template match="gat:description/gat:text" mode="text_report_errors">
+		<xsl:value-of select="."/>
+	</xsl:template>
+	
+	<xsl:template match="gat:description/gat:term" mode="text_report_errors">
+		<xsl:apply-templates select="*" mode="text"/>
+	</xsl:template>
+	
 	
 	<xsl:template match="gat:illformed" mode="text_report_errors">
 	    <xsl:text>subterm </xsl:text>

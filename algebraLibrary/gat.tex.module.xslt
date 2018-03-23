@@ -354,12 +354,20 @@
 	</xsl:template>
   
 
-	
 	<xsl:template match="gat:type_error" mode="tex_report_errors">
-		<xsl:value-of select="gat:description"/> 
-		<xsl:text>
-
+		<xsl:apply-templates select="*" mode="tex_report_errors"/>
+		<xsl:text>\\
 		</xsl:text>
+	</xsl:template>
+	
+	<xsl:template match="gat:description/gat:text" mode="tex_report_errors">
+		<xsl:value-of select="."/>
+	</xsl:template>
+	
+	<xsl:template match="gat:description/gat:term" mode="tex_report_errors">
+	    <xsl:text>$</xsl:text>
+		<xsl:apply-templates select="*" mode="tex"/>
+		<xsl:text>$</xsl:text>
 	</xsl:template>
 
 	<!-- end of tex -->
