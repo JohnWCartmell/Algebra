@@ -14,7 +14,7 @@ DESCRIPTION
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
 
-  <xsl:template match="o|f"  mode="text">
+  <xsl:template match="o|id|star|p|q|s"  mode="text">
     <xsl:variable name="args" as="xs:string *">
       <xsl:for-each select="ccseq:*|gat:point">
         <xsl:variable name="arg">
@@ -23,12 +23,13 @@ DESCRIPTION
         <xsl:value-of select="$arg"/>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:text>o(</xsl:text>
+	<xsl:value-of select="name()"/>
+    <xsl:text>(</xsl:text>
     <xsl:value-of select="string-join($args,',')"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-
+<!--
   <xsl:template match="q" mode="text">
     <xsl:text>q(</xsl:text>
     <xsl:apply-templates select="*[1]" mode="text"/>
@@ -82,6 +83,8 @@ DESCRIPTION
 	    <xsl:apply-templates select="*[1]" mode="text"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
+  
+  -->
   
 
   <xsl:template match="Ob" mode="text">

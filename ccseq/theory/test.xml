@@ -1,0 +1,27 @@
+<!-- 22 Feb 2017 -->
+
+<test 	xmlns="" >
+
+<a>
+   <description>one b followed  by a c </description>
+   <b/>
+   <c/>
+</a>
+
+<a>
+   <description>two b's followed by two c's</description>
+   <b/>
+   <b/>
+   <c/>
+   <c/>
+</a>
+
+<a>
+   <description>one b followed by a far away c</description>
+   <b/>
+   <x/><x/><x/><x/><x/>
+   <x/><x/><x/><x/><x/>
+   <x/><x/><x/><x/><x/>
+   <c/>
+</a>
+</test>

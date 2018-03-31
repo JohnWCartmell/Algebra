@@ -99,17 +99,13 @@
 
   <xsl:template match="substitute" mode="substitution">
     <xsl:param name="substitutions" as="element(substitution)"/>
-    <!--
-    <xsl:message>substituting <xsl:value-of select="$substitutions/name()"/> <xsl:apply-templates select="$substitutions" mode="text"/>
-      into substitute of <xsl:value-of select="(*:seq|*:var)/name()"/> <xsl:value-of select="(*:seq|*:var)/name"/> 
-      which is <xsl:apply-templates select="." mode="text"/></xsl:message>
-    -->
-
     <xsl:if test="some $varlike in $substitutions/(subject|target)/substitute/(*:var|*:seq) satisfies  (    ($varlike/name = (*:seq|*:var)/name) 
         and 
         ($varlike/name()=(*:seq|*:var)/name())  
         )">
-      <xsl:message terminate="yes">OUT OF SPEC when applying a substitution to a substitution substitute of a seq </xsl:message>
+	  <xsl:message>OUT OF SPEC context <xsl:copy-of select="."/></xsl:message>
+	  <xsl:message>OUT OF SPEC substitutions <xsl:copy-of select="$substitutions"/> </xsl:message>
+      <xsl:message terminate="yes">OUT OF SPEC when applying a substitution to a substitution substitute of a var or seq </xsl:message>
     </xsl:if>
     <xsl:copy>
       <xsl:copy-of select="*:seq|*:var"/>

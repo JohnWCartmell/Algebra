@@ -10,15 +10,26 @@
 
 
 
-	<xsl:template match="*[self::gat:*][not(self::gat:term)]" mode="normalise">
-		<xsl:message> THIS "normailise" template ISNT CALLED CURRENTLY POTENTIALLY USE IN THE FUTURE - TO NORMALISE A CONTEXT OR AN ENTIRE RULE </xsl:message>
-		<xsl:message terminate="yes"> Yes it does -  Gets called with <xsl:value-of select="name()"/> </xsl:message>
+	<xsl:template match="*[self::gat:*][not(self::gat:term)][not(self::gat:type)]" mode="normalise">
+		<xsl:message> THIS "normailise" template is only used from normalisation unit test</xsl:message>
 		<xsl:copy>
 			<xsl:copy-of select="namespace::*"/>
 			<xsl:apply-templates mode="normalise"/>
 		</xsl:copy>
 	</xsl:template>
 
+
+	<xsl:template match="gat:type" mode="normalise">  
+		<xsl:message> Normalising type <xsl:apply-templates select="." mode="text"/>
+			<xsl:copy-of select="."/></xsl:message>
+
+		<xsl:copy>
+			<xsl:call-template name="recursive_rewrite">
+				<xsl:with-param name="document" select="*"/> 
+			</xsl:call-template>
+		</xsl:copy>
+		<xsl:message> End Normalising type <xsl:apply-templates select="." mode="text"/> </xsl:message>
+	</xsl:template>
 
 	<xsl:template match="gat:term" mode="normalise">  
 		<xsl:message> Normalising term <xsl:apply-templates select="." mode="text"/></xsl:message>
@@ -27,6 +38,7 @@
 				<xsl:with-param name="document" select="*"/> 
 			</xsl:call-template>
 		</xsl:copy>
+		<xsl:message> End Normalising term <xsl:apply-templates select="." mode="text"/></xsl:message>
 	</xsl:template>
 
 	<xsl:template match="*[not(self::gat:*)]" mode="normalise">  
@@ -34,6 +46,7 @@
 		<xsl:call-template name="recursive_rewrite">
 			<xsl:with-param name="document" select="."/> 
 		</xsl:call-template>
+		<xsl:message> End Normalising <xsl:apply-templates select="." mode="text"/></xsl:message>
 	</xsl:template>
 
 
@@ -163,284 +176,304 @@
 						</xsl:variable>
 						<xsl:message>End of type enriching first cut diamond rule</xsl:message>
 
-						<xsl:variable name="typeCorrectionSubstitution" as="element(substitution)">
+						<xsl:variable name="typeCorrectionSubstitution" as="element(substitution)?">
 							<xsl:call-template name="specialise_to_correct_typing">
 								<xsl:with-param name="tT-ruleTypeEnriched" select="$firstCutTopOfDiamondRuleTypeEnriched"/>
 							</xsl:call-template>
-						</xsl:variable> 			
-						<xsl:variable name="typeCorrectedDiamondRuleTypeEnriched" as="element(tT-rule)">   
-							<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
-								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/> <!-- just do the first one -->
-							</xsl:apply-templates>  
-						</xsl:variable>
-
-						<xsl:variable name="topOfDiamond" as="element()" 
-								select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*"/>
-
-						<xsl:variable name="left_reduction_firstcut" as="element(term)">
-							<gat:term>
-								<xsl:apply-templates select="$outerRule_rhs/*" mode="substitution">
-									<xsl:with-param name="substitutions" select="substitution"/>  
-								</xsl:apply-templates>
-							</gat:term>
-						</xsl:variable>
-						<xsl:variable name="left_reduction" as="element(term)">
-								<xsl:apply-templates select="$left_reduction_firstcut" mode="substitution">
-									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
-								</xsl:apply-templates>
-						</xsl:variable>
-						<xsl:variable name="left_reductionRule" as="element(tT-rule)">
-							<gat:tT-rule>
-								<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/context"/>
-								<gat:tT-conclusion>
-									<xsl:copy-of select="$left_reduction"/>
-								</gat:tT-conclusion>							
-							</gat:tT-rule>
-						</xsl:variable>
-						<xsl:variable name="left_reductionRuleTypeEnriched" as="element(tT-rule)">
-							<xsl:apply-templates select="$left_reductionRule" mode="cleanse_and_type_enrich"/>
-						</xsl:variable>
-						
-						<xsl:variable name="leftReductionTypeEnriched" as="element(term)"
-						                select="$left_reductionRuleTypeEnriched/tT-conclusion/term" />
-										
-						<!-- inner Term -->
-
-						<xsl:variable name="innerTerm_lhs_in_context" as="element(term)">
-							<xsl:apply-templates select="stub"  mode="fill_in_stub">
-								<xsl:with-param name="subterm" select="$innerTerm"/>
-							</xsl:apply-templates>
-						</xsl:variable>
-
-						<xsl:variable name="innerTerm_lhs_in_context_specialised" as="element(term)">
-							<xsl:apply-templates select="$innerTerm_lhs_in_context" mode="substitution">
-								<xsl:with-param name="substitutions" select="substitution"/>
-							</xsl:apply-templates>
-						</xsl:variable>
-
-						<xsl:variable name="innerTerm_lhs_in_context_specialised_text" >  <!-- how to type this ?-->
-							<xsl:apply-templates select="$innerTerm_lhs_in_context_specialised" mode="text"/>
-						</xsl:variable>
+						</xsl:variable> 
 
 
-						<xsl:variable name="innerTerm_rhs_in_context" as="element(term)">
-							<xsl:apply-templates select="stub"  mode="fill_in_stub">
-								<xsl:with-param name="subterm" select="$innerTerm_rhs"/>
-							</xsl:apply-templates>
-						</xsl:variable>
-						
-						<xsl:variable name="right_reduction_first_cut" as="element(term)">
-							<gat:term>
-								<xsl:apply-templates select="$innerTerm_rhs_in_context/*" mode="substitution">
-									<xsl:with-param name="substitutions" select="substitution"/>
-								</xsl:apply-templates>
-							</gat:term>
-						</xsl:variable>
-						<xsl:variable name="right_reduction" as="element(term)">
-							<gat:term>
-								<xsl:apply-templates select="$right_reduction_first_cut/*" mode="substitution">
-									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
-								</xsl:apply-templates>
-							</gat:term>
-						</xsl:variable>
+						<xsl:choose>						
+							<xsl:when test="$typeCorrectionSubstitution">					
+								<xsl:variable name="typeCorrectedDiamondRuleTypeEnriched" as="element(tT-rule)">   
+									<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
+										<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/> <!-- just do the first one -->
+									</xsl:apply-templates>  
+								</xsl:variable>
 
-						<xsl:message>right_reduction text is <xsl:apply-templates select="$right_reduction" mode="text"/></xsl:message>
-						<xsl:message>right_reduction  is <xsl:copy-of copy-namespaces="no" select="$right_reduction"/></xsl:message>
-						
-						<xsl:message>right_reduction context is <xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/context" mode="text"/></xsl:message>
-						<xsl:variable name="right_reductionRule" as="element(tT-rule)">
-							<gat:tT-rule>
-								<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/context"/>
-								<gat:tT-conclusion>
-									<xsl:copy-of select="$right_reduction"/>
-								</gat:tT-conclusion>							
-							</gat:tT-rule>
-						</xsl:variable>
-						<xsl:variable name="right_reductionRuleTypeEnriched" as="element(tT-rule)">
-							<xsl:apply-templates select="$right_reductionRule" mode="cleanse_and_type_enrich"/>
-						</xsl:variable>
-						<xsl:variable name="rightReductionTypeEnriched" as="element(term)"
-						                select="$right_reductionRuleTypeEnriched/tT-conclusion/term" />
-						
-						
+								<xsl:variable name="topOfDiamond" as="element()" 
+										select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*"/>
 
-						<xsl:variable name="diamondIdentity" select="concat($outer_rule_id,'-',$inner_rule_id,'-',position())"/>
-						<!-- OUTPUT -->
-						<gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
-							<gat:identity><xsl:value-of select="$diamondIdentity"/></gat:identity>
-							<gat:from>
-								<gat:outer>
-									<gat:id><xsl:value-of select="$outer_rule_id"/></gat:id>
+
+								<!-- 31st March 2018 -->
+								<xsl:variable name="rhs_cleansed" as="element()">
+									<xsl:apply-templates select="$outerRule_rhs/*" mode="remove_gat_annotations"/>
+								</xsl:variable>
+								
+								<xsl:variable name="left_reduction_firstcut" as="element(term)">
 									<gat:term>
-										<!--<xsl:copy-of select="$outerTerm" />-->
-										<xsl:apply-templates select="$outerTerm" mode="text"/>
+										<xsl:apply-templates select="$rhs_cleansed" mode="substitution">
+											<xsl:with-param name="substitutions" select="substitution"/>  
+										</xsl:apply-templates>
 									</gat:term>
-									<gat:context>
-										<!-- <xsl:copy-of select="$outerContext"/> -->
-										<xsl:apply-templates select="$outerContext" mode="text"/>
-									</gat:context>
-									<gat:substitution> 
-										<xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
-									</gat:substitution>
-									<gat:contextsubstituted>
-										<!--<xsl:copy-of select="$outerContextSubstituted"/>-->  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex -->
-										<xsl:apply-templates select="$outerContextSubstituted" mode="text"/>  
-									</gat:contextsubstituted>
-									<gat:term_specialised>
-										<!--<xsl:copy-of select="$outerTermSpecialised"/>-->
-										<xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
-									</gat:term_specialised>
+								</xsl:variable>
+								<xsl:variable name="left_reduction" as="element(term)">
+									<xsl:apply-templates select="$left_reduction_firstcut" mode="substitution">
+										<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+									</xsl:apply-templates>
+								</xsl:variable>
+								<xsl:variable name="left_reductionRule" as="element(tT-rule)">
+									<gat:tT-rule>
+										<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/context"/>
+										<gat:tT-conclusion>
+											<xsl:copy-of select="$left_reduction"/>
+										</gat:tT-conclusion>							
+									</gat:tT-rule>
+								</xsl:variable>
+								<xsl:variable name="left_reductionRuleTypeEnriched" as="element(tT-rule)">
+									<xsl:apply-templates select="$left_reductionRule" mode="cleanse_and_type_enrich"/>
+								</xsl:variable>
 
-									<gat:leftreduction>
-										<!--<xsl:copy-of select="$left_reduction" />-->
-										<xsl:apply-templates select="$left_reduction" mode="text"/>
-									</gat:leftreduction>
-									<gat:left_reduction_type_errors>							     
-										<xsl:apply-templates select="$left_reductionRuleTypeEnriched" mode="text_report_errors"/>
-									</gat:left_reduction_type_errors>
-								</gat:outer>
-								<gat:inner>
-									<gat:id><xsl:value-of select="$inner_rule_id"/></gat:id>
-									<gat:term><xsl:apply-templates select="$innerTerm" mode="text"/></gat:term>                   
-									<gat:context>
-										<!-- <xsl:copy-of select="$innerContext"/> -->
-										<xsl:apply-templates select="$innerContext" mode="text"/>
-									</gat:context>
-									<gat:substitution>
-										<xsl:apply-templates  select="substitution/target/substitute" mode="text"/>
-									</gat:substitution>
-									<gat:contextsubstituted>
-										<!--<xsl:copy-of select="$innerContextSubstituted"/>-->
-										<xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
-									</gat:contextsubstituted>
-									<gat:term_specialised>
-										<!--<xsl:copy-of select="$innerTermSpecialised"/>-->
-										<xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
-									</gat:term_specialised>
-									<gat:term_in_context_specialised>
-										<xsl:apply-templates select="$innerTerm_lhs_in_context_specialised" mode="text"/>
-									</gat:term_in_context_specialised>
-									<gat:rightreduction>
-										<!--<xsl:copy-of select="$right_reduction" />-->
-										<xsl:apply-templates select="$right_reduction" mode="text"/>
-									</gat:rightreduction>
-									<gat:right_reduction_type_errors>
-										<xsl:apply-templates select="$right_reductionRuleTypeEnriched" mode="text_report_errors"/>
-									</gat:right_reduction_type_errors>
-								</gat:inner>
+								<xsl:variable name="leftReductionTypeEnriched" as="element(term)"
+										select="$left_reductionRuleTypeEnriched/tT-conclusion/term" />
 
-								<xsl:if test="not($innerTerm_lhs_in_context_specialised_text = $outerTermSpecialisedText)">
-									<gat:ERROR> OUT OF SPEC </gat:ERROR>
-									<xsl:copy-of select="."/>  for diagnostic purposes 
-								</xsl:if> 
+								<!-- inner Term -->
 
-							</gat:from>
+								<xsl:variable name="innerTerm_lhs_in_context" as="element(term)">
+									<xsl:apply-templates select="stub"  mode="fill_in_stub">
+										<xsl:with-param name="subterm" select="$innerTerm"/>
+									</xsl:apply-templates>
+								</xsl:variable>
 
-							<!-- Normalise left hand side -->
-							<xsl:message> left reduction type enriched is <xsl:copy-of select="$leftReductionTypeEnriched"/> </xsl:message>
-							<xsl:message> Normalise the left reduction </xsl:message>
-							<xsl:variable name="leftReductionNormalised" as="element(term)">
-								<xsl:call-template name="recursive_rewrite">
-									<xsl:with-param name="document" select="$leftReductionTypeEnriched" />
-								</xsl:call-template>
-							</xsl:variable>
-							<xsl:variable name="leftReductionNormalisedText">
-								<xsl:apply-templates select="$leftReductionNormalised" mode="text"/>
-							</xsl:variable>	
-							<xsl:message>left reduction normalised <xsl:value-of select="$leftReductionNormalisedText"/></xsl:message>									
-							<xsl:variable name="lhscost" as="xs:double">
-								<xsl:apply-templates select="$leftReductionNormalised" mode="number"/>
-							</xsl:variable>
-							<!-- Normalise right hand side -->
-							<xsl:message> Normalise the right reduction </xsl:message>
-							<xsl:message> right reduction  type enriched is <xsl:copy-of copy-namespaces="no" select="$rightReductionTypeEnriched"/> </xsl:message>
-							<xsl:variable name="rightReductionNormalised" as="element(term)">
-								<xsl:call-template name="recursive_rewrite">
-									<xsl:with-param name="document" select="$rightReductionTypeEnriched"/>
-								</xsl:call-template>
-							</xsl:variable>
-							<xsl:variable name="rightReductionNormalisedText">
-								<xsl:apply-templates select="$rightReductionNormalised" mode="text"/>
-							</xsl:variable>							
-							<xsl:message><xsl:value-of select="$rightReductionNormalisedText"/></xsl:message>
-							<xsl:variable name="rhscost" as="xs:double">
-								<xsl:apply-templates select="$rightReductionNormalised" mode="number"/>
-							</xsl:variable>
-							<!-- OUTPUT -->
-							<gat:first_pass_diamond_context>
-								<xsl:apply-templates select="$firstCutDiamondContext" mode="text"/> 
-							</gat:first_pass_diamond_context>     
-							<gat:first_pass_top_of_diamond>
-								<xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
-							</gat:first_pass_top_of_diamond>
+								<xsl:variable name="innerTerm_lhs_in_context_specialised" as="element(term)">
+									<xsl:apply-templates select="$innerTerm_lhs_in_context" mode="substitution">
+										<xsl:with-param name="substitutions" select="substitution"/>
+									</xsl:apply-templates>
+								</xsl:variable>
 
-							<gat:first_pass_diamond_type_errors>
-								<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="text_report_errors"/>
-							</gat:first_pass_diamond_type_errors>
+								<xsl:variable name="innerTerm_lhs_in_context_specialised_text" >  <!-- how to type this ?-->
+									<xsl:apply-templates select="$innerTerm_lhs_in_context_specialised" mode="text"/>
+								</xsl:variable>
 
-							<!-- second pass -->
-							<gat:diamond_context>
-								<xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/context" mode="text"/> 
-							</gat:diamond_context>
+								<xsl:variable name="innerTerm_rhs_in_context" as="element(term)">
+									<xsl:apply-templates select="stub"  mode="fill_in_stub">
+										<xsl:with-param name="subterm" select="$innerTerm_rhs"/>
+									</xsl:apply-templates>
+								</xsl:variable>
 
-							<!--COPY the ancestor term with the result substitutions and mark application_node_id -->
-							<gat:top_of_diamond>
-								<!--<xsl:copy-of select="$topOfDiamond"/>-->
-								<xsl:apply-templates select="$topOfDiamond" mode="text"/>
-							</gat:top_of_diamond>
-							<gat:top_of_diamond_type>
-								<!--<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion"/>-->
-								<xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*/gat:type/*" mode="text"/> 
-							</gat:top_of_diamond_type>
+								<xsl:variable name="right_reduction_first_cut" as="element(term)">
+									<gat:term>
+										<xsl:apply-templates select="$innerTerm_rhs_in_context/*" mode="substitution">
+											<xsl:with-param name="substitutions" select="substitution"/>
+										</xsl:apply-templates>
+									</gat:term>
+								</xsl:variable>
+								<xsl:variable name="right_reduction" as="element(term)">
+									<gat:term>
+										<xsl:apply-templates select="$right_reduction_first_cut/*" mode="substitution">
+											<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+										</xsl:apply-templates>
+									</gat:term>
+								</xsl:variable>
+								
+								<!-- 31 March 2018 cleanse right reduction -->
+								<xsl:variable name="right_reduction_cleansed">
+								xxxxxxxxxxxxxxxxxxxxxx
+								</xsl:variable>
+
+								<xsl:message>right_reduction text is <xsl:apply-templates select="$right_reduction" mode="text"/></xsl:message>
+								<xsl:message>right_reduction  is <xsl:copy-of copy-namespaces="no" select="$right_reduction"/></xsl:message>
+
+								<xsl:message>right_reduction context is <xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/context" mode="text"/></xsl:message>
+								<xsl:variable name="right_reductionRule" as="element(tT-rule)">
+									<gat:tT-rule>
+										<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/context"/>
+										<gat:tT-conclusion>
+											<xsl:copy-of select="$right_reduction"/>
+										</gat:tT-conclusion>							
+									</gat:tT-rule>
+								</xsl:variable>
+								<xsl:variable name="right_reductionRuleTypeEnriched" as="element(tT-rule)">
+									<xsl:apply-templates select="$right_reductionRule" mode="cleanse_and_type_enrich"/>
+								</xsl:variable>
+								<xsl:variable name="rightReductionTypeEnriched" as="element(term)"
+										select="$right_reductionRuleTypeEnriched/tT-conclusion/term" />
 
 
-							<gat:top_of_diamond_type_errors>							     
-								<!--<xsl:copy-of select="$topOfDiamondRuleTypeEnriched/tT-conclusion/term"/>-->
-								<xsl:apply-templates select="$topOfDiamond" mode="text_report_errors"/>
-							</gat:top_of_diamond_type_errors>
 
-							<gat:leftReductionNormalised>
-								<!--
+								<xsl:variable name="diamondIdentity" select="concat($outer_rule_id,'-',$inner_rule_id,'-',position())"/>
+								<!-- OUTPUT -->
+								<gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
+									<gat:identity><xsl:value-of select="$diamondIdentity"/></gat:identity>
+									<gat:from>
+										<gat:outer>
+											<gat:id><xsl:value-of select="$outer_rule_id"/></gat:id>
+											<gat:term>
+												<!--<xsl:copy-of select="$outerTerm" />-->
+												<xsl:apply-templates select="$outerTerm" mode="text"/>
+											</gat:term>
+											<gat:context>
+												<!-- <xsl:copy-of select="$outerContext"/> -->
+												<xsl:apply-templates select="$outerContext" mode="text"/>
+											</gat:context>
+											<gat:substitution> 
+												<xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
+											</gat:substitution>
+											<gat:contextsubstituted>
+												<!--<xsl:copy-of select="$outerContextSubstituted"/>-->  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex -->
+												<xsl:apply-templates select="$outerContextSubstituted" mode="text"/>  
+											</gat:contextsubstituted>
+											<gat:term_specialised>
+												<!--<xsl:copy-of select="$outerTermSpecialised"/>-->
+												<xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
+											</gat:term_specialised>
+
+											<gat:leftreduction>
+												<!--<xsl:copy-of select="$left_reduction" />-->
+												<xsl:apply-templates select="$left_reduction" mode="text"/>
+											</gat:leftreduction>
+											<gat:left_reduction_type_errors>							     
+												<xsl:apply-templates select="$left_reductionRuleTypeEnriched" mode="text_report_errors"/>
+											</gat:left_reduction_type_errors>
+										</gat:outer>
+										<gat:inner>
+											<gat:id><xsl:value-of select="$inner_rule_id"/></gat:id>
+											<gat:term><xsl:apply-templates select="$innerTerm" mode="text"/></gat:term>                   
+											<gat:context>
+												<!-- <xsl:copy-of select="$innerContext"/> -->
+												<xsl:apply-templates select="$innerContext" mode="text"/>
+											</gat:context>
+											<gat:substitution>
+												<xsl:apply-templates  select="substitution/target/substitute" mode="text"/>
+											</gat:substitution>
+											<gat:contextsubstituted>
+												<!--<xsl:copy-of select="$innerContextSubstituted"/>-->
+												<xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
+											</gat:contextsubstituted>
+											<gat:term_specialised>
+												<!--<xsl:copy-of select="$innerTermSpecialised"/>-->
+												<xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
+											</gat:term_specialised>
+											<gat:term_in_context_specialised>
+												<xsl:apply-templates select="$innerTerm_lhs_in_context_specialised" mode="text"/>
+											</gat:term_in_context_specialised>
+											<gat:rightreduction>
+												<!--<xsl:copy-of select="$right_reduction" />-->
+												<xsl:apply-templates select="$right_reduction" mode="text"/>
+											</gat:rightreduction>
+											<gat:right_reduction_type_errors>
+												<xsl:apply-templates select="$right_reductionRuleTypeEnriched" mode="text_report_errors"/>
+											</gat:right_reduction_type_errors>
+										</gat:inner>
+
+										<xsl:if test="not($innerTerm_lhs_in_context_specialised_text = $outerTermSpecialisedText)">
+											<gat:ERROR> OUT OF SPEC </gat:ERROR>
+											<xsl:copy-of select="."/>  for diagnostic purposes 
+										</xsl:if> 
+
+									</gat:from>
+
+									<!-- Normalise left hand side -->
+									<xsl:message> left reduction type enriched is <xsl:copy-of select="$leftReductionTypeEnriched"/> </xsl:message>
+									<xsl:message> Normalise the left reduction </xsl:message>
+									<xsl:variable name="leftReductionNormalised" as="element(term)">
+										<xsl:call-template name="recursive_rewrite">
+											<xsl:with-param name="document" select="$left_reduction" /> <!-- 31 March 2018 Change from ledtReductioTypeEnriched -->
+										</xsl:call-template>
+									</xsl:variable>
+									<xsl:variable name="leftReductionNormalisedText">
+										<xsl:apply-templates select="$leftReductionNormalised" mode="text"/>
+									</xsl:variable>	
+									<xsl:message>left reduction normalised <xsl:value-of select="$leftReductionNormalisedText"/></xsl:message>									
+									<xsl:variable name="lhscost" as="xs:double">
+										<xsl:apply-templates select="$leftReductionNormalised" mode="number"/>
+									</xsl:variable>
+									<!-- Normalise right hand side -->
+									<xsl:message> Normalise the right reduction </xsl:message>
+									<xsl:message> right reduction  type enriched is <xsl:copy-of copy-namespaces="no" select="$rightReductionTypeEnriched"/> </xsl:message>
+									<xsl:variable name="rightReductionNormalised" as="element(term)">
+										<xsl:call-template name="recursive_rewrite">
+											<xsl:with-param name="document" select="$rightReductionTypeEnriched"/>
+										</xsl:call-template>
+									</xsl:variable>
+									<xsl:variable name="rightReductionNormalisedText">
+										<xsl:apply-templates select="$rightReductionNormalised" mode="text"/>
+									</xsl:variable>							
+									<xsl:message><xsl:value-of select="$rightReductionNormalisedText"/></xsl:message>
+									<xsl:variable name="rhscost" as="xs:double">
+										<xsl:apply-templates select="$rightReductionNormalised" mode="number"/>
+									</xsl:variable>
+									<!-- OUTPUT -->
+									<gat:first_pass_diamond_context>
+										<xsl:apply-templates select="$firstCutDiamondContext" mode="text"/> 
+									</gat:first_pass_diamond_context>     
+									<gat:first_pass_top_of_diamond>
+										<!--<xsl:copy-of select="$firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*"/>-->
+										<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*" mode="text"/>
+									</gat:first_pass_top_of_diamond>
+
+									<gat:first_pass_diamond_type_errors>
+										<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="text_report_errors"/>
+									</gat:first_pass_diamond_type_errors>
+
+									<!-- second pass -->
+									<gat:diamond_context>
+										<xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/context" mode="text"/> 
+									</gat:diamond_context>
+
+									<!--COPY the ancestor term with the result substitutions and mark application_node_id -->
+									<gat:top_of_diamond>
+										<!--<xsl:copy-of select="$topOfDiamond"/>-->
+										<xsl:apply-templates select="$topOfDiamond" mode="text"/>
+									</gat:top_of_diamond>
+									<gat:top_of_diamond_type>
+										<!--<xsl:copy-of select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion"/>-->
+										<xsl:apply-templates select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*/gat:type/*" mode="text"/> 
+									</gat:top_of_diamond_type>
+
+
+									<gat:top_of_diamond_type_errors>							     
+										<!--<xsl:copy-of select="$topOfDiamondRuleTypeEnriched/tT-conclusion/term"/>-->
+										<xsl:apply-templates select="$topOfDiamond" mode="text_report_errors"/>
+									</gat:top_of_diamond_type_errors>
+
+									<gat:leftReductionNormalised>
+										<!--
 									<xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
 										<xsl:copy-of select="$leftReductionNormalised"/>
 									</xsl:if>
                                     -->
-								<gat:text>
-									<xsl:value-of select="$leftReductionNormalisedText"/>
-									<xsl:text>{</xsl:text>
-									<xsl:value-of select="$lhscost"/>
-									<xsl:text>}</xsl:text>
-								</gat:text>
-							</gat:leftReductionNormalised>
-							<gat:rightReductionNormalised>
-								<!--
+										<gat:text>
+											<xsl:value-of select="$leftReductionNormalisedText"/>
+											<xsl:text>{</xsl:text>
+											<xsl:value-of select="$lhscost"/>
+											<xsl:text>}</xsl:text>
+										</gat:text>
+									</gat:leftReductionNormalised>
+									<gat:rightReductionNormalised>
+										<!--
 									<xsl:if test="not($leftReductionNormalisedText = $rightReductionNormalisedText)">
 										<xsl:copy-of select="$rightReductionNormalised"/>
 									</xsl:if>
                                     -->                  
-								<gat:text>
-									<xsl:value-of select="$rightReductionNormalisedText"/>
-									<xsl:text>{</xsl:text>
-									<xsl:value-of select="$rhscost"/>
-									<xsl:text>}</xsl:text>
-								</gat:text>
-							</gat:rightReductionNormalised>
-							<xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
-								<gat:NON-CONFLUENT>
-									<xsl:if test="$lhscost=$rhscost">
-										<gat:STALEMATE/>
+										<gat:text>
+											<xsl:value-of select="$rightReductionNormalisedText"/>
+											<xsl:text>{</xsl:text>
+											<xsl:value-of select="$rhscost"/>
+											<xsl:text>}</xsl:text>
+										</gat:text>
+									</gat:rightReductionNormalised>
+									<xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
+										<gat:NON-CONFLUENT>
+											<xsl:if test="$lhscost=$rhscost">
+												<gat:STALEMATE/>
+											</xsl:if>
+											<xsl:if test="$lhscost &lt; $rhscost">
+												<gat:RIGHT-TO-LEFT/>
+											</xsl:if>
+											<xsl:if test="$rhscost &lt; $lhscost">
+												<gat:LEFT-TO-RIGHT/>
+											</xsl:if>
+										</gat:NON-CONFLUENT>
+										<xsl:message>*********** Diamond <xsl:value-of select="$diamondIdentity"/>  NON CONFLUENT ************</xsl:message>
 									</xsl:if>
-									<xsl:if test="$lhscost &lt; $rhscost">
-										<gat:RIGHT-TO-LEFT/>
-									</xsl:if>
-									<xsl:if test="$rhscost &lt; $lhscost">
-										<gat:LEFT-TO-RIGHT/>
-									</xsl:if>
-								</gat:NON-CONFLUENT>
-								<xsl:message>*********** Diamond <xsl:value-of select="$diamondIdentity"/>  NON CONFLUENT ************</xsl:message>
-							</xsl:if>
 
-						</gat:diamond>
+								</gat:diamond>
+							</xsl:when>
+							<xsl:otherwise>
+								<ABANDONED/>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each> <!-- end outer term -->
 				</xsl:for-each> <!-- end inner term -->
 			</xsl:for-each>
@@ -449,16 +482,16 @@
 
 	<xsl:template name="specialise_to_correct_typing">
 		<xsl:param name="tT-ruleTypeEnriched" as="element(tT-rule)"/>
-		<!--
-    <xsl:variable name="tT-rulePurified" as="element(tT-rule)">
-            <xsl:apply-templates select="$tT-rule" mode="remove_gat_annotations"/>
-    </xsl:variable>
-	-->
+
+		<xsl:message>Entering type correction </xsl:message>
 		<xsl:variable name="termInitial" as="element()" select="$tT-ruleTypeEnriched/tT-conclusion/term/*"/>
 
 		<xsl:variable name="first_type_error" select="$termInitial/descendant::type_error[1]" as="element(type_error)?"/>
 		<xsl:choose>
-			<xsl:when test="$first_type_error and not($termInitial/descendant::illformed)">
+			<xsl:when test="$termInitial/descendant::illformed">
+				<xsl:message>Bail out of type correction - cant be done</xsl:message>
+			</xsl:when>
+			<xsl:when test="$first_type_error">
 				<xsl:message>Found type errors in initial term: </xsl:message>
 				<xsl:message>          <xsl:value-of select="$termInitial/descendant::type_error"/> </xsl:message>
 				<xsl:message> Dealing with type error <xsl:value-of select="$first_type_error/description"/> </xsl:message>
@@ -470,60 +503,54 @@
 				</xsl:variable>
 				<xsl:for-each select="$lhs/*"> 
 					<xsl:variable name="specialisation_results" as="element()*">
-						<xsl:call-template name="specialiseTerm">
+						<xsl:call-template name="specialiseTermConsistentWithContext">
 							<xsl:with-param name="targetTerm" select="$rhs/*"/>
+							<xsl:with-param name="context" select="$tT-ruleTypeEnriched/context"/>
 						</xsl:call-template>
 					</xsl:variable>        
 					<xsl:choose>
 						<xsl:when test="not($specialisation_results) or $specialisation_results[self::INCOMPATIBLE]">
 							<xsl:message>Cannot specialise diamond to be well-typed</xsl:message>
-							<substitution>
-								<subject></subject>
-								<target></target>
-							</substitution>
 							<!--<xsl:copy-of select="$tT-ruleTypeEnriched"/> -->
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:message>Applying type correction substitution <xsl:apply-templates select="$specialisation_results[1]" mode="text"/></xsl:message>
+							<xsl:message>Applying type correction substitution <xsl:apply-templates select="$specialisation_results[1]" mode="text"/></xsl:message>						
 							<xsl:variable name="typeImprovedtT-rule" as="element(tT-rule)">   
 								<xsl:apply-templates select="$tT-ruleTypeEnriched" mode="substitution">
 									<xsl:with-param name="substitutions" select="$specialisation_results[1]"/> <!-- just do the first one -->
 								</xsl:apply-templates>  
 							</xsl:variable>
-							
-							<!--
-							
-							<xsl:variable name="termCleansed" as="element(term)">
-								<xsl:apply-templates select="$typeImprovedtT-rule/tT-conclusion/term" mode="remove_gat_annotations"/>
-							</xsl:variable>
-							<xsl:variable name="typeImprovedtT-rule_cleansed" as="element(tT-rule)">
-								<gat:tT-rule>
-									<xsl:copy-of select="$typeImprovedtT-rule/context"/>
-									<gat:tT-conclusion>
-										<xsl:copy-of select="$termCleansed"/>
-									</gat:tT-conclusion>
-								</gat:tT-rule>
-							</xsl:variable>
-							-->
+							<xsl:message>Now cleanse and type enrich</xsl:message>
 							<xsl:variable name="typeImprovedRuleTypeEnriched" as="element(tT-rule)">
 								<xsl:apply-templates 	select="$typeImprovedtT-rule" mode="cleanse_and_type_enrich"/>
 							</xsl:variable>
-							<xsl:message>Recursing into type checking/correction"</xsl:message>
-							<xsl:variable name="further_improvement_substitution" as="element()">
+							<xsl:if test="$typeImprovedRuleTypeEnriched/descendant::illformed">
+								<xsl:message>************illformed on return from type enrichment during type correction</xsl:message>
+							</xsl:if>
+							<xsl:message>Recursing into type correction"</xsl:message>
+							<xsl:variable name="further_improvement_substitution" as="element(substitution)?">
 								<xsl:call-template name="specialise_to_correct_typing">
 									<xsl:with-param name="tT-ruleTypeEnriched" select="$typeImprovedRuleTypeEnriched"/>
 								</xsl:call-template>  
-							</xsl:variable>							
+							</xsl:variable>			
+							<xsl:message>End of recurse into type correction</xsl:message>							
 							<!-- return composed substitutions -->
-							<xsl:apply-templates select="$further_improvement_substitution" mode="compose_substitutions">
-								<xsl:with-param name="head_substitution" select="$specialisation_results[1]"/>
-							</xsl:apply-templates>			<!-- IS THIS THE CORRECT ORDER TO COMPOSE IN?? -->						
+							<xsl:choose>
+								<xsl:when test="$further_improvement_substitution">
+									<xsl:apply-templates select="$further_improvement_substitution" mode="compose_substitutions">
+										<xsl:with-param name="head_substitution" select="$specialisation_results[1]"/>
+									</xsl:apply-templates>		
+								</xsl:when>	
+								<xsl:otherwise>
+									<xsl:message>Bailing out of type correction</xsl:message>							
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:message>End of type checking/correction</xsl:message>
+				<xsl:message>End of type correction with identity sub</xsl:message>
 				<!-- empty (identity) substitution -->
 				<substitution>
 					<subject></subject>
@@ -533,6 +560,47 @@
 			</xsl:otherwise>
 		</xsl:choose>  
 	</xsl:template>
+
+
+	<xsl:template name="specialiseTermConsistentWithContext">
+		<xsl:param name="targetTerm" as="element()"/>
+		<xsl:param name="context" as="element(context)"/>
+
+		<xsl:variable name="specialisations" as="element()*">
+			<xsl:call-template name="specialiseTerm">
+				<xsl:with-param name="targetTerm" select="$targetTerm"/>		
+			</xsl:call-template>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="not($specialisations) or $specialisations[self::INCOMPATIBLE]">
+				<INCOMPATIBLE/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:for-each select="$specialisations">
+					<xsl:if test="not(self::substitution)">
+						<xsl:message terminate="yes">Assertion failuure <xsl:value-of select="name()"/></xsl:message>
+					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="some $substitute in (subject|target)/substitute,
+							$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
+							$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
+							$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
+							$varlike_dependended_on_by_substituting_term_varlike 
+							in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
+							satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
+							<xsl:message>Avoiding dependency cycle </xsl:message>
+							<INCOMPATIBLE/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:copy-of select="."/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:otherwise>
+		</xsl:choose>
+
+	</xsl:template>
+
 
 	<xsl:template match="tT-rule" mode="cleanse_and_type_enrich">
 		<xsl:variable name="termCleansed" as="element(term)">
