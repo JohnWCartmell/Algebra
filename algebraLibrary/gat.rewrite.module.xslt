@@ -267,8 +267,8 @@
 								</xsl:variable>
 								
 								<!-- 31 March 2018 cleanse right reduction -->
-								<xsl:variable name="right_reduction_cleansed">
-								xxxxxxxxxxxxxxxxxxxxxx
+								<xsl:variable name="right_reduction_cleansed" as="element()">
+								   <xsl:apply-templates select="$right_reduction" mode="remove_gat_annotations"/>
 								</xsl:variable>
 
 								<xsl:message>right_reduction text is <xsl:apply-templates select="$right_reduction" mode="text"/></xsl:message>
@@ -383,7 +383,7 @@
 									<xsl:message> right reduction  type enriched is <xsl:copy-of copy-namespaces="no" select="$rightReductionTypeEnriched"/> </xsl:message>
 									<xsl:variable name="rightReductionNormalised" as="element(term)">
 										<xsl:call-template name="recursive_rewrite">
-											<xsl:with-param name="document" select="$rightReductionTypeEnriched"/>
+											<xsl:with-param name="document" select="$right_reduction_cleansed"/>
 										</xsl:call-template>
 									</xsl:variable>
 									<xsl:variable name="rightReductionNormalisedText">
