@@ -136,5 +136,13 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_recursive"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	
+	<xsl:template match="gat:type_error"
+			mode="initial_enrichment_recursive"> 
+		<xsl:message>Passing through gat:type_error in initial enrichment recursive</xsl:message>
+		<xsl:copy-of select="."/>
+	</xsl:template>
+	
 
 </xsl:transform>

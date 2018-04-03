@@ -491,6 +491,9 @@
 			<xsl:when test="$termInitial/descendant::illformed">
 				<xsl:message>Bail out of type correction - cant be done</xsl:message>
 			</xsl:when>
+						<xsl:when test="$termInitial/descendant::lacking_type_information">
+				<xsl:message>Bail out of type correction - lacking type information </xsl:message>
+			</xsl:when>
 			<xsl:when test="$first_type_error">
 				<xsl:message>Found type errors in initial term: </xsl:message>
 				<xsl:message>          <xsl:value-of select="$termInitial/descendant::type_error"/> </xsl:message>
@@ -744,6 +747,11 @@
 			<xsl:apply-templates mode="rewrite"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<xsl:template match="gat:type_error" mode="rewrite">
+	<xsl:message>Stepping over type_error in rewrite </xsl:message>
+	</xsl:template>
+	
 
 	<xsl:template name="recursive_rewrite">
 		<xsl:param name="document" as="element()"/>
