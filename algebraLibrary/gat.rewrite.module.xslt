@@ -142,14 +142,27 @@
 						</xsl:variable>
 						<xsl:variable name="firstCutDiamondContextInitial" as="element(context)">
 							<context>
+							    <!-- before 3rd April 2018 was 
 								<xsl:call-template name="merge_declarations">
 									<xsl:with-param name="result_declarations_so_far" select="()"/>
-									<xsl:with-param name="lhs_declarations" select="$outerContextSubstituted/*[(some $var_or_seq 
-										in $outerTermSpecialised/descendant::*[self::*:var|self::*:seq]
-										satisfies $var_or_seq/name = ./name)]"/>
-									<xsl:with-param name="rhs_declarations" select="$innerContextSubstituted/*[(some $var_or_seq 
-										in $outerTermSpecialised/descendant::*[self::*:var|self::*:seq] 
-										satisfies $var_or_seq/name = ./name)]"/>
+									<xsl:with-param name="lhs_declarations" 
+									                select="$outerContextSubstituted/*
+													 [(some $var_or_seq 
+										               in $outerTermSpecialised/descendant::*[self::*:var|self::*:seq]
+										               satisfies $var_or_seq/name = ./name)]"/>
+									<xsl:with-param name="rhs_declarations" 
+									                select="$innerContextSubstituted/*
+													        [(some $var_or_seq 
+										                      in $outerTermSpecialised/descendant::*[self::*:var|self::*:seq] 
+										                      satisfies $var_or_seq/name = ./name)]"/>
+								</xsl:call-template>
+								but now is -->
+								<xsl:call-template name="merge_declarations">
+									<xsl:with-param name="result_declarations_so_far" select="()"/>
+									<xsl:with-param name="lhs_declarations" 
+									                select="$outerContextSubstituted/*"/>
+									<xsl:with-param name="rhs_declarations" 
+									                select="$innerContextSubstituted/*"/>
 								</xsl:call-template>
 							</context>
 						</xsl:variable>
