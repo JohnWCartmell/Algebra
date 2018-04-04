@@ -1004,6 +1004,14 @@
 						</Ob>
 					</gat:type>
 				</gat:decl>
+				<gat:decl>
+					<gat:name>yy</gat:name>
+					<gat:type>
+						<Ob>
+							<var>x</var>
+						</Ob>
+					</gat:type>
+				</gat:decl>
 				<gat:sequence>
 					<gat:name>h_1</gat:name>
 					<gat:type>
@@ -1041,6 +1049,11 @@
 							<var>x</var>
 							<var>f</var>
 						</s>
+						<p>
+						   <var>yy</var>
+						   <var>x</var>
+						</p>
+						<!-- experiment
 						<p> 
 							<star>
 								<var>x</var>
@@ -1055,7 +1068,7 @@
 								<var>y</var>
 							</star> 
 							<var>x</var>
-						</p>
+						</p-->
 						<seq>h_2</seq>
 					</o>
 				</gat:lhs>
@@ -1073,6 +1086,7 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
+	<!--
 	<gat:rewriteRule>
 		<gat:id>10ps.id</gat:id>
 		<gat:tt-rule>
@@ -1228,6 +1242,8 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
+	
+	-->
 
 
 	<gat:rewriteRule>
@@ -2815,6 +2831,5 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
-
 
 </gat:algebra>
