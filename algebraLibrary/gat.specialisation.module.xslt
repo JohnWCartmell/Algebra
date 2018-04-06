@@ -214,11 +214,13 @@
 						<xsl:when test="(1 + $numberOfTargetChildrenConsumed + 1 &gt; count($targetTerm/* ) )
 								and ($targetTerm/*[1 + $numberOfTargetChildrenConsumed][self::*:seq])
 								">
-							<xsl:message>   sSTF finished consumption branch two - insert targetSubstitution</xsl:message>
+							<xsl:variable name="seq" as="element()" select="$targetTerm/*[1 + $numberOfTargetChildrenConsumed]"/>
+							<xsl:message>   sSTF finished consumption of subject  branch two - insert targetSubstitution</xsl:message>
+
 							<xsl:message>   sSTF About to insert empty seq </xsl:message>
 							<xsl:variable name="substitute" as="element(substitute)">
 								<substitute>
-									<xsl:copy-of select="$targetTerm/*[1 + $numberOfTargetChildrenConsumed]"/>
+									<xsl:copy-of select="$seq"/>
 									<!-- empty set of terms -->
 								</substitute>
 							</xsl:variable>
@@ -345,7 +347,7 @@
 						<xsl:variable name="targetseq" as="element()" select="$targetTerm/*[1]"/>
 
 						<xsl:message>       19 March 2018 - case (1)</xsl:message> 
-						<!-- case (3)  subject seq maps to every  to empty
+						<!-- case (3)  subject seq maps to empty
 						               target seq  maps to empty
 					    -->
 						<head_substitution>
@@ -528,29 +530,32 @@
 						</xsl:for-each>
 						<!--case (6) t1 maps to singleton s1 -->
 						<xsl:if test="./*">  <!-- test not reqd as at 20 March 2018 because calling template has code that completes when one target seq left and no subject subterms -->
-						                     <!-- but calling code should be changed to call this template instead - code would be more uniform -->
+							<!-- but calling code should be changed to call this template instead - code would be more uniform -->
 							<xsl:message>       19 March 2018 - case (6)</xsl:message> 
 							<xsl:message>       In case (6) number of subject subterms is <xsl:value-of select="count(./*)"/></xsl:message>
-							<head_substitution>
-								<substitution>
-									<subject>
-									</subject>
-									<target>
-										<substitute>
-											<xsl:copy-of select="$targetseq"/>
-											<term>
-												<xsl:copy-of select="./*[1]"/>
-											</term>
-										</substitute>
-									</target>
-								</substitution>
-								<tail>
-									<xsl:copy-of  select="./*[position() &gt; 1]"/> 
-								</tail>
-								<numberOfTargetChildrenConsumed>
-									<xsl:value-of select="1"/>
-								</numberOfTargetChildrenConsumed>
-							</head_substitution>  
+							<xsl:if test="not(./*[1][self::*:seq] and ($targetseq/name = ./*[1]/name) )">
+							    <xsl:message> case (6) triggers</xsl:message>
+								<head_substitution>
+									<substitution>
+										<subject>
+										</subject>
+										<target>
+											<substitute>
+												<xsl:copy-of select="$targetseq"/>
+												<term>
+													<xsl:copy-of select="./*[1]"/>
+												</term>
+											</substitute>
+										</target>
+									</substitution>
+									<tail>
+										<xsl:copy-of  select="./*[position() &gt; 1]"/> 
+									</tail>
+									<numberOfTargetChildrenConsumed>
+										<xsl:value-of select="1"/>
+									</numberOfTargetChildrenConsumed>
+								</head_substitution> 
+							</xsl:if>							
 						</xsl:if>						
 					</xsl:if> 
 					<xsl:if test="./*[1][self::*:seq] and not($targetTerm/*[1][self::*:seq])">
