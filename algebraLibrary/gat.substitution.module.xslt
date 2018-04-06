@@ -168,11 +168,7 @@
   </xsl:template>
 
   <xsl:template match="*" mode="insert_target_substitute">
-    <xsl:param name="substitute" as="element(substitute)"/> 
-  
-		<xsl:message>Inserting target substitute of var/seq named <xsl:value-of select="$substitute/*/*:name"/></xsl:message>
-		<xsl:message>Explanation substitute is <xsl:copy-of select="$substitute"/> </xsl:message>
-
+    <xsl:param name="substitute" as="element(substitute)"/>
     <xsl:copy>
       <xsl:apply-templates mode="insert_target_substitute">
         <xsl:with-param name="substitute" select="$substitute"/>
