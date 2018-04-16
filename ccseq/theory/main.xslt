@@ -18,6 +18,8 @@
 	<xsl:include href="../../algebraLibrary/gat.type_enrichment.module.xslt"/>
   
   <xsl:include href="../../algebraLibrary/gat.rewrite.module.xslt"/>
+  <xsl:include href="../../algebraLibrary/gat.roughcut_diamond.module.xslt"/>
+  <xsl:include href="../../algebraLibrary/gat.filter_roughcut_diamond.module.xslt"/>
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
