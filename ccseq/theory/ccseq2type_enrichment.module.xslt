@@ -15,25 +15,11 @@
   -->
 
 
-	<xsl:template match="id[not(gat:type)][child::ccseq:*/gat:type]" 
-			mode="initial_enrichment_recursive">
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>  
-			<xsl:apply-templates mode="copy_tidily"/>
-			<gat:type>
-				<!-- add typecheck here that childtype is an instance of "Ob" -->
-				<Hom>
-					<xsl:copy-of select="ccseq:*"/>
-					<xsl:copy-of select="ccseq:*"/>
-				</Hom>
-			</gat:type>
-		</xsl:copy>
-	</xsl:template>	
 
 	<!-- type of o(x) is Hom(x,x) -->
 	<xsl:template match="o[not(gat:type)]
-			[count(child::ccseq:*)=1]
-			" 
+		[count(child::ccseq:*)=1]
+		" 
 			mode="initial_enrichment_recursive" priority="11">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
@@ -47,23 +33,36 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="o
+		[count(*[not(self::ccseq:*)]) &gt; 1]" 
+			mode="initial_enrichment_recursive" priority="1000">
+
+		<xsl:message>Found in o term : <xsl:copy-of select="*[not(self::ccseq:*)]"/></xsl:message>
+		<xsl:message terminate="yes">so hold everything - more than one non ccseq child in o term
+			<xsl:apply-templates select="." mode="text"/>
+		</xsl:message>
+	</xsl:template>
+
 
 	<xsl:template match="o[not(gat:type)]
-			[count(child::ccseq:*) &gt; 1]
-			[every $subterm in child::ccseq:*[position() &gt; 1] satisfies $subterm/gat:type]" 
+		[count(child::ccseq:*) &gt; 1]
+		[every $subterm in child::ccseq:*[position() &gt; 1] satisfies $subterm/gat:type]" 
 			mode="initial_enrichment_recursive" priority="10">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>  
 			<xsl:apply-templates mode="copy_tidily"/>
 			<gat:type>
-
-				<!-- typechecking -->
 				<xsl:variable name="arg1">
 					<xsl:copy-of select="ccseq:*[1]"/>
 				</xsl:variable>
 				<xsl:variable name="arg2dom">
 					<xsl:copy-of select="ccseq:*[2]/gat:type/(Hom|HomSeq)/ccseq:*[1]"/>
 				</xsl:variable>
+				<Hom>
+					<xsl:copy-of select="$arg2dom"/>
+					<xsl:copy-of select="ccseq:*[last()]/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[2]"/>
+				</Hom>
+				<!-- typechecking -->
 				<xsl:variable name="arg1_text">
 					<xsl:apply-templates mode="text" select="$arg1"/>
 				</xsl:variable>
@@ -111,7 +110,6 @@
 					</xsl:if>
 					<xsl:if test="not($cod_text=$dom_text)">
 						<xsl:message> Type error in subterms of o in rule <xsl:value-of select="ancestor::gat:rewriteRule/gat:id"/></xsl:message>
-
 						<gat:type_error>
 							<gat:need-equal>
 								<gat:lhs>
@@ -134,29 +132,22 @@
 						</gat:type_error>    
 					</xsl:if>
 				</xsl:for-each>
-				<Hom>
-					<xsl:copy-of select="$arg2dom"/>
-					<xsl:copy-of select="ccseq:*[last()]/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[2]"/>
-				</Hom>
 			</gat:type>
 		</xsl:copy>
 	</xsl:template>
 
 
 	<xsl:template match="p[not(gat:type)]
-			[ccseq:*[1][gat:type]]
-			" 
+		[ccseq:*[1][gat:type]]
+		" 
 			mode="initial_enrichment_recursive">
 		<xsl:variable name="domainTerm" as="element()" select="ccseq:*[1]"/>
 		<xsl:variable name="codomainTerm" as="element()" select="ccseq:*[2]"/>
 		<xsl:variable name="domainTermBase" as="element()" select="$domainTerm/gat:type/ccseq:Ob/ccseq:*[1]"/>
 		<xsl:variable name="domainTerm_normalised" as="element()">
-			<xsl:message>normalise p domain</xsl:message>
 			<xsl:apply-templates mode="normalise" select="$domainTerm"/>
 		</xsl:variable>
-		<xsl:message>domain of p term normalised is <xsl:apply-templates select="$domainTerm_normalised" mode="text"/> </xsl:message>
 		<xsl:variable name="codomainTerm_normalised" as="element()">
-			<xsl:message>normalise p codomain term</xsl:message>
 			<xsl:apply-templates mode="normalise" select="$codomainTerm"/>
 		</xsl:variable>
 
@@ -215,9 +206,9 @@
 
 
 	<xsl:template match="star[not(gat:type)]
-			[child::ccseq:*[2][gat:type]]
-			[child::ccseq:*[3][gat:type]]
-			" 
+		[child::ccseq:*[2][gat:type]]
+		[child::ccseq:*[3][gat:type]]
+		" 
 			mode="initial_enrichment_recursive">
 		<!-- star(x,f,z) -->
 		<xsl:variable name="xTerm" as="element()" select="*[1]"/>
@@ -321,9 +312,9 @@
 	</xsl:template>
 
 	<xsl:template match="q[not(gat:type)]
-			[ccseq:*[2]/gat:type]
-			[ccseq:*[3]/gat:type]
-			" 
+		[ccseq:*[2]/gat:type]
+		[ccseq:*[3]/gat:type]
+		" 
 			mode="initial_enrichment_recursive">
 
 		<xsl:variable name="xTerm" as="element()" select="child::ccseq:*[1]"/>
@@ -420,13 +411,15 @@
 
 
 	<xsl:template match="s[not(gat:type)]
-			[child::ccseq:*[2]/gat:type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]/gat:type]" 
+		[child::ccseq:*[2]/gat:type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]/gat:type]" 
 			mode="initial_enrichment_recursive">
-
+		<!-- 
+           suppose s(f) where  f: x -> y 
+		-->
 		<xsl:variable name="xTerm" as="element()" select="child::ccseq:*[1]"/>
 		<xsl:variable name="fTerm" as="element()" select="child::ccseq:*[2]"/>
-		<xsl:variable name="yTerm" as="element()" select="$fTerm/gat:type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]"/>
-		<xsl:variable name="fTermDomain" as="element()" select="$fTerm/gat:type/(Hom|HomSeq)/ccseq:*[1]"/>
+		<xsl:variable name="yTerm" as="element()"       select="$fTerm/gat:type/(ccseq:Hom|ccseq:Homseq)/ccseq:*[2]"/>
+		<xsl:variable name="fTermDomain" as="element()" select="$fTerm/gat:type/(ccseq:Hom|ccseq:HomSeq)/ccseq:*[1]"/>
 
 		<xsl:variable name="xTerm_text">
 			<xsl:apply-templates mode="text" select="$xTerm"/>
@@ -434,8 +427,6 @@
 		<xsl:variable name="fTermDomain_text">
 			<xsl:apply-templates mode="text" select="$fTermDomain"/>
 		</xsl:variable>
-
-		<xsl:message>in type of s term yTerm is <xsl:copy-of select="$yTerm"/></xsl:message>
 		<xsl:variable name="y_pTerm" as="element()" select="$yTerm/gat:type/Ob/ccseq:*[1]"/>
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>

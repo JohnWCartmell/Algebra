@@ -214,11 +214,13 @@
 
   <xsl:template match="substitution" mode="compose_substitutions">
     <xsl:param name="head_substitution" as="element(substitution)"/> <!-- changed param name to head_substitution because not symetric -->
-    <xsl:message>              Composing substitutions </xsl:message>	
+	<!--
+    <xsl:message>              Composing substitutions </xsl:message>
     <xsl:message>              dot substitution subject  <xsl:apply-templates select="./subject" mode="text"/></xsl:message>
     <xsl:message>              dot substitution target  <xsl:apply-templates select="./target" mode="text"/></xsl:message>
     <xsl:message>              head substitution subject <xsl:apply-templates select="$head_substitution/subject" mode="text"/></xsl:message>
     <xsl:message>              head substitution target <xsl:apply-templates select="$head_substitution/target" mode="text"/></xsl:message>
+	-->
     <xsl:variable name="result_substitution" as="element(substitution)">
       <xsl:copy>
         <xsl:apply-templates select="$head_substitution" mode="compose_substitutionsxxxx">

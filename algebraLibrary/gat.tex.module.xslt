@@ -290,12 +290,23 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<xsl:template match="decl" mode="tex">
+	<xsl:template match="decl[not(gat:term)]" mode="tex">
 		<xsl:text>\ofT{</xsl:text>
 		<xsl:value-of select="name"/>
 		<xsl:text>}{</xsl:text>
 		<xsl:apply-templates select="type" mode="tex"/>
 		<xsl:text>}</xsl:text>
+		<xsl:if test="gat:term">
+			<xsl:text>=_{def}</xsl:text>
+			<xsl:apply-templates select="gat:term" mode="tex"/>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="decl[gat:term]" mode="tex">
+		<xsl:value-of select="name"/>
+		<xsl:text> \buildrel \text{d{}ef}\over = </xsl:text>
+		<xsl:apply-templates select="gat:term" mode="tex"/>
+		<xsl:apply-templates select="type" mode="tex"/>
 	</xsl:template>
 
 	<xsl:template match="sequence" mode="tex">
@@ -352,20 +363,20 @@
 		</xsl:text>
 		<xsl:apply-templates select="*" mode="tex_report_errors"/>
 	</xsl:template>
-  
+
 
 	<xsl:template match="gat:type_error" mode="tex_report_errors">
 		<xsl:apply-templates select="*" mode="tex_report_errors"/>
 		<xsl:text>\\
 		</xsl:text>
 	</xsl:template>
-	
+
 	<xsl:template match="gat:description/gat:text" mode="tex_report_errors">
 		<xsl:value-of select="."/>
 	</xsl:template>
-	
+
 	<xsl:template match="gat:description/gat:term" mode="tex_report_errors">
-	    <xsl:text>$</xsl:text>
+		<xsl:text>$</xsl:text>
 		<xsl:apply-templates select="*" mode="tex"/>
 		<xsl:text>$</xsl:text>
 	</xsl:template>

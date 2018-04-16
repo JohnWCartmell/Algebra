@@ -194,7 +194,7 @@
 			<xsl:message>                                targetTerm <xsl:apply-templates select="$targetTerm" mode="text"/> </xsl:message>
 			<xsl:message>                                substitution subject <xsl:apply-templates select="$head_substitution/substitution/subject" mode="text"/> </xsl:message>
 			<xsl:message>                                substitution target <xsl:apply-templates select="$head_substitution/substitution/target" mode="text"/> </xsl:message>
-			<xsl:message><xsl:copy-of select="substitution/traceback"/></xsl:message>
+			<!--<xsl:message><xsl:copy-of select="substitution/traceback"/></xsl:message>-->
 			<xsl:if test="not($head_substitution/tail)">
 				<xsl:message terminate="yes">   sSTF **** type error - tail assertion fails </xsl:message>
 			</xsl:if>
