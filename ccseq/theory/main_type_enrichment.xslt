@@ -14,7 +14,7 @@
   <xsl:include href="../../algebraLibrary/gat.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.rewrite.module.xslt"/>
   <xsl:include href="../../algebraLibrary/gat.text.module.xslt"/>
-  <xsl:include href="../../algebraLibrary/gat.specialisation.module.xslt"/>
+  <xsl:include href="../../algebraLibrary/gat.unification.module.xslt"/>
 	<xsl:include href="../../algebraLibrary/gat.tex.module.xslt"/>
 	<xsl:include href="../../algebraLibrary/gat.substitution.module.xslt"/>
 	<xsl:include href="../../algebraLibrary/gat.type_enrichment.module.xslt"/>

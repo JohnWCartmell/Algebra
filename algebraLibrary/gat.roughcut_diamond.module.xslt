@@ -100,7 +100,7 @@
 							<xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
 						</xsl:variable>
 						<xsl:variable name="firstCutDiamondContextInitial" as="element(context)">
-							<context>
+							<gat:context>
 								<!-- before 3rd April 2018 was 
 								<xsl:call-template name="merge_declarations">
 									<xsl:with-param name="result_declarations_so_far" select="()"/>
@@ -123,7 +123,7 @@
 									<xsl:with-param name="rhs_declarations" 
 											select="$innerContextSubstituted/*"/>
 								</xsl:call-template>
-							</context>
+							</gat:context>
 						</xsl:variable>
 						<!--
 						<xsl:variable name="firstCutDiamondContext" as="element(context)">    
@@ -155,9 +155,15 @@
 										<!-- <xsl:copy-of select="$outerContext"/> -->
 										<xsl:apply-templates select="$outerContext" mode="text"/>
 									</gat:context>
-									<gat:substitution> 
+									<gat:substitution_text> 
 										<xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
+									</gat:substitution_text>
+									<!--
+									<gat:substitution> 
+										<xsl:copy-of  select="substitution/subject/substitute"/>
 									</gat:substitution>
+									-->
+									
 									<gat:contextsubstituted>
 										<!--<xsl:copy-of select="$outerContextSubstituted"/>-->  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex -->
 										<xsl:apply-templates select="$outerContextSubstituted" mode="text"/>  

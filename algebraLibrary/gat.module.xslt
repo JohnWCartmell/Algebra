@@ -46,11 +46,12 @@
           <xsl:apply-templates select= "target/*" mode="text"/>
         </target>
         <xsl:variable name="specialisations">
-          <xsl:for-each select="subject/*">
-            <xsl:call-template name="specialiseTerm">
+          <!--<xsl:for-each select="subject/*">-->
+            <xsl:call-template name="unifyTerms">
+			<xsl:with-param name="subjectTerm" select="subject/*"/>
               <xsl:with-param name="targetTerm" select="../../target/*"/>
             </xsl:call-template>
-          </xsl:for-each>
+          <!--</xsl:for-each>-->
         </xsl:variable>
         <results>
           <xsl:variable name="subject" as="element()" select="subject"/>
@@ -130,11 +131,12 @@
           <xsl:apply-templates select="lowerTerm" mode="text"/>
         </lowerTerm>
         <by>
-          <xsl:for-each select="upperTerm/*">
-            <xsl:call-template name="specialiseTerm">
+          <!--<xsl:for-each select="upperTerm/*">-->
+            <xsl:call-template name="unifyTerms">
+			  <xsl:with-param name="subjectTerm" select="upperTerm/*"/>
               <xsl:with-param name="targetTerm" select="../../lowerTerm/*"/>
             </xsl:call-template>
-          </xsl:for-each>
+          <!-- </xsl:for-each> -->
         </by>
       </specialise>
       <xsl:message/>

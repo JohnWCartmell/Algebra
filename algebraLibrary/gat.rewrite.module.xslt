@@ -72,7 +72,7 @@
 				</xsl:variable>
 				<xsl:for-each select="$lhs/*"> 
 					<xsl:variable name="specialisation_results" as="element()*">
-						<xsl:call-template name="specialiseTermConsistentWithContext">
+						<xsl:call-template name="unifyTermsConsistentWithContext">
 							<xsl:with-param name="targetTerm" select="$rhs/*"/>
 							<xsl:with-param name="context" select="$tT-ruleTypeEnriched/context"/>
 						</xsl:call-template>
@@ -134,12 +134,13 @@
 	</xsl:template>
 
 
-	<xsl:template name="specialiseTermConsistentWithContext">
+	<xsl:template name="unifyTermsConsistentWithContext">
 		<xsl:param name="targetTerm" as="element()"/>
 		<xsl:param name="context" as="element(context)"/>
 
 		<xsl:variable name="specialisations" as="element()*">
-			<xsl:call-template name="specialiseTerm">
+			<xsl:call-template name="unifyTerms">
+			    <xsl:with-param name="subjectTerm" select="."/>
 				<xsl:with-param name="targetTerm" select="$targetTerm"/>		
 			</xsl:call-template>
 		</xsl:variable>
@@ -373,7 +374,8 @@
 
 		<!-- First look for specialisations (i.e. substuituitional instances) of the current term -->
 		<xsl:variable name="substitutions" as="element()*">
-			<xsl:call-template name="specialiseTerm">
+			<xsl:call-template name="unifyTerms">
+			    <xsl:with-param name="subjectTerm" select="."/>
 				<xsl:with-param name="targetTerm" select="$targetTerm"/>
 			</xsl:call-template>
 		</xsl:variable> 

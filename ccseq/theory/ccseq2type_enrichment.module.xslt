@@ -4,17 +4,10 @@
 		xmlns:ccseq               ="http://www.entitymodelling.org/theory/contextualcategory/sequence"
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" 	   
-		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
+		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" 
+		exclude-result-prefixes="xs">
 
 	<xsl:strip-space elements="*"/>
-
-	<!--
-
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
-  
-  -->
-
-
 
 	<!-- type of o(x) is Hom(x,x) -->
 	<xsl:template match="o[not(gat:type)]

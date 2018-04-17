@@ -169,6 +169,9 @@
 
   <xsl:template match="*" mode="insert_target_substitute">
     <xsl:param name="substitute" as="element(substitute)"/>
+	<xsl:if test="$substitute/substitution">
+	    <xsl:message terminate="yes">Out OF SPEC - Nested substitution!</xsl:message>
+	</xsl:if>
     <xsl:copy>
       <xsl:apply-templates mode="insert_target_substitute">
         <xsl:with-param name="substitute" select="$substitute"/>
@@ -221,6 +224,12 @@
     <xsl:message>              head substitution subject <xsl:apply-templates select="$head_substitution/subject" mode="text"/></xsl:message>
     <xsl:message>              head substitution target <xsl:apply-templates select="$head_substitution/target" mode="text"/></xsl:message>
 	-->
+	<xsl:if test="$head_substitution/*/substitute/substitution">
+	    <xsl:message terminate="yes">Out OF SPEC - Nested substitution!</xsl:message>
+	</xsl:if>
+	<xsl:if test="./*/substitute/substitution">
+	    <xsl:message terminate="yes">Out OF SPEC - Nested substitution!</xsl:message>
+	</xsl:if>
     <xsl:variable name="result_substitution" as="element(substitution)">
       <xsl:copy>
         <xsl:apply-templates select="$head_substitution" mode="compose_substitutionsxxxx">
