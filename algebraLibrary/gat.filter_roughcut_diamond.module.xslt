@@ -14,24 +14,26 @@
 
 	<xsl:template match="diamond" mode="filter_roughcut_diamonds">
 		<xsl:copy>
+		<xsl:message>Considering roughcut diamond: <xsl:value-of select="identity"/></xsl:message>
 			<xsl:copy-of select="namespace::*"/>			
-			<xsl:copy-of select="*"/>
+			<xsl:copy-of select="*[not(self::top_of_diamond)][not(self::diamond_context)]"/>   <!-- TEMPORARY FILTER -->
 			<xsl:variable name="top_of_diamond" as="element()" select="top_of_diamond"/>
 			<xsl:variable name="more_general_tops" as="element(more_general_top)*">	
 				<xsl:for-each select="(preceding-sibling::*|following-sibling::*)
-				                         [self::gat:diamond]
-				                         [from/outer/id = current()/from/outer/id]
-										 [from/inner/id = current()/from/inner/id]
-									 ">
+						[self::gat:diamond]
+						[from/outer/id = current()/from/outer/id]
+						[from/inner/id = current()/from/inner/id]
+						">
 					<xsl:variable name="candidate_identity" select="identity"/>
-					<xsl:variable name="how_specialises">
+					<xsl:message>... is <xsl:value-of select="$candidate_identity"/> more general? </xsl:message>
+					<xsl:variable name="how_specialises" as="element(substitution)*">
 						<xsl:for-each select="top_of_diamond/*">
 							<xsl:call-template name="changeTargetVariablesAndSpecialiseTerm">
 								<xsl:with-param name="targetTerm" select="$top_of_diamond/*"/>
 							</xsl:call-template>
 						</xsl:for-each>
 					</xsl:variable>
-					<xsl:for-each select="$how_specialises/substitution">
+					<xsl:for-each select="$how_specialises">
 						<xsl:if test="count(target/substitute)=0">
 							<gat:more_general_top>
 								<gat:diamond-id><xsl:value-of select="$candidate_identity"/></gat:diamond-id>
@@ -63,7 +65,8 @@
 		<xsl:variable name="targetTermWithVblsChanged" as="element()">
 			<xsl:apply-templates select="$targetTerm" mode="prefix_variable_names"/>
 		</xsl:variable>
-		<xsl:call-template name="specialiseTerm">
+		<xsl:call-template name="unifyTerms">
+			<xsl:with-param name="subjectTerm" select="."/>
 			<xsl:with-param name="targetTerm" select="$targetTermWithVblsChanged"/>
 		</xsl:call-template>
 	</xsl:template>
