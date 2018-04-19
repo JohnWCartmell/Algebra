@@ -8,6 +8,70 @@
 
 	<xsl:strip-space elements="*"/> 
 
+	<xsl:template match="*" mode="type_correction">
+		<xsl:copy>
+			<xsl:apply-templates mode="type_correction"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="gat:diamond" mode="type_correction">
+		<xsl:copy>
+			<xsl:copy-of select="*"/>
+			<gat:typed>
+				<xsl:variable name="firstCutDiamondContext" as="element(context)">    
+					<xsl:call-template name="recursive_rewrite">
+						<xsl:with-param name="document" select="gat:roughcut/gat:context"/>
+					</xsl:call-template>
+				</xsl:variable>
+
+				<xsl:variable name="firstCutTopOfDiamondRule" as="element(tT-rule)">
+					<gat:tT-rule>
+						<xsl:copy-of select="$firstCutDiamondContext"/>
+						<gat:tT-conclusion>
+							<gat:term>
+								<xsl:copy-of select="gat:roughcut/gat:top_of_diamond/*"/>
+							</gat:term>
+						</gat:tT-conclusion>							
+					</gat:tT-rule>
+				</xsl:variable>
+
+				<xsl:message>Type enriching first cut diamond rule</xsl:message>
+				<xsl:variable name="firstCutTopOfDiamondRuleTypeEnriched" as="element(tT-rule)">
+					<xsl:apply-templates select="$firstCutTopOfDiamondRule" mode="type_enrich"/>
+				</xsl:variable>
+				<xsl:message>End of type enriching first cut diamond rule</xsl:message>
+
+				<xsl:message>firstCutTopOfDiamondRuleTypeEnriched <xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="text"/></xsl:message>
+
+				<xsl:variable name="typeCorrectionSubstitution" as="element(substitution)?">
+					<xsl:call-template name="specialise_to_correct_typing">
+						<xsl:with-param name="tT-ruleTypeEnriched" select="$firstCutTopOfDiamondRuleTypeEnriched"/>
+					</xsl:call-template>
+				</xsl:variable> 
+
+				<xsl:choose>						
+					<xsl:when test="$typeCorrectionSubstitution">	
+						<!--
+						<xsl:variable name="typeCorrectedDiamondRuleTypeEnriched" as="element(tT-rule)">   
+							<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
+								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/> --><!-- just do the first one -->
+						<!--
+							</xsl:apply-templates>  
+						</xsl:variable>
+						<xsl:variable name="topOfDiamond" as="element()" 
+								select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*"/>
+-->
+						<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
+							<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+						</xsl:apply-templates>  
+					</xsl:when>
+					<xsl:otherwise>
+						<gat:ABANDONED/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</gat:typed>
+		</xsl:copy>
+	</xsl:template>
 
 
 	<xsl:template match="*[self::gat:*][not(self::gat:term)][not(self::gat:type)]" mode="normalise">
@@ -48,6 +112,10 @@
 		<xsl:param name="tT-ruleTypeEnriched" as="element(tT-rule)"/>
 
 		<xsl:message>Entering type correction </xsl:message>
+		<xsl:if test="not($tT-ruleTypeEnriched/tT-conclusion/term/*)">
+			<xsl:message><xsl:copy-of select="$tT-ruleTypeEnriched/tT-conclusion"/></xsl:message>
+			<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
+		</xsl:if>
 		<xsl:variable name="termInitial" as="element()" select="$tT-ruleTypeEnriched/tT-conclusion/term/*"/>
 
 		<xsl:variable name="first_type_error" select="$termInitial/descendant::type_error[1]" as="element(type_error)?"/>
@@ -92,12 +160,20 @@
 									<xsl:with-param name="substitutions" select="$specialisation_results[1]"/> <!-- just do the first one -->
 								</xsl:apply-templates>  
 							</xsl:variable>
-							<xsl:message>Now cleanse and type enrich</xsl:message>
+							<xsl:if test="not($typeImprovedtT-rule/tT-conclusion/term/*)">
+								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
+								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
+							</xsl:if>
+							<xsl:message>Now cleanse and type enrich  <xsl:copy-of select="$typeImprovedtT-rule"/></xsl:message>
 							<xsl:variable name="typeImprovedRuleTypeEnriched" as="element(tT-rule)">
 								<xsl:apply-templates 	select="$typeImprovedtT-rule" mode="cleanse_and_type_enrich"/>
 							</xsl:variable>
 							<xsl:if test="$typeImprovedRuleTypeEnriched/descendant::illformed">
 								<xsl:message>************illformed on return from type enrichment during type correction</xsl:message>
+							</xsl:if>
+								<xsl:if test="not($typeImprovedRuleTypeEnriched/tT-conclusion/term/*)">
+								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
+								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 							</xsl:if>
 							<xsl:message>Recursing into type correction"</xsl:message>
 							<xsl:variable name="further_improvement_substitution" as="element(substitution)?">
@@ -140,7 +216,7 @@
 
 		<xsl:variable name="specialisations" as="element()*">
 			<xsl:call-template name="unifyTerms">
-			    <xsl:with-param name="subjectTerm" select="."/>
+				<xsl:with-param name="subjectTerm" select="."/>
 				<xsl:with-param name="targetTerm" select="$targetTerm"/>		
 			</xsl:call-template>
 		</xsl:variable>
@@ -155,12 +231,12 @@
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="some $substitute in (subject|target)/substitute,
-							$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
-							$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
-							$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
-							$varlike_dependended_on_by_substituting_term_varlike 
-							in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
-							satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
+								$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
+								$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
+								$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
+								$varlike_dependended_on_by_substituting_term_varlike 
+								in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
+								satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
 							<xsl:message>Avoiding dependency cycle </xsl:message>
 							<INCOMPATIBLE/>
 						</xsl:when>
@@ -282,8 +358,8 @@
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="postfix_variable_names"/>
 		</xsl:copy>
 	</xsl:template>
-	
-	
+
+
 	<xsl:template match="*" mode="prefix_variable_names">
 		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates mode="prefix_variable_names"/>
@@ -296,7 +372,7 @@
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="prefix_variable_names"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 
 	<!--
 	<xsl:template match="point" mode="innerReduction">
@@ -375,7 +451,7 @@
 		<!-- First look for specialisations (i.e. substuituitional instances) of the current term -->
 		<xsl:variable name="substitutions" as="element()*">
 			<xsl:call-template name="unifyTerms">
-			    <xsl:with-param name="subjectTerm" select="."/>
+				<xsl:with-param name="subjectTerm" select="."/>
 				<xsl:with-param name="targetTerm" select="$targetTerm"/>
 			</xsl:call-template>
 		</xsl:variable> 
