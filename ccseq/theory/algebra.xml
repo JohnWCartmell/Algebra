@@ -996,7 +996,7 @@
 	</gat:rewriteRule>
 
 
-
+<gat:hidden>
 	<gat:rewriteRule>
 		<gat:id>10ps</gat:id>
 		<gat:tt-rule>
@@ -3835,6 +3835,6 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
-
+</gat:hidden>
 
 </gat:algebra>
