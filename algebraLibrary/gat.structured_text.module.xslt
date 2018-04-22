@@ -14,9 +14,15 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*[self::gat:outer|self::gat:inner|self::gat:roughcut|self::gat:typed]/gat:*" mode="structured_text">
+	<xsl:template match="*[self::gat:outer|self::gat:inner|self::gat:roughcut]/gat:*" mode="structured_text">
 		<xsl:copy>
 			<xsl:apply-templates mode="text"/>
+		</xsl:copy>
+	</xsl:template>
+	
+		<xsl:template match="*[self::gat:tT-rule|self::gat:term]/gat:*" mode="structured_text">
+		<xsl:copy>
+			<xsl:apply-templates select="." mode="text"/>
 		</xsl:copy>
 	</xsl:template>
 

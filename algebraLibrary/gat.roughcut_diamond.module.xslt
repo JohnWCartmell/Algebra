@@ -24,28 +24,38 @@
 					<xsl:apply-templates select="." mode="cleanse_of_attributes"/> 
 					<!-- added so as deep-equal in rewrite rules not fouled up -->
 				</xsl:variable>
+				<!--
 				<xsl:variable name="innerRuleWithVblsChanged" as="element(tt-rule)">
 					<xsl:apply-templates select="$innerRuleCleansed" mode="postfix_variable_names"/>
 				</xsl:variable>
-				<xsl:variable name="innerTerm" as="element()" select="$innerRuleWithVblsChanged/tt-conclusion/lhs/*"/> 
-				<xsl:variable name="innerTerm_rhs" as="element()" select="$innerRuleWithVblsChanged/tt-conclusion/rhs/*"/> 				
+				-->
+				<xsl:variable name="innerTerm" as="element()" select="$innerRuleCleansed/tt-conclusion/lhs/*"/> 
+				<xsl:variable name="innerReduction" as="element()" select="$innerRuleCleansed/tt-conclusion/rhs/*"/> 				
 				<xsl:variable name="innerTermPurified" as="element()">
 					<xsl:apply-templates select="$innerTerm" mode="remove_gat_annotations"/>
 				</xsl:variable>
-				<xsl:variable name="innerContext" as="element(context)" select="$innerRuleWithVblsChanged/context"/>
+				<xsl:variable name="innerReduction_purified" as="element()">
+					<xsl:apply-templates select="$innerReduction" mode="remove_gat_annotations"/>
+				</xsl:variable>
+				<xsl:variable name="innerContext" as="element(context)" select="$innerRuleCleansed/context"/>
 
 				<xsl:for-each select="../../rewriteRule">  <!-- consider each possible outer rewrite rule -->
 					<xsl:variable name="outerRuleCleansed" as="element(tt-rule)">
 						<xsl:apply-templates select="tt-rule" mode="cleanse_of_attributes"/> 
 						<!-- added so as deep-equal in rewrite rules not fouled up -->
 					</xsl:variable>
-					<xsl:variable name="outerRule_lhs" as="element(lhs)" select="$outerRuleCleansed/tt-conclusion/lhs"/>
-					<xsl:variable name="outerRule_rhs" as="element(rhs)" select="$outerRuleCleansed/tt-conclusion/rhs"/>
-					<xsl:variable name="outerContext" as="element(context)" select="$outerRuleCleansed/context"/>
+					<xsl:variable name="outerRuleWithVblsChanged" as="element(tt-rule)">
+						<xsl:apply-templates select="$outerRuleCleansed" mode="postfix_variable_names"/>
+					</xsl:variable>
+					<xsl:variable name="outerTerm" as="element()" select="$outerRuleWithVblsChanged/tt-conclusion/lhs/*"/>
+					<xsl:variable name="outerReduction" as="element()" select="$outerRuleWithVblsChanged/tt-conclusion/rhs/*"/>
+					<xsl:variable name="outerContext" as="element(context)" select="$outerRuleWithVblsChanged/context"/>
 					<xsl:variable name="outer_rule_id" select="id"/>
-					<xsl:variable name="outerTerm" as="element()" select="$outerRule_lhs/*"/>
 					<xsl:variable name="outerTermPurified" as="element()">
 						<xsl:apply-templates select="$outerTerm" mode="remove_gat_annotations"/>
+					</xsl:variable>
+					<xsl:variable name="outerReduction_purified" as="element()">
+						<xsl:apply-templates select="$outerReduction" mode="remove_gat_annotations"/>
 					</xsl:variable>
 					<xsl:variable name="top_level_stub" as="element()">
 						<point/>
@@ -69,29 +79,38 @@
 							</xsl:apply-templates>
 						</xsl:variable>
 						<xsl:variable name="innerTermSpecialised" as="element()">
-							<xsl:apply-templates select="$innerTerm" mode="substitution">  
+							<xsl:apply-templates select="$innerTermPurified" mode="substitution">  
 								<xsl:with-param name="substitutions" select="substitution"/> 
 							</xsl:apply-templates>
 						</xsl:variable>
 						<xsl:variable name="innerTermSpecialisedText">
 							<xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
 						</xsl:variable>
-						<xsl:variable name="innerTerm_lhs_in_stub" as="element(term)">
+						<xsl:variable name="innerTerm_in_stub" as="element(term)">
 							<xsl:apply-templates select="stub"  mode="fill_in_stub">
-								<xsl:with-param name="subterm" select="$innerTerm"/>
+								<xsl:with-param name="subterm" select="$innerTermPurified"/>
 							</xsl:apply-templates>
 						</xsl:variable>
-						<xsl:variable name="innerTerm_lhs_in_stub_specialised" as="element(term)">
-							<xsl:apply-templates select="$innerTerm_lhs_in_stub" mode="substitution">
+						<xsl:variable name="innerTerm_in_stub_specialised" as="element(term)">
+							<xsl:apply-templates select="$innerTerm_in_stub" mode="substitution">
 								<xsl:with-param name="substitutions" select="substitution"/>
 							</xsl:apply-templates>
 						</xsl:variable>
-
-						<xsl:variable name="innerTerm_lhs_in_stub_specialised_text" >  <!-- how to type this ?-->
-							<xsl:apply-templates select="$innerTerm_lhs_in_stub_specialised" mode="text"/>
+						<xsl:variable name="innerTerm_in_stub_specialised_text" >  <!-- how to type this ?-->
+							<xsl:apply-templates select="$innerTerm_in_stub_specialised" mode="text"/>
 						</xsl:variable>
-
-
+						<xsl:variable name="innerReduction_in_stub" as="element(term)">
+							<xsl:apply-templates select="stub"  mode="fill_in_stub">
+								<xsl:with-param name="subterm" select="$innerReduction"/>
+							</xsl:apply-templates>
+						</xsl:variable>
+						<xsl:variable name="right_reduction" as="element(term)">
+							<gat:term>
+								<xsl:apply-templates select="$innerReduction_in_stub/*" mode="substitution">
+									<xsl:with-param name="substitutions" select="substitution"/>
+								</xsl:apply-templates>
+							</gat:term>
+						</xsl:variable>
 						<xsl:variable name="outerTermSpecialised" as="element()">
 							<xsl:apply-templates select="$outerTermPurified" mode="substitution"> <!-- changed to purified because need to annotate with types after substitution -->
 								<xsl:with-param name="substitutions" select="substitution"/> 
@@ -111,6 +130,13 @@
 								</xsl:call-template>
 							</gat:context>
 						</xsl:variable>
+						<xsl:variable name="left_reduction" as="element(term)">
+							<gat:term>
+								<xsl:apply-templates select="$outerReduction_purified" mode="substitution">
+									<xsl:with-param name="substitutions" select="substitution"/>  
+								</xsl:apply-templates>
+							</gat:term>
+						</xsl:variable>
 						<!-- OUTPUT -->
 						<gat:diamond xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence">
 							<gat:identity><xsl:value-of select="$diamond_identity"/></gat:identity>
@@ -118,74 +144,53 @@
 								<gat:outer>
 									<gat:id><xsl:value-of select="$outer_rule_id"/></gat:id>
 									<gat:term>
-										<xsl:copy-of select="$outerTerm" />
-										<!--<xsl:apply-templates select="$outerTerm" mode="text"/>-->
+										<xsl:copy-of select="$outerTermPurified" />
 									</gat:term>
 									<gat:context>
 										<xsl:copy-of select="$outerContext"/> 
-										<!--<xsl:apply-templates select="$outerContext" mode="text"/>-->
 									</gat:context>
-									<!--
-									<gat:substitution_text> 
-										<xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
-									</gat:substitution_text>
-									-->
 									<gat:substitution> 
 										<xsl:copy-of  select="substitution/subject/substitute"/>
 									</gat:substitution>
 									<gat:contextsubstituted>
-										<xsl:copy-of select="$outerContextSubstituted"/>  <!-- MAKE INTO FIRST PASS XML. SECOND PASS TEXT OR EVEN tex 
-										<xsl:apply-templates select="$outerContextSubstituted" mode="text"/> 
--->										
+										<xsl:copy-of select="$outerContextSubstituted"/>
 									</gat:contextsubstituted>
 									<gat:term_specialised>
 										<xsl:copy-of select="$outerTermSpecialised"/>
-										<!--<xsl:value-of select="$outerTermSpecialised_text"/>-->
 									</gat:term_specialised>
+									<gat:left_reduction>
+										<xsl:copy-of select="$left_reduction"/>
+									</gat:left_reduction>
 								</gat:outer>
 								<gat:inner>
 									<gat:id><xsl:value-of select="$inner_rule_id"/></gat:id>
 									<gat:term>
-										<xsl:copy-of select="$innerTerm"/>
-										<!--<xsl:apply-templates select="$innerTerm" mode="text"/>-->
+										<xsl:copy-of select="$innerTermPurified"/>
 									</gat:term>                   
 									<gat:context>
-										<!-- <xsl:copy-of select="$innerContext"/> -->
 										<xsl:apply-templates select="$innerContext" mode="text"/>
 									</gat:context>
 									<gat:substitution> 
 										<xsl:copy-of  select="substitution/target/substitute"/>
 									</gat:substitution>
-									<!--
-									<gat:substitution_text>
-										<xsl:apply-templates  select="substitution/target/substitute" mode="text"/>
-									</gat:substitution_text>
-									-->
 									<gat:stub>
 										<xsl:copy-of  select="stub" />
 									</gat:stub>
-									<!--
-									<gat:stub_text>
-									    <xsl:apply-templates  select="stub" mode="text"/>
-									</gat:stub_text>
-									-->
 									<gat:contextsubstituted>
 										<xsl:copy-of select="$innerContextSubstituted"/>
-										<!--
-										<xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
-										-->
 									</gat:contextsubstituted>
 									<gat:term_specialised>
 										<xsl:copy-of select="$innerTermSpecialised"/>
-										<!--<xsl:apply-templates select="$innerTermSpecialised" mode="text"/>-->
 									</gat:term_specialised>
 									<gat:term_in_stub_specialised>
-										<xsl:copy-of select="$innerTerm_lhs_in_stub_specialised_text"/>
-										<!--<xsl:apply-templates select="$innerTerm_lhs_in_stub_specialised" mode="text"/>-->
+										<xsl:copy-of select="$innerTerm_in_stub_specialised"/>
 									</gat:term_in_stub_specialised>
+									<gat:right_reduction>
+										<xsl:copy-of select="$right_reduction"/>
+									</gat:right_reduction>
 								</gat:inner>
 							</gat:from>
-							<xsl:if test="not($outerTermSpecialised_text=$innerTerm_lhs_in_stub_specialised_text)">
+							<xsl:if test="not($outerTermSpecialised_text=$innerTerm_in_stub_specialised_text)">
 								<gat:OUT-OF-SPEC/>
 							</xsl:if>
 							<gat:roughcut>

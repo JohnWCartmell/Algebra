@@ -17,7 +17,7 @@
 		<xsl:message>Considering roughcut diamond: <xsl:value-of select="identity"/></xsl:message>
 			<xsl:copy-of select="namespace::*"/>			
 			<xsl:copy-of select="*[not(self::top_of_diamond)][not(self::diamond_context)]"/>   <!-- TEMPORARY FILTER -->
-			<xsl:variable name="top_of_diamond" as="element()" select="top_of_diamond"/>
+			<xsl:variable name="top_of_diamond" as="element()" select="type_corrected/top_of_diamond"/>
 			<xsl:variable name="more_general_tops" as="element(more_general_top)*">	
 				<xsl:for-each select="(preceding-sibling::*|following-sibling::*)
 						[self::gat:diamond]
@@ -27,7 +27,7 @@
 					<xsl:variable name="candidate_identity" select="identity"/>
 					<xsl:message>... is <xsl:value-of select="$candidate_identity"/> more general? </xsl:message>
 					<xsl:variable name="how_specialises" as="element(substitution)*">
-						<xsl:for-each select="top_of_diamond/*">
+						<xsl:for-each select="type_corrected/top_of_diamond/*">
 							<xsl:call-template name="changeTargetVariablesAndSpecialiseTerm">
 								<xsl:with-param name="targetTerm" select="$top_of_diamond/*"/>
 							</xsl:call-template>

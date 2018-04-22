@@ -17,7 +17,7 @@
 	<xsl:template match="gat:diamond" mode="type_correction">
 		<xsl:copy>
 			<xsl:copy-of select="*"/>
-			<gat:typed>
+			<gat:type_corrected>
 				<xsl:variable name="firstCutDiamondContext" as="element(context)">    
 					<xsl:call-template name="recursive_rewrite">
 						<xsl:with-param name="document" select="gat:roughcut/gat:context"/>
@@ -51,25 +51,31 @@
 
 				<xsl:choose>						
 					<xsl:when test="$typeCorrectionSubstitution">	
-						<!--
-						<xsl:variable name="typeCorrectedDiamondRuleTypeEnriched" as="element(tT-rule)">   
-							<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
-								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/> --><!-- just do the first one -->
-						<!--
+						<gat:top_of_diamond>
+							<xsl:apply-templates select="$firstCutTopOfDiamondRule" mode="substitution">
+								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
 							</xsl:apply-templates>  
-						</xsl:variable>
-						<xsl:variable name="topOfDiamond" as="element()" 
-								select="$typeCorrectedDiamondRuleTypeEnriched/tT-conclusion/term/*"/>
--->
-						<xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="substitution">
-							<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
-						</xsl:apply-templates>  
+						</gat:top_of_diamond>
+						<gat:left_reduction>
+							<gat:term>
+								<xsl:apply-templates select="from/outer/left_reduction/*" mode="substitution">
+									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+								</xsl:apply-templates>
+							</gat:term>
+						</gat:left_reduction>
+						<gat:right_reduction>
+							<gat:term>
+								<xsl:apply-templates select="from/inner/right_reduction/*" mode="substitution">
+									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+								</xsl:apply-templates>
+							</gat:term>
+						</gat:right_reduction>
 					</xsl:when>
 					<xsl:otherwise>
 						<gat:ABANDONED/>
 					</xsl:otherwise>
 				</xsl:choose>
-			</gat:typed>
+			</gat:type_corrected>
 		</xsl:copy>
 	</xsl:template>
 
@@ -164,14 +170,14 @@
 								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
 								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 							</xsl:if>
-							<xsl:message>Now cleanse and type enrich  <xsl:copy-of select="$typeImprovedtT-rule"/></xsl:message>
+							<xsl:message>Now cleanse and type enrich  </xsl:message>
 							<xsl:variable name="typeImprovedRuleTypeEnriched" as="element(tT-rule)">
 								<xsl:apply-templates 	select="$typeImprovedtT-rule" mode="cleanse_and_type_enrich"/>
 							</xsl:variable>
 							<xsl:if test="$typeImprovedRuleTypeEnriched/descendant::illformed">
 								<xsl:message>************illformed on return from type enrichment during type correction</xsl:message>
 							</xsl:if>
-								<xsl:if test="not($typeImprovedRuleTypeEnriched/tT-conclusion/term/*)">
+							<xsl:if test="not($typeImprovedRuleTypeEnriched/tT-conclusion/term/*)">
 								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
 								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 							</xsl:if>
@@ -231,12 +237,12 @@
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="some $substitute in (subject|target)/substitute,
-								$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
-								$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
-								$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
-								$varlike_dependended_on_by_substituting_term_varlike 
-								in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
-								satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
+							$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
+							$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
+							$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
+							$varlike_dependended_on_by_substituting_term_varlike 
+							in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
+							satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
 							<xsl:message>Avoiding dependency cycle </xsl:message>
 							<INCOMPATIBLE/>
 						</xsl:when>
@@ -276,31 +282,6 @@
 			<xsl:apply-templates select="*[not(self::gat:*)]" mode="remove_gat_annotations"/>
 		</xsl:copy>
 	</xsl:template>
-
-	<!--
-	<xsl:template match="gat:*" mode="assign_ids">
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates  mode="assign_ids"/>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="*[not(self::gat:*)][@id]" mode="assign_ids">	
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates  mode="assign_ids"/>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="*[not(self::gat:*)][not(@id)]" mode="assign_ids">	
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:attribute name="id" select="generate-id()"/>
-			<xsl:apply-templates  mode="assign_ids"/>
-		</xsl:copy>
-	</xsl:template>
-	
-	-->
 
 
 	<xsl:template name="merge_declarations">
@@ -374,35 +355,6 @@
 	</xsl:template>
 
 
-	<!--
-	<xsl:template match="point" mode="innerReduction">
-		<xsl:param name="rule_id"/>
-		<xsl:message> innerReduction using rule <xsl:value-of select="$rule_id"/>
-		</xsl:message>
-		<xsl:for-each select="*[1]">
-			<xsl:call-template name="apply_named_rule">
-				<xsl:with-param name="ruleid" select="$rule_id"/>
-			</xsl:call-template>
-		</xsl:for-each>
-	</xsl:template>
-
-	<xsl:template match="*" mode="innerReduction">
-		<xsl:param name="rule_id"/>
-		<xsl:copy>
-			<xsl:apply-templates mode="innerReduction">
-				<xsl:with-param name="rule_id" select="$rule_id"/>
-			</xsl:apply-templates>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="*:var" mode="innerReduction">
-		<xsl:param name="rule_id"/>
-		<xsl:copy>
-			<xsl:apply-templates mode="copy"/>
-		</xsl:copy>
-	</xsl:template>	
-	-->
-
 	<xsl:template match="*" mode="rewrite">
 		<xsl:copy>
 			<xsl:apply-templates mode="rewrite"/>
@@ -448,6 +400,7 @@
 		<xsl:param name="targetTerm" as="element()"/>
 		<xsl:param name="stub"       as="element()"/>
 
+
 		<!-- First look for specialisations (i.e. substuituitional instances) of the current term -->
 		<xsl:variable name="substitutions" as="element()*">
 			<xsl:call-template name="unifyTerms">
@@ -485,41 +438,6 @@
 		</xsl:for-each>
 	</xsl:template>  
 
-
-	<!--
-	<xsl:template match="*" mode="insert_point_and_remove_ids">
-		<xsl:param name="point_id"/>
-		<xsl:choose>
-			<xsl:when test="@id=$point_id">
-				<xsl:message>INSERTING point in node name() <xsl:value-of select="name()"/></xsl:message>
-				<point>
-					<xsl:copy>
-						<xsl:apply-templates mode="cleanse_of_attributes"/>
-					</xsl:copy>
-				</point>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:copy>
-					<xsl:apply-templates mode="insert_point_and_remove_ids">
-						<xsl:with-param name="point_id" select="$point_id"/>
-					</xsl:apply-templates>
-				</xsl:copy>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
-	<xsl:template match="*" mode="extract_subterm_at_point">
-		<xsl:apply-templates select="*[not(self::*:var|self::*:seq)]" mode="extract_subterm_at_point"/>
-	</xsl:template>
-
-	<xsl:template match="point" mode="extract_subterm_at_point">
-		<xsl:copy-of select="*"/>
-	</xsl:template>
-
-	<xsl:template match="point" mode="remove_point">
-		<xsl:apply-templates mode="copy"/>
-	</xsl:template>
--->
 
 	<xsl:template match="*" mode="push_point">
 		<xsl:param name="elementname" as="xs:string"/>
