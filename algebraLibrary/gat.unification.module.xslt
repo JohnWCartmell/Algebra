@@ -12,18 +12,18 @@
        variables by as="element(<name>)" whereever it is possible.
     -->
 	<!-- 21 Feb 2018 Separate all the subject and target substitutions into
-              <substitution>
-                       <subject>SUBSTITUTE*</subject>
-                       <target>SUBSTITUTE*</target>
-              </substitution>
+              <gat:substitution>
+                       <gat:subject>SUBSTITUTE*</gat:subject>
+                       <gat:target>SUBSTITUTE*</gat:target>
+              </gat:substitution>
       where
-              SUBSTITUTE ::= <substitute>
+              SUBSTITUTE ::= <gat:substitute>
                                   <var>|<seq>
                                        <gat:name>cccc</gat:name>
                                   <gat:term>
                                        ...
                                   </gat:term>
-                             </substitute> 
+                             </gat:substitute> 
    -->      
 	<!--  16 April 2018 Rename specialiseTerm to unifyTerms. 
                        Make subjectTerm an explicit param (no longer context node)
@@ -36,9 +36,9 @@
      ==============
      Find a substitutional instance of a given term that
      matches a substitutional instance of a target term.
-     Returns zero, one or more <substitution> elements.
-     A <substitution> element contains a <subject> and a <target> - each containing
-	 zero, one or more <substitute> elements each 
+     Returns zero, one or more <gat:substitution> elements.
+     A <gat:substitution> element contains a <gat:subject> and a <gat:target> - each containing
+	 zero, one or more <gat:substitute> elements each 
      specifying a variable <var>  and a <term> to be substituted for it
      or a <seq> and zero, one or more <term> elements to be substituted for it.          
      -->
@@ -55,6 +55,7 @@
 	<xsl:template name="unifyTerms">
 		<xsl:param name="subjectTerm" as="element()"/>
 		<xsl:param name="targetTerm" as="element()"/>
+		<xsl:param name="specialise" as="xs:boolean" select="false()"/>
 		<!--<xsl:variable name="subjectTerm" as="element()" select="."/>-->
 		<xsl:message>unifyTerms subjectTerm: <xsl:apply-templates select="$subjectTerm" mode="text"/>
 		</xsl:message>
@@ -69,18 +70,18 @@
 				<xsl:choose>
 					<xsl:when test="$targetTerm[self::*:var] and $subjectTerm/name=$targetTerm/name">
 						<xsl:message>new empty substitution for var </xsl:message>
-						<substitution>
-							<subject/>
-							<target/>
-						</substitution>
+						<gat:substitution>
+							<gat:subject/>
+							<gat:target/>
+						</gat:substitution>
 					</xsl:when>
 					<xsl:when test="$targetTerm[self::*:seq] and $subjectTerm/name=$targetTerm/name">
 						<xsl:message terminate="yes">new empty substitution for seq </xsl:message> 
 						<!-- terminate added after code inspection 15 March 2018 -->
-						<substitution>
-							<subject/>
-							<target/>
-						</substitution>
+						<gat:substitution>
+							<gat:subject/>
+							<gat:target/>
+						</gat:substitution>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:choose>
@@ -92,42 +93,42 @@
 								<!--<INCOMPATIBLE/>-->
 							</xsl:when>
 							<xsl:otherwise>
-								<substitution>
-									<subject>
-										<substitute>
+								<gat:substitution>
+									<gat:subject>
+										<gat:substitute>
 											<xsl:copy-of select="$subjectTerm"/>
 											<term>
 												<xsl:copy-of select="$targetTerm"/>
 											</term>
-										</substitute>
-									</subject>
-									<target>
-									</target>
-								</substitution>
+										</gat:substitute>
+									</gat:subject>
+									<gat:target>
+									</gat:target>
+								</gat:substitution>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
-			<xsl:when test="$targetTerm[self::*:var]">					 
+			<xsl:when test="$targetTerm[self::*:var] and not($specialise)">					 
 				<xsl:choose>
 					<xsl:when test="some $subjectvar in $subjectTerm/descendant::* satisfies $subjectvar/name = $targetTerm/name">
 						<!--<INCOMPATIBLE/>-->
 					</xsl:when>
 					<xsl:otherwise>
-						<substitution>
-							<subject>
-							</subject>
-							<target>
-								<substitute>
+						<gat:substitution>
+							<gat:subject>
+							</gat:subject>
+							<gat:target>
+								<gat:substitute>
 									<placeone/>
 									<xsl:copy-of select="$targetTerm"/>
 									<term>
 										<xsl:copy-of select="$subjectTerm"/>
 									</term>
-								</substitute>
-							</target>
-						</substitution>
+								</gat:substitute>
+							</gat:target>
+						</gat:substitution>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
@@ -143,7 +144,7 @@
 					<xsl:when test="count($subjectTerm/*)=0 "> <!-- zero subterms --> 
 						<xsl:choose>
 							<xsl:when test="count($targetTerm/*)=0">   
-								<substitution><subject/><target/></substitution>
+								<gat:substitution><gat:subject/><gat:target/></gat:substitution>
 							</xsl:when>
 							<xsl:otherwise>
 								<!--<INCOMPATIBLE/>-->
@@ -158,6 +159,7 @@
 						<xsl:call-template name="unifySubtermSequences">
 							<xsl:with-param name="subjectTerm" select="$subjectTerm"/>
 							<xsl:with-param name="targetTerm" select="$targetTerm"/>
+							<xsl:with-param name="specialise" select="$specialise"/>
 						</xsl:call-template>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -173,11 +175,13 @@
        and appplying successive substitutions to unify 
        each subterm to match a correspondingly positioned subterm 
        of a target term.
-       Returns zero, one or more <substitution> elements.
+       Returns zero, one or more <gat:substitution> elements.
   -->
 	<xsl:template name="unifySubtermSequences">
 		<xsl:param name="subjectTerm" as="element()"/>
 		<xsl:param name="targetTerm" as="element()"/>
+
+		<xsl:param name="specialise" as="xs:boolean" />
 		<xsl:message>   sSTF specialise subterms from subject: <xsl:apply-templates select="$subjectTerm" mode="text"/>
 		</xsl:message>
 		<xsl:message>   sSTF                        to target: <xsl:apply-templates select="$targetTerm" mode="text"/>
@@ -187,6 +191,7 @@
 			<xsl:call-template name="headUnification">
 				<xsl:with-param name="subjectTerm" select="$subjectTerm"/>
 				<xsl:with-param name="targetTerm" select="$targetTerm"/>
+				<xsl:with-param name="specialise" select="$specialise"/>
 			</xsl:call-template>
 		</xsl:variable>
 
@@ -237,7 +242,8 @@
 								<xsl:message>   sSTF call to itself (unifySubtermSequences) recursively</xsl:message>
 								<xsl:call-template name="unifySubtermSequences">
 									<xsl:with-param name="subjectTerm" select="$subjectTailSpecialised"/>  									
-									<xsl:with-param name="targetTerm" select="$targetTailSpecialised"/>  
+									<xsl:with-param name="targetTerm" select="$targetTailSpecialised"/> 
+									<xsl:with-param name="specialise" select="$specialise"/>									
 								</xsl:call-template>
 							</xsl:variable>
 							<xsl:apply-templates select="$tail_substitutions" mode="compose_substitutions">
@@ -264,16 +270,17 @@
      
      Returns zero one or more <head_substitution> elements.
      each <head_substitution> element contains
-     a <substitution> element and a <subjectTail> element and a <targetTail> element.
+     a <gat:substitution> element and a <subjectTail> element and a <targetTail> element.
      
      
      21 Feb 2018 Add a postcondition:
-            <numberOfTargetChildrenConsumed>=count(<substitution>/<substitute>/<term>)
+            <numberOfTargetChildrenConsumed>=count(<gat:substitution>/<gat:substitute>/<term>)
 -->
 
 	<xsl:template name="headUnification">
 		<xsl:param name="subjectTerm" as="element()"/>
 		<xsl:param name="targetTerm" as="element()"/>
+		<xsl:param name="specialise" as="xs:boolean" /> <!--select="false()"/>-->
 		<xsl:variable name="head_substitution_entry_number" select="generate-id()"/>
 		<xsl:variable name="subjectTerm_text"><xsl:apply-templates select="$subjectTerm" mode="text"/></xsl:variable>
 		<xsl:variable name="targetTerm_text"><xsl:apply-templates select="$targetTerm" mode="text"/></xsl:variable>
@@ -292,6 +299,7 @@
 						<xsl:call-template name="unifyTerms">
 							<xsl:with-param name="subjectTerm" select="$subjectTerm/*[1]"/>
 							<xsl:with-param name="targetTerm" select="$targetTerm/*[1]"/>
+							<xsl:with-param name="specialise" select="$specialise"/>	
 						</xsl:call-template>
 					</xsl:variable>
 
@@ -311,7 +319,7 @@
 					</xsl:for-each>
 				</xsl:when>
 				<xsl:otherwise> 
-					<xsl:if test="$subjectTerm/*[1][self::*:seq] and $targetTerm/*[1][self::*:seq]">
+					<xsl:if test="$subjectTerm/*[1][self::*:seq] and $targetTerm/*[1][self::*:seq] and not($specialise)">
 
 						<xsl:variable name="subjectseq" as="element()" select="$subjectTerm/*[1]"/>
 						<xsl:variable name="targetseq" as="element()" select="$targetTerm/*[1]"/>
@@ -321,19 +329,19 @@
 						               target seq  maps to empty
 					    -->
 						<head_substitution>
-							<substitution>
+							<gat:substitution>
 								<case>1</case>
-								<subject>
-									<substitute>				
+								<gat:subject>
+									<gat:substitute>				
 										<xsl:copy-of select="$subjectseq"/>
-									</substitute>
-								</subject>
-								<target>
-									<substitute>				
+									</gat:substitute>
+								</gat:subject>
+								<gat:target>
+									<gat:substitute>				
 										<xsl:copy-of select="$targetseq"/>
-									</substitute>
-								</target>
-							</substitution>
+									</gat:substitute>
+								</gat:target>
+							</gat:substitution>
 							<subjectTail>
 								<xsl:copy-of  select="$subjectTerm/*[position() &gt; 1]"/>
 							</subjectTail> 
@@ -357,15 +365,15 @@
 								">  <!-- test changed 18 april $subjectseqname ::= $targetseqname ??? DOUBLECHECK THIS LOGIC
 								          WHAT IF subjectseq recurs in mapping back of target?????-->
 							<head_substitution>
-								<substitution>
+								<gat:substitution>
 									<case>2</case>
-									<subject>
-										<substitute>
+									<gat:subject>
+										<gat:substitute>
 											<xsl:copy-of select="$subjectseq"/>
-										</substitute>
-									</subject>
-									<target>
-										<substitute>
+										</gat:substitute>
+									</gat:subject>
+									<gat:target>
+										<gat:substitute>
 											<xsl:copy-of select="$targetseq"/>											
 											<xsl:for-each select="(self::* | preceding-sibling::*)[preceding-sibling::*]"> 
 												<xsl:if test="descendant-or-self::*:seq/name=$targetseq/name">
@@ -375,9 +383,9 @@
 													<xsl:copy-of select="."/>
 												</term>
 											</xsl:for-each>
-										</substitute>
-									</target>
-								</substitution>
+										</gat:substitute>
+									</gat:target>
+								</gat:substitution>
 								<subjectTail>
 									<xsl:copy-of  select="following-sibling::*"/>
 								</subjectTail>
@@ -406,10 +414,10 @@
 								]
 								">
 							<head_substitution>
-								<substitution>
+								<gat:substitution>
 									<case>3</case>
-									<subject>
-										<substitute>
+									<gat:subject>
+										<gat:substitute>
 											<xsl:copy-of select="$subjectseq"/>
 											<xsl:for-each select="(self::* | preceding-sibling::*)[preceding-sibling::*]"> 
 												<term>
@@ -422,14 +430,14 @@
 													<xsl:copy-of select="."/>
 												</term>
 											</xsl:for-each>
-										</substitute>
-									</subject>
-									<target>
-										<substitute>
+										</gat:substitute>
+									</gat:subject>
+									<gat:target>
+										<gat:substitute>
 											<xsl:copy-of select="$targetseq"/>
-										</substitute>
-									</target>
-								</substitution>
+										</gat:substitute>
+									</gat:target>
+								</gat:substitution>
 								<xsl:copy-of  select="$subjectTail"/> 
 								<targetTail>
 									<xsl:copy-of select="$targetTerm/*[position() &gt; current()/count(preceding-sibling::*) + 1 ]"/> 
@@ -456,10 +464,10 @@
 								]
 								">
 							<head_substitution>
-								<substitution>
+								<gat:substitution>
 									<case>4</case>
-									<subject>
-										<substitute>
+									<gat:subject>
+										<gat:substitute>
 											<xsl:copy-of select="$subjectseq"/>
 											<xsl:for-each select="self::* | preceding-sibling::*"> 
 												<xsl:if test="descendant-or-self::*:seq/name=$subjectseq/name">
@@ -469,11 +477,11 @@
 													<xsl:copy-of select="."/>
 												</term>
 											</xsl:for-each>
-										</substitute>
-									</subject>
-									<target>
-									</target>
-								</substitution>
+										</gat:substitute>
+									</gat:subject>
+									<gat:target>
+									</gat:target>
+								</gat:substitution>
 								<xsl:copy-of  select="$subjectTail"/> 
 								<targetTail>
 									<xsl:copy-of select="$targetTerm/*[position() &gt; current()/count(preceding-sibling::*) + 1 ]"/> 
@@ -484,24 +492,24 @@
 							<!-- case (5) s1 maps to singleton t1-->
 							<xsl:message>       17 April 2018 - case (5)</xsl:message>
 							<xsl:if test="not(some $targetsubterm 
-							                  in $targetTerm/*[1]/descendant-or-self::*:seq
-									          satisfies $targetsubterm/name=$subjectseq/name)
-									     ">
+									in $targetTerm/*[1]/descendant-or-self::*:seq
+									satisfies $targetsubterm/name=$subjectseq/name)
+									">
 								<xsl:message>case(5) triggers </xsl:message>
 								<head_substitution>							
-									<substitution>
+									<gat:substitution>
 										<case>5</case>
-										<subject>
-											<substitute>
+										<gat:subject>
+											<gat:substitute>
 												<xsl:copy-of select="$subjectseq"/>
 												<term>
 													<xsl:copy-of select="$targetTerm/*[1]"/>
 												</term>
-											</substitute>
-										</subject>
-										<target>
-										</target>
-									</substitution>
+											</gat:substitute>
+										</gat:subject>
+										<gat:target>
+										</gat:target>
+									</gat:substitution>
 									<subjectTail>
 										<xsl:copy-of  select="$subjectTerm/*[position() &gt; 1]"/> 
 									</subjectTail>
@@ -513,7 +521,7 @@
 						</xsl:if>						
 					</xsl:if>
 
-					<xsl:if test="$targetTerm/*[1][self::*:seq]">
+					<xsl:if test="$targetTerm/*[1][self::*:seq] and not($specialise)">
 						<xsl:message>       17 April 2018 - case (6)</xsl:message> 
 						<!-- case (6)  t1 maps to every non-empty non-singleton initial subsequence of the subject subterms -->
 						<xsl:variable name="targetseq" as="element()" select="$targetTerm/*[1]"/>
@@ -525,12 +533,12 @@
 								]
 								">
 							<head_substitution>
-								<substitution>
+								<gat:substitution>
 									<case>6</case>
-									<subject>
-									</subject>
-									<target>
-										<substitute>
+									<gat:subject>
+									</gat:subject>
+									<gat:target>
+										<gat:substitute>
 											<xsl:copy-of select="$targetseq"/>
 											<xsl:for-each select="self::* | preceding-sibling::*">
 
@@ -541,9 +549,9 @@
 													<xsl:copy-of select="."/>
 												</term>
 											</xsl:for-each>
-										</substitute>
-									</target>
-								</substitution>
+										</gat:substitute>
+									</gat:target>
+								</gat:substitution>
 								<subjectTail>
 									<xsl:copy-of  select="following-sibling::*"/>
 								</subjectTail>
@@ -558,16 +566,16 @@
 						<xsl:message> In case (7) number of target subterms is <xsl:value-of select="count($targetTerm/*)"/></xsl:message>
 						<!-- case (7) s1 maps to empty-->
 						<head_substitution>
-							<substitution>
+							<gat:substitution>
 								<case>7</case>
-								<subject>
-									<substitute>
+								<gat:subject>
+									<gat:substitute>
 										<xsl:copy-of select="$subjectseq"/>
-									</substitute>
-								</subject>
-								<target>
-								</target>
-							</substitution>
+									</gat:substitute>
+								</gat:subject>
+								<gat:target>
+								</gat:target>
+							</gat:substitution>
 							<subjectTail>
 								<xsl:copy-of  select="$subjectTerm/*[position() &gt; 1]"/> 
 							</subjectTail>
@@ -577,7 +585,7 @@
 						</head_substitution> 
 
 					</xsl:if>
-					<xsl:if test="$targetTerm/*[1][self::*:seq] and not($subjectTerm/*[1][self::*:seq])">
+					<xsl:if test="$targetTerm/*[1][self::*:seq] and not($subjectTerm/*[1][self::*:seq]) and not($specialise)">
 						<xsl:variable name="targetseq" as="element()" select="$targetTerm/*[1]"/>
 						<!--case (8) t1 maps to singleton s1 -->
 						<xsl:if test="$subjectTerm/*"> 
@@ -594,12 +602,12 @@
 									">
 								<xsl:message> case (8) triggers</xsl:message>
 								<head_substitution>
-									<substitution>
+									<gat:substitution>
 										<case>8</case>
-										<subject>
-										</subject>
-										<target>
-											<substitute>
+										<gat:subject>
+										</gat:subject>
+										<gat:target>
+											<gat:substitute>
 												<xsl:copy-of select="$targetseq"/>
 												<xsl:if test="$subjectTerm/*[1]/descendant-or-self::*:seq/name=$targetseq/name">
 													<xsl:message terminate="yes">OUT-OF_SPEC</xsl:message>
@@ -607,9 +615,9 @@
 												<term>
 													<xsl:copy-of select="$subjectTerm/*[1]"/>
 												</term>
-											</substitute>
-										</target>
-									</substitution>
+											</gat:substitute>
+										</gat:target>
+									</gat:substitution>
 									<subjectTail>
 										<xsl:copy-of  select="$subjectTerm/*[position() &gt; 1]"/> 
 									</subjectTail>
@@ -624,16 +632,16 @@
 						<xsl:variable name="targetseq" as="element()" select="$targetTerm/*[1]"/>
 						<!-- case (9) t1 maps to empty-->
 						<head_substitution>
-							<substitution>
+							<gat:substitution>
 								<case>9</case>
-								<subject>								
-								</subject>
-								<target>
-									<substitute>
+								<gat:subject>								
+								</gat:subject>
+								<gat:target>
+									<gat:substitute>
 										<xsl:copy-of select="$targetseq"/>
-									</substitute>
-								</target>
-							</substitution>
+									</gat:substitute>
+								</gat:target>
+							</gat:substitution>
 							<subjectTail>
 								<xsl:copy-of  select="$subjectTerm/*"/> 
 							</subjectTail>
@@ -666,13 +674,13 @@
 			<head_substitution>
 				<!-- inject traceback for diagnostic purposes - can trace back to this place from the resulting substitutions -->
 				<xsl:for-each select="substitution"> 
-					<substitution>
-						<substitution_text><xsl:apply-templates select="subject/substitute" mode="text"/></substitution_text>
+					<gat:substitution>
+						<!--<substitution_text><xsl:apply-templates select="subject/substitute" mode="text"/></substitution_text>-->
 						<xsl:message>   subject substitution <xsl:apply-templates select="subject/substitute" mode="text"/> </xsl:message>
 						<xsl:message>   target substitution <xsl:apply-templates select="target/substitute" mode="text"/> </xsl:message>
-						<targetSubstitution_text><xsl:apply-templates select="target/substitute" mode="text"/></targetSubstitution_text>
+						<!--<targetSubstitution_text><xsl:apply-templates select="target/substitute" mode="text"/></targetSubstitution_text>-->
 						<xsl:copy-of select="*"/>
-					</substitution>
+					</gat:substitution>
 				</xsl:for-each>
 				<xsl:copy-of select="*[not(self::substitution)]"/>
 			</head_substitution>

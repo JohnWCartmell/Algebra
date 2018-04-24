@@ -7,6 +7,95 @@
 		exclude-result-prefixes="xs gat">
 
 	<xsl:strip-space elements="*"/> 
+	<xsl:template match="*" mode="diamond_filter">
+		<xsl:copy>
+			<xsl:apply-templates mode="diamond_filter"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="gat:diamond
+			[not(most_generalising_tops/most_generalising_top
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			)
+			]" mode="diamond_filter">
+		<xsl:message>Keeping <xsl:value-of select="identity"/></xsl:message>
+		<xsl:copy>
+			<xsl:copy-of select="*[not(self::most_generalising_tops)]"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="gat:diamond
+			[most_generalising_tops/most_generalising_top
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			]" mode="diamond_filter">
+
+		<!-- filter out this diamond -->
+		<xsl:variable name="generalising_top_that_itself_has_a_generalisation"
+				as="element(most_generalising_top)*"
+				select="most_generalising_tops/most_generalising_top
+				[right_reduction_more_general
+				and 
+				left_reduction_more_general
+				]
+				[  some $diamond_id in diamond-id 
+				        satisfies //diamond[identity=$diamond_id]/most_generalising_tops/most_generalising_top
+				                   [right_reduction_more_general
+				                    and 
+				                    left_reduction_more_general
+				                   ]
+				]
+				"/>
+		<xsl:choose>
+			<xsl:when test="$generalising_top_that_itself_has_a_generalisation">
+				<xsl:message> Diamond <xsl:value-of select="identity"/> has generalising top that itself has a generalisation...</xsl:message>
+				<xsl:variable name="subject_identity" select="identity"/>
+				<xsl:choose>
+					<xsl:when test="every $such_generalising_top
+							in $generalising_top_that_itself_has_a_generalisation
+							satisfies
+							some $generalising_diamond in  //diamond[identity=$such_generalising_top/diamond-id],
+							     $further_generalisation in $generalising_diamond/most_generalising_tops/most_generalising_top,
+							     $diamond-id in $further_generalisation/diamond-id
+							satisfies $diamond-id=$subject_identity
+							">
+						<xsl:message>... every one of them is to a more general diamond that itself has this one as a generalisation...</xsl:message>
+						<!-- mutually generalising - filter out all but the first one  -->
+						<xsl:variable name="subject_position" select="tokenize(identity,'-')[last()]"/>
+						<xsl:choose>
+							<xsl:when test="every $such_generalising_top
+								in $generalising_top_that_itself_has_a_generalisation
+								satisfies number($such_generalising_top/tokenize(diamond-id,'-')[last()]) &gt; number($subject_position)">
+								<xsl:message>... keep this one as it is the first one.</xsl:message>
+								<xsl:copy>
+									<xsl:copy-of select="*[not(self::most_generalising_tops)]"/>
+								</xsl:copy> 
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:message>... discard this one as it is not the first one.</xsl:message>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:message>...discard this one because there is no circularity and generalisation is transitive</xsl:message>
+					</xsl:otherwise>
+				</xsl:choose>
+				<!-- I don't know whether or not we could get circular generalisations -->
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:message> Filtering out <xsl:value-of select="identity"/>
+				</xsl:message>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+
+
 
 	<xsl:template match="*" mode="type_correction">
 		<xsl:copy>
@@ -16,7 +105,15 @@
 
 	<xsl:template match="gat:diamond" mode="type_correction">
 		<xsl:copy>
-			<xsl:copy-of select="*"/>
+			<!--<xsl:copy-of select="*"/>-->
+			<xsl:copy-of select="gat:identity"/>
+			<gat:from_outer_id>
+				<xsl:value-of select="from/outer/id"/>
+			</gat:from_outer_id>
+			<gat:from_inner_id>
+				<xsl:value-of select="from/inner/id"/>
+			</gat:from_inner_id>
+
 			<gat:type_corrected>
 				<xsl:variable name="firstCutDiamondContext" as="element(context)">    
 					<xsl:call-template name="recursive_rewrite">
@@ -41,7 +138,8 @@
 				</xsl:variable>
 				<xsl:message>End of type enriching first cut diamond rule</xsl:message>
 
-				<xsl:message>firstCutTopOfDiamondRuleTypeEnriched <xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="text"/></xsl:message>
+				<xsl:message>firstCutTopOfDiamondRuleTypeEnriched <xsl:apply-templates select="$firstCutTopOfDiamondRuleTypeEnriched" mode="text"/>
+				</xsl:message>
 
 				<xsl:variable name="typeCorrectionSubstitution" as="element(substitution)?">
 					<xsl:call-template name="specialise_to_correct_typing">
@@ -57,18 +155,14 @@
 							</xsl:apply-templates>  
 						</gat:top_of_diamond>
 						<gat:left_reduction>
-							<gat:term>
-								<xsl:apply-templates select="from/outer/left_reduction/*" mode="substitution">
-									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
-								</xsl:apply-templates>
-							</gat:term>
+							<xsl:apply-templates select="from/outer/left_reduction/*" mode="substitution">
+								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+							</xsl:apply-templates>
 						</gat:left_reduction>
 						<gat:right_reduction>
-							<gat:term>
-								<xsl:apply-templates select="from/inner/right_reduction/*" mode="substitution">
-									<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
-								</xsl:apply-templates>
-							</gat:term>
+							<xsl:apply-templates select="from/inner/right_reduction/*" mode="substitution">
+								<xsl:with-param name="substitutions" select="$typeCorrectionSubstitution"/>
+							</xsl:apply-templates>
 						</gat:right_reduction>
 					</xsl:when>
 					<xsl:otherwise>
@@ -119,7 +213,9 @@
 
 		<xsl:message>Entering type correction </xsl:message>
 		<xsl:if test="not($tT-ruleTypeEnriched/tT-conclusion/term/*)">
-			<xsl:message><xsl:copy-of select="$tT-ruleTypeEnriched/tT-conclusion"/></xsl:message>
+			<xsl:message>
+				<xsl:copy-of select="$tT-ruleTypeEnriched/tT-conclusion"/>
+			</xsl:message>
 			<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 		</xsl:if>
 		<xsl:variable name="termInitial" as="element()" select="$tT-ruleTypeEnriched/tT-conclusion/term/*"/>
@@ -137,7 +233,8 @@
 				<!--
 				<xsl:message>          <xsl:value-of select="$termInitial/descendant::type_error"/> </xsl:message>
 				-->
-				<xsl:message> Dealing with type error <xsl:value-of select="$first_type_error/description"/> </xsl:message>
+				<xsl:message> Dealing with type error <xsl:value-of select="$first_type_error/description"/>
+				</xsl:message>
 				<xsl:variable name="lhs" as="element()">
 					<xsl:apply-templates select="$first_type_error/need-equal/lhs" mode="remove_gat_annotations"/>
 				</xsl:variable>
@@ -158,16 +255,21 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:if test="count($specialisation_results) &gt; 1">
-								<xsl:message>Number of ways to correct type error: <xsl:value-of select="count($specialisation_results)"/> </xsl:message>
+								<xsl:message>Number of ways to correct type error: <xsl:value-of select="count($specialisation_results)"/>
+								</xsl:message>
 							</xsl:if>
-							<xsl:message>Applying type correction substitution <xsl:apply-templates select="$specialisation_results[1]" mode="text"/></xsl:message>						
+							<xsl:message>Applying type correction substitution <xsl:apply-templates select="$specialisation_results[1]" mode="text"/>
+							</xsl:message>						
 							<xsl:variable name="typeImprovedtT-rule" as="element(tT-rule)">   
 								<xsl:apply-templates select="$tT-ruleTypeEnriched" mode="substitution">
-									<xsl:with-param name="substitutions" select="$specialisation_results[1]"/> <!-- just do the first one -->
+									<xsl:with-param name="substitutions" select="$specialisation_results[1]"/>
+									<!-- just do the first one -->
 								</xsl:apply-templates>  
 							</xsl:variable>
 							<xsl:if test="not($typeImprovedtT-rule/tT-conclusion/term/*)">
-								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
+								<xsl:message>
+									<xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/>
+								</xsl:message>
 								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 							</xsl:if>
 							<xsl:message>Now cleanse and type enrich  </xsl:message>
@@ -178,7 +280,9 @@
 								<xsl:message>************illformed on return from type enrichment during type correction</xsl:message>
 							</xsl:if>
 							<xsl:if test="not($typeImprovedRuleTypeEnriched/tT-conclusion/term/*)">
-								<xsl:message><xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/></xsl:message>
+								<xsl:message>
+									<xsl:copy-of select="$typeImprovedtT-rule/tT-conclusion"/>
+								</xsl:message>
 								<xsl:message terminate="yes">OUT-OF-SPEC</xsl:message>
 							</xsl:if>
 							<xsl:message>Recursing into type correction"</xsl:message>
@@ -206,10 +310,10 @@
 			<xsl:otherwise>
 				<xsl:message>End of type correction with identity sub</xsl:message>
 				<!-- empty (identity) substitution -->
-				<substitution>
-					<subject></subject>
-					<target></target>
-				</substitution>
+				<gat:substitution>
+					<gat:subject/>
+					<gat:target/>
+				</gat:substitution>
 				<!--<xsl:copy-of select="$tT-ruleTypeEnriched"/>-->
 			</xsl:otherwise>
 		</xsl:choose>  
@@ -233,16 +337,17 @@
 			<xsl:otherwise>
 				<xsl:for-each select="$specialisations">
 					<xsl:if test="not(self::substitution)">
-						<xsl:message terminate="yes">Assertion failuure <xsl:value-of select="name()"/></xsl:message>
+						<xsl:message terminate="yes">Assertion failuure <xsl:value-of select="name()"/>
+						</xsl:message>
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="some $substitute in (subject|target)/substitute,
-							$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
-							$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
-							$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
-							$varlike_dependended_on_by_substituting_term_varlike 
-							in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
-							satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
+								$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
+								$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
+								$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
+								$varlike_dependended_on_by_substituting_term_varlike 
+								in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
+								satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
 							<xsl:message>Avoiding dependency cycle </xsl:message>
 							<INCOMPATIBLE/>
 						</xsl:when>
@@ -278,7 +383,8 @@
 		<!-- need to keeep gat:name however -->
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="gat:name"/> <!-- only applicable to var's and seq's -->
+			<xsl:copy-of select="gat:name"/>
+			<!-- only applicable to var's and seq's -->
 			<xsl:apply-templates select="*[not(self::gat:*)]" mode="remove_gat_annotations"/>
 		</xsl:copy>
 	</xsl:template>
@@ -335,7 +441,8 @@
 
 	<xsl:template match="*:var|*:seq|gat:sequence|gat:decl" mode="postfix_variable_names">
 		<xsl:copy copy-namespaces="no">
-			<gat:name><xsl:value-of select="gat:name"/>'</gat:name>
+			<gat:name>
+				<xsl:value-of select="gat:name"/>'</gat:name>
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="postfix_variable_names"/>
 		</xsl:copy>
 	</xsl:template>
@@ -349,10 +456,34 @@
 
 	<xsl:template match="*:var|*:seq|gat:sequence|gat:decl" mode="prefix_variable_names">
 		<xsl:copy copy-namespaces="no">
-			<gat:name>v<xsl:value-of select="gat:name"/></gat:name>
+			<gat:name>v<xsl:value-of select="gat:name"/>
+			</gat:name>
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="prefix_variable_names"/>
 		</xsl:copy>
 	</xsl:template>
+
+	<xsl:template match="*" mode="unprefix_variable_names">
+		<xsl:copy copy-namespaces="no">
+			<xsl:apply-templates mode="unprefix_variable_names"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="substitute" mode="unprefix_variable_names">
+		<xsl:copy copy-namespaces="no">
+			<xsl:copy-of select="*:var|*:seq"/>
+			<xsl:apply-templates select="*[not(self::*:var|self::*:seq)]" mode="unprefix_variable_names"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="*:var|*:seq" mode="unprefix_variable_names">
+		<xsl:copy copy-namespaces="no">
+			<gat:name>
+				<xsl:value-of select="substring(gat:name,2)"/>
+			</gat:name>
+			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unprefix_variable_names"/>
+		</xsl:copy>
+	</xsl:template>
+
 
 
 	<xsl:template match="*" mode="rewrite">

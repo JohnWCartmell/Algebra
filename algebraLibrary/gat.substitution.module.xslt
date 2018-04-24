@@ -138,11 +138,11 @@
     <xsl:param name="substitute" as="element(substitute)"/> 
     <xsl:copy>
       <xsl:variable name="subject_sub" as="element(substitution)">
-        <substitution>
+        <gat:substitution>
           <subject>
             <xsl:copy-of select="$substitute"/>
           </subject>
-        </substitution>
+        </gat:substitution>
       </xsl:variable>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$subject_sub"/>
@@ -155,11 +155,11 @@
     <xsl:param name="substitute" as="element(substitute)"/> 
     <xsl:copy>
       <xsl:variable name="subject_sub" as="element(substitution)">
-        <substitution>
+        <gat:substitution>
           <subject>
             <xsl:copy-of select="$substitute"/>
           </subject>
-        </substitution>
+        </gat:substitution>
       </xsl:variable>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$subject_sub"/>
@@ -183,11 +183,11 @@
     <xsl:param name="substitute" as="element(substitute)"/> 
     <xsl:copy>
       <xsl:variable name="target_sub" as="element(substitution)">
-        <substitution>
+        <gat:substitution>
           <target>
             <xsl:copy-of select="$substitute"/>
           </target>
-        </substitution>
+        </gat:substitution>
       </xsl:variable>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$target_sub"/>
@@ -202,11 +202,11 @@
 
     <xsl:copy>
       <xsl:variable name="target_sub" as="element(substitution)">
-        <substitution>
+        <gat:substitution>
           <target>
             <xsl:copy-of select="$substitute"/>
           </target>
-        </substitution>
+        </gat:substitution>
       </xsl:variable>
       <xsl:apply-templates mode="substitution">
         <xsl:with-param name="substitutions" select="$target_sub"/>

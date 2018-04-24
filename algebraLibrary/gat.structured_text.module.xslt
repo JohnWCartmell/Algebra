@@ -9,19 +9,20 @@
 	<xsl:strip-space elements="*"/> 
 
 	<xsl:template match="*" mode="structured_text">
-		<xsl:copy>
+		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates mode="structured_text"/>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*[self::gat:outer|self::gat:inner|self::gat:roughcut]/gat:*" mode="structured_text">
-		<xsl:copy>
+	<xsl:template match="*[self::gat:outer|self::gat:inner|self::gat:roughcut|self::gat:substitution|gat:term]/gat:*" mode="structured_text">
+		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates mode="text"/>
 		</xsl:copy>
 	</xsl:template>
 	
-		<xsl:template match="*[self::gat:tT-rule|self::gat:term]/gat:*" mode="structured_text">
-		<xsl:copy>
+
+	<xsl:template match="*[self::gat:tT-rule]/gat:*" mode="structured_text">
+		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates select="." mode="text"/>
 		</xsl:copy>
 	</xsl:template>

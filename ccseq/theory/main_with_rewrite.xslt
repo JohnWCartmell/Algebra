@@ -8,7 +8,7 @@
   <xsl:include href="ccseq2txt.module.xslt" />
   <xsl:include href="ccseq2tex.module.xslt" />
   <xsl:include href="ccseq2type_enrichment.module.xslt" />
-  <!--<xsl:include href="temp/rewrite.module.xslt"/>-->
+  <xsl:include href="temp/rewrite.module.xslt"/>
   
   <xsl:include href="../../algebraLibrary/gat.module.xslt"/>
   

@@ -101,7 +101,7 @@
 						</xsl:variable>
 						<xsl:variable name="innerReduction_in_stub" as="element(term)">
 							<xsl:apply-templates select="stub"  mode="fill_in_stub">
-								<xsl:with-param name="subterm" select="$innerReduction"/>
+								<xsl:with-param name="subterm" select="$innerReduction_purified"/>
 							</xsl:apply-templates>
 						</xsl:variable>
 						<xsl:variable name="right_reduction" as="element(term)">
