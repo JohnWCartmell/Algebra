@@ -37,7 +37,9 @@
 				<xsl:variable name="innerReduction_purified" as="element()">
 					<xsl:apply-templates select="$innerReduction" mode="remove_gat_annotations"/>
 				</xsl:variable>
-				<xsl:variable name="innerContext" as="element(context)" select="$innerRuleCleansed/context"/>
+				<xsl:variable name="innerContext" as="element(context)">
+					<xsl:apply-templates select="$innerRuleCleansed/context" mode="remove_gat_annotations"/>
+				</xsl:variable>
 
 				<xsl:for-each select="../../rewriteRule">  <!-- consider each possible outer rewrite rule -->
 					<xsl:variable name="outerRuleCleansed" as="element(tt-rule)">
@@ -49,7 +51,9 @@
 					</xsl:variable>
 					<xsl:variable name="outerTerm" as="element()" select="$outerRuleWithVblsChanged/tt-conclusion/lhs/*"/>
 					<xsl:variable name="outerReduction" as="element()" select="$outerRuleWithVblsChanged/tt-conclusion/rhs/*"/>
-					<xsl:variable name="outerContext" as="element(context)" select="$outerRuleWithVblsChanged/context"/>
+					<xsl:variable name="outerContext" as="element(context)">
+						<xsl:apply-templates select="$outerRuleWithVblsChanged/context" mode="remove_gat_annotations"/>
+					</xsl:variable>
 					<xsl:variable name="outer_rule_id" select="id"/>
 					<xsl:variable name="outerTermPurified" as="element()">
 						<xsl:apply-templates select="$outerTerm" mode="remove_gat_annotations"/>
@@ -144,19 +148,19 @@
 								<gat:outer>
 									<gat:id><xsl:value-of select="$outer_rule_id"/></gat:id>
 									<gat:term>
-										<xsl:copy-of select="$outerTermPurified" />
+										<xsl:apply-templates select="$outerTermPurified" mode="text"/>
 									</gat:term>
 									<gat:context>
-										<xsl:copy-of select="$outerContext"/> 
+										<xsl:apply-templates select="$outerContext" mode="text"/> 
 									</gat:context>
 									<gat:substitution> 
-										<xsl:copy-of  select="substitution/subject/substitute"/>
+										<xsl:apply-templates  select="substitution/subject/substitute" mode="text"/>
 									</gat:substitution>
 									<gat:contextsubstituted>
-										<xsl:copy-of select="$outerContextSubstituted"/>
+										<xsl:apply-templates select="$outerContextSubstituted" mode="text"/>
 									</gat:contextsubstituted>
 									<gat:term_specialised>
-										<xsl:copy-of select="$outerTermSpecialised"/>
+										<xsl:apply-templates select="$outerTermSpecialised" mode="text"/>
 									</gat:term_specialised>
 									<gat:left_reduction>
 										<xsl:copy-of select="$left_reduction"/>
@@ -165,25 +169,25 @@
 								<gat:inner>
 									<gat:id><xsl:value-of select="$inner_rule_id"/></gat:id>
 									<gat:term>
-										<xsl:copy-of select="$innerTermPurified"/>
+										<xsl:apply-templates select="$innerTermPurified" mode="text"/>
 									</gat:term>                   
 									<gat:context>
 										<xsl:apply-templates select="$innerContext" mode="text"/>
 									</gat:context>
 									<gat:substitution> 
-										<xsl:copy-of  select="substitution/target/substitute"/>
+										<xsl:apply-templates  select="substitution/target/substitute" mode="text"/>
 									</gat:substitution>
 									<gat:stub>
-										<xsl:copy-of  select="stub" />
+										<xsl:apply-templates  select="stub"  mode="text"/>
 									</gat:stub>
 									<gat:contextsubstituted>
-										<xsl:copy-of select="$innerContextSubstituted"/>
+										<xsl:apply-templates select="$innerContextSubstituted" mode="text"/>
 									</gat:contextsubstituted>
 									<gat:term_specialised>
-										<xsl:copy-of select="$innerTermSpecialised"/>
+										<xsl:apply-templates select="$innerTermSpecialised" mode="text"/>
 									</gat:term_specialised>
 									<gat:term_in_stub_specialised>
-										<xsl:copy-of select="$innerTerm_in_stub_specialised"/>
+										<xsl:apply-templates select="$innerTerm_in_stub_specialised" mode="text"/>
 									</gat:term_in_stub_specialised>
 									<gat:right_reduction>
 										<xsl:copy-of select="$right_reduction"/>
