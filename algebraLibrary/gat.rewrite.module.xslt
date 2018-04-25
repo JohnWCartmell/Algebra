@@ -2,68 +2,147 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
+		xmlns:ccseq="http://www.entitymodelling.org/theory/contextualcategory/sequence"
 		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
 		xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
 		exclude-result-prefixes="xs gat">
 
 	<xsl:strip-space elements="*"/> 
+
+	<xsl:template match="*" mode="grow_diamond">
+		<xsl:copy>
+			<xsl:apply-templates mode="grow_diamond"/>
+		</xsl:copy>
+	</xsl:template>
+
+
+	<xsl:template match="gat:diamond" mode="grow_diamond">
+		<xsl:copy>
+			<xsl:copy-of select="*"/>
+			<xsl:message> Normalise the left reduction </xsl:message>
+			<xsl:variable name="leftReductionNormalised" as="element(term)">
+				<xsl:call-template name="recursive_rewrite">
+					<xsl:with-param name="document" select="type_corrected/left_reduction/term"/>
+				</xsl:call-template>
+			</xsl:variable>	
+			<xsl:variable name="leftReductionNormalisedText">
+				<xsl:apply-templates select="$leftReductionNormalised" mode="text"/>
+			</xsl:variable>	
+			<xsl:variable name="lhscost" as="xs:double">
+				<xsl:apply-templates select="$leftReductionNormalised" mode="number"/>
+			</xsl:variable>
+
+			<xsl:variable name="rightReductionNormalised" as="element(term)">
+				<xsl:call-template name="recursive_rewrite">
+					<xsl:with-param name="document" select="type_corrected/right_reduction/term"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="rightReductionNormalisedText">
+				<xsl:apply-templates select="$rightReductionNormalised" mode="text"/>
+			</xsl:variable>	
+			<xsl:variable name="rhscost" as="xs:double">
+				<xsl:apply-templates select="$rightReductionNormalised" mode="number"/>
+			</xsl:variable>
+			<gat:leftside>
+				<gat:left_reduction_normalised>
+					<xsl:copy-of select="$leftReductionNormalised"/>
+				</gat:left_reduction_normalised>
+				<gat:cost>
+					<xsl:value-of select="$lhscost"/>
+				</gat:cost>
+			</gat:leftside>
+			<gat:rightside>
+				<xsl:variable name="rightReductionNormalised" as="element(term)">
+					<xsl:call-template name="recursive_rewrite">
+						<xsl:with-param name="document" select="type_corrected/right_reduction/term"/>
+					</xsl:call-template>
+				</xsl:variable>
+				<gat:right_reduction_normalised>
+					<xsl:copy-of select="$rightReductionNormalised"/>
+				</gat:right_reduction_normalised>
+				<gat:cost>
+					<xsl:value-of select="$rhscost"/>
+				</gat:cost>
+			</gat:rightside>
+
+			<xsl:if test="not($leftReductionNormalisedText=$rightReductionNormalisedText)">
+				<gat:NON-CONFLUENT>
+					<xsl:if test="$lhscost=$rhscost">
+						<gat:STALEMATE/>
+					</xsl:if>
+					<xsl:if test="$lhscost &lt; $rhscost">
+						<gat:RIGHT-TO-LEFT/>
+					</xsl:if>
+					<xsl:if test="$rhscost &lt; $lhscost">
+						<gat:LEFT-TO-RIGHT/>
+					</xsl:if>
+				</gat:NON-CONFLUENT>
+				<xsl:message>*********** Diamond <xsl:value-of select="identity"/>  NON CONFLUENT ************</xsl:message>
+			</xsl:if>
+
+		</xsl:copy>
+	</xsl:template>
+
+
 	<xsl:template match="*" mode="diamond_filter">
 		<xsl:copy>
 			<xsl:apply-templates mode="diamond_filter"/>
 		</xsl:copy>
 	</xsl:template>
 
+
 	<xsl:template match="gat:diamond
-			[not(most_generalising_tops/most_generalising_top
-			[right_reduction_more_general
-			and 
-			left_reduction_more_general
-			]
-			)
-			]" mode="diamond_filter">
-		<xsl:message>Keeping <xsl:value-of select="identity"/></xsl:message>
+		[not(most_generalising_tops/most_generalising_top
+		[right_reduction_more_general
+		and 
+		left_reduction_more_general
+		]
+		)
+		]" mode="diamond_filter">
+		<xsl:message>Keeping <xsl:value-of select="identity"/>
+		</xsl:message>
 		<xsl:copy>
 			<xsl:copy-of select="*[not(self::most_generalising_tops)]"/>
 		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="gat:diamond
-			[most_generalising_tops/most_generalising_top
-			[right_reduction_more_general
-			and 
-			left_reduction_more_general
-			]
-			]" mode="diamond_filter">
+		[most_generalising_tops/most_generalising_top
+		[right_reduction_more_general
+		and 
+		left_reduction_more_general
+		]
+		]" mode="diamond_filter">
 
 		<!-- filter out this diamond -->
 		<xsl:variable name="generalising_top_that_itself_has_a_generalisation"
 				as="element(most_generalising_top)*"
 				select="most_generalising_tops/most_generalising_top
-				[right_reduction_more_general
-				and 
-				left_reduction_more_general
-				]
-				[  some $diamond_id in diamond-id 
-				        satisfies //diamond[identity=$diamond_id]/most_generalising_tops/most_generalising_top
-				                   [right_reduction_more_general
-				                    and 
-				                    left_reduction_more_general
-				                   ]
-				]
-				"/>
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			[  some $diamond_id in diamond-id 
+			satisfies //diamond[identity=$diamond_id]/most_generalising_tops/most_generalising_top
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			]
+			"/>
 		<xsl:choose>
 			<xsl:when test="$generalising_top_that_itself_has_a_generalisation">
 				<xsl:message> Diamond <xsl:value-of select="identity"/> has generalising top that itself has a generalisation...</xsl:message>
 				<xsl:variable name="subject_identity" select="identity"/>
 				<xsl:choose>
 					<xsl:when test="every $such_generalising_top
-							in $generalising_top_that_itself_has_a_generalisation
-							satisfies
-							some $generalising_diamond in  //diamond[identity=$such_generalising_top/diamond-id],
-							     $further_generalisation in $generalising_diamond/most_generalising_tops/most_generalising_top,
-							     $diamond-id in $further_generalisation/diamond-id
-							satisfies $diamond-id=$subject_identity
-							">
+						in $generalising_top_that_itself_has_a_generalisation
+						satisfies
+						some $generalising_diamond in  //diamond[identity=$such_generalising_top/diamond-id],
+						$further_generalisation in $generalising_diamond/most_generalising_tops/most_generalising_top,
+						$diamond-id in $further_generalisation/diamond-id
+						satisfies $diamond-id=$subject_identity
+						">
 						<xsl:message>... every one of them is to a more general diamond that itself has this one as a generalisation...</xsl:message>
 						<!-- mutually generalising - filter out all but the first one  -->
 						<xsl:variable name="subject_position" select="tokenize(identity,'-')[last()]"/>
@@ -95,7 +174,20 @@
 	</xsl:template>
 
 
-
+	<!-- rubbush as yet 
+  <xsl:function name="gat:varlikeOccursIn" as="xs:boolean">
+  <xsl:param name="substitute" as="element(substitute)"/>
+  <xsl:param name="substitution" as="element(substitution)"/>
+  <xsl:value-of select="
+                        some $varlike
+						in $substitution/(subject|target)/substitute/(*:var|*:seq) 
+								   satisfies  (($varlike/name = $substitute/(*:seq|*:var)/name) 
+                                                and 
+                                               ($varlike/name()=(*:seq|*:var)/name())  
+                                               )
+                       "/>
+  </xsl:function>
+  -->
 
 	<xsl:template match="*" mode="type_correction">
 		<xsl:copy>
@@ -221,6 +313,25 @@
 		<xsl:variable name="termInitial" as="element()" select="$tT-ruleTypeEnriched/tT-conclusion/term/*"/>
 
 		<xsl:variable name="first_type_error" select="$termInitial/descendant::type_error[1]" as="element(type_error)?"/>
+		<xsl:variable name="lhs_error_terms" as="element(tail)">
+			<gat:tail>
+				<xsl:for-each select="$termInitial/descendant::type_error/need-equal/lhs/*">
+				    <ccseq:s>
+					   <xsl:apply-templates select="." mode="remove_gat_annotations"/>
+					</ccseq:s>
+				</xsl:for-each>
+			</gat:tail>
+		</xsl:variable>
+		<xsl:variable name="rhs_error_terms" as="element(tail)">
+			<gat:tail>			
+			     <xsl:for-each select="$termInitial/descendant::type_error/need-equal/rhs/*">
+				    <ccseq:s>
+					   <xsl:apply-templates select="." mode="remove_gat_annotations"/>
+					</ccseq:s>
+				</xsl:for-each>
+			</gat:tail>
+		</xsl:variable>
+
 		<xsl:choose>
 			<xsl:when test="$termInitial/descendant::illformed">
 				<xsl:message>Bail out of type correction - cant be done</xsl:message>
@@ -241,10 +352,12 @@
 				<xsl:variable name="rhs" as="element()">
 					<xsl:apply-templates select="$first_type_error/need-equal/rhs" mode="remove_gat_annotations"/>
 				</xsl:variable>
-				<xsl:for-each select="$lhs/*"> 
+				<!--<xsl:for-each select="$lhs/*"> -->
+				<xsl:for-each select="$lhs_error_terms">
 					<xsl:variable name="specialisation_results" as="element()*">
 						<xsl:call-template name="unifyTermsConsistentWithContext">
-							<xsl:with-param name="targetTerm" select="$rhs/*"/>
+							<xsl:with-param name="targetTerm" select="$rhs_error_terms"/>
+							<!--<xsl:with-param name="targetTerm" select="$rhs/*"/>-->
 							<xsl:with-param name="context" select="$tT-ruleTypeEnriched/context"/>
 						</xsl:call-template>
 					</xsl:variable>        
@@ -342,12 +455,12 @@
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="some $substitute in (subject|target)/substitute,
-								$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
-								$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
-								$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
-								$varlike_dependended_on_by_substituting_term_varlike 
-								in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
-								satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
+							$varlike_being_substituted_for in $substitute/(*:var|*:seq),  
+							$varlike_in_substituting_term in $substitute/term/(descendant::*:var|descendant::*:seq), 
+							$defining_decl_of_varlike_in_substituting_term in $context/(decl|sequence)[name=$varlike_in_substituting_term/name],
+							$varlike_dependended_on_by_substituting_term_varlike 
+							in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
+							satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
 							<xsl:message>Avoiding dependency cycle </xsl:message>
 							<INCOMPATIBLE/>
 						</xsl:when>
@@ -378,6 +491,12 @@
 	</xsl:template>
 
 
+	<xsl:template match="*[self::context]" mode="remove_gat_annotations">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="*" mode="remove_gat_annotations"/>
+		</xsl:copy>
+	</xsl:template>
 
 	<xsl:template match="*" mode="remove_gat_annotations">
 		<!-- need to keeep gat:name however -->
@@ -385,6 +504,16 @@
 			<xsl:copy-of select="@*"/>
 			<xsl:copy-of select="gat:name"/>
 			<!-- only applicable to var's and seq's -->
+			<xsl:apply-templates select="*[not(self::gat:*)]" mode="remove_gat_annotations"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="*[self::decl|self::sequence]" mode="remove_gat_annotations">
+		<!-- need to keeep gat:type and gat:name for decl and for sequence however -->
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:copy-of select="gat:name"/>
+			<xsl:apply-templates select="gat:type" mode="remove_gat_annotations"/>
 			<xsl:apply-templates select="*[not(self::gat:*)]" mode="remove_gat_annotations"/>
 		</xsl:copy>
 	</xsl:template>
