@@ -188,6 +188,8 @@
                        "/>
   </xsl:function>
   -->
+  
+  <xsl:param name="diamond_selection_pattern" select="'.*'"/>
 
 	<xsl:template match="*" mode="type_correction">
 		<xsl:copy>
@@ -196,6 +198,7 @@
 	</xsl:template>
 
 	<xsl:template match="gat:diamond" mode="type_correction">
+		<xsl:if test="matches(identity,$diamond_selection_pattern)">
 		<xsl:copy>
 			<!--<xsl:copy-of select="*"/>-->
 			<xsl:copy-of select="gat:identity"/>
@@ -205,6 +208,11 @@
 			<gat:from_inner_id>
 				<xsl:value-of select="from/inner/id"/>
 			</gat:from_inner_id>
+			
+			<gat:roughcut>
+			          <xsl:apply-templates select="gat:roughcut/gat:context" mode="text"/>
+					  <xsl:apply-templates select="gat:roughcut/top_of_diamond" mode="text"/>
+			</gat:roughcut>
 
 			<gat:type_corrected>
 				<xsl:variable name="firstCutDiamondContext" as="element(context)">    
@@ -263,6 +271,7 @@
 				</xsl:choose>
 			</gat:type_corrected>
 		</xsl:copy>
+		</xsl:if>
 	</xsl:template>
 
 
