@@ -9,6 +9,7 @@
 	<xsl:template match="/" mode="tex" >
 		<xsl:text>
 			\documentclass[10pt,a4paper,fleqn]{article}
+			\usepackage{amsmath}
 			\usepackage{mathtools}
 			\usepackage{alltt}
 			\usepackage{mnsymbol}
@@ -26,30 +27,88 @@
 		<xsl:value-of select="algebra/name"/>
 		<xsl:text>}
 			\maketitle
-			\noindent
-			\begin{eqnarray}
 		</xsl:text>
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
-		<xsl:text>Symbol</xsl:text>
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>     
-		<xsl:text>\hspace{1cm}Introductory Rule \nonumber \\
-		</xsl:text>
-		<xsl:apply-templates select="algebra/(sort|operator)" mode="tex_tablestyle"/>
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
-		<xsl:text>Axioms</xsl:text>
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
-		<xsl:text>\nonumber \\
-		</xsl:text>
-		<xsl:apply-templates select="algebra/(axiom|rewriteRule)" mode="tex_tablestyle"/>
-		<xsl:text>\end{eqnarray} 
-			\noindent
-			Derived Rules\\
-		</xsl:text>
-		<xsl:apply-templates select="algebra/lemma" mode="tex_linestyle"/>   
+
+		<xsl:if test="algebra/(sort|operator|axiom|rewriteRule|lemma)">
+			<xsl:text>
+				\noindent
+				\begin{eqnarray}
+			</xsl:text>
+			<xsl:text disable-output-escaping="yes">
+				<![CDATA[&]]>
+			</xsl:text>
+			<xsl:text>Symbol</xsl:text>
+			<xsl:text disable-output-escaping="yes">
+				<![CDATA[&]]>
+			</xsl:text>     
+			<xsl:text>\hspace{1cm}Introductory Rule \nonumber \\
+			</xsl:text>
+			<xsl:apply-templates select="algebra/(sort|operator)" mode="tex_tablestyle"/>
+			<xsl:text disable-output-escaping="yes">
+				<![CDATA[&]]>
+			</xsl:text>
+			<xsl:text>Axioms</xsl:text>
+			<xsl:text disable-output-escaping="yes">
+				<![CDATA[&]]>
+			</xsl:text>
+			<xsl:text>\nonumber \\
+			</xsl:text>
+			<xsl:apply-templates select="algebra/(axiom|rewriteRule)" mode="tex_tablestyle"/>
+			<xsl:text>\end{eqnarray} 
+				\noindent
+				Derived Rules\\
+			</xsl:text>
+			<xsl:apply-templates select="algebra/lemma" mode="tex_linestyle"/> 
+		</xsl:if>		
+
+		<xsl:if test="algebra/diamond">
+			<xsl:text>\section{Non-Confluent Diamonds}
+			</xsl:text>
+		</xsl:if>
+		<xsl:apply-templates select="algebra/diamond[NON-CONFLUENT]" mode="tex"/>
+
 		<xsl:text>
 			\end{document}
 			&#xA;
 		</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="diamond" mode="tex">
+		<xsl:text>Identity </xsl:text>
+		<xsl:value-of select="identity"/>
+		<xsl:text> </xsl:text> 
+		<xsl:text>\\&#xA;</xsl:text>
+		<xsl:text>\begin{align*}&#xA;</xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:apply-templates select="type_corrected/top_of_diamond/tT-rule/tT-conclusion/term/*" mode="tex"/>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text>\mbox{(top)}\\&#xA;</xsl:text>
+	    <xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:apply-templates select="type_corrected/top_of_diamond/tT-rule/tT-conclusion/type/*" mode="tex"/>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text>\mbox{(type)}\\&#xA;</xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:apply-templates select="leftside/left_reduction_normalised/term/*" mode="tex"/>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text>\mbox{(left)}\\&#xA;</xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:apply-templates select="rightside/right_reduction_normalised/term/*" mode="tex"/>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text>\mbox{(right)}\\&#xA;</xsl:text>
+		<xsl:text>\end{align*}&#xA;</xsl:text>
+		<xsl:text>where&#xA;</xsl:text>
+		<xsl:text>\begin{equation*}&#xA;</xsl:text>
+		<xsl:text>\begin{array}{l}&#xA;</xsl:text>
+		<xsl:for-each select="type_corrected/top_of_diamond/tT-rule/context/*">
+			<xsl:apply-templates select="." mode="tex"/>
+			<xsl:text>\\&#xA;</xsl:text>
+		</xsl:for-each>
+		<xsl:text>\end{array}&#xA;</xsl:text>
+		<xsl:text>\end{equation*}&#xA;</xsl:text>
+		<xsl:text>\noindent\rule{8cm}{0.4pt}&#xA;</xsl:text>\\
+        <xsl:text>&#xA;</xsl:text>
+        <xsl:text>\noindent&#xA;</xsl:text>
+
 	</xsl:template>
 
 	<xsl:template match="/" mode="tex_rulestyle" >
@@ -114,7 +173,8 @@
 
 	<xsl:template match="lemma" mode="tex_rulestyle">
 		<xsl:variable name="filename" select="concat('example',id,'.tex')"/>
-		<xsl:message>Filenamne is <xsl:value-of select="$filename"/> </xsl:message>
+		<xsl:message>Filenamne is <xsl:value-of select="$filename"/>
+		</xsl:message>
 		<xsl:text>\input{</xsl:text>
 		<xsl:value-of select="$filename"/>
 		<xsl:text>}
@@ -148,23 +208,31 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="tex_rulestyle">
-		<xsl:message>Passing over element name() <xsl:value-of select="name()"/> </xsl:message>
+		<xsl:message>Passing over element name() <xsl:value-of select="name()"/>
+		</xsl:message>
 	</xsl:template>
 
 
 	<xsl:template match="sort|operator" mode="tex_tablestyle">
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text disable-output-escaping="yes">
+			<![CDATA[&]]>
+		</xsl:text>
 		<xsl:value-of select="id"/> \hspace{0.25cm}
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]>\hspace{1cm}</xsl:text>
+		<xsl:text disable-output-escaping="yes">
+			<![CDATA[&]]>\hspace{1cm}</xsl:text>
 		<xsl:apply-templates select="T-rule|tT-rule" mode="tex"/>
 		<xsl:text> \\
 		</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="rewriteRule|axiom" mode="tex_tablestyle">
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text disable-output-escaping="yes">
+			<![CDATA[&]]>
+		</xsl:text>
 		<!--<xsl:value-of select="id"/>-->
-		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>		
+		<xsl:text disable-output-escaping="yes">
+			<![CDATA[&]]>
+		</xsl:text>		
 		<xsl:apply-templates select="TT-rule|tt-rule" mode="tex_linestyle"/>
 		<xsl:if test="following-sibling::*[self::sort|self::operator|self::rewriteRule|self::equation]">
 			<xsl:text> \\</xsl:text>
@@ -270,7 +338,8 @@
 
 
 	<xsl:template match="gat:*" mode="tex">
-		<xsl:message>Passing over element gat:name() <xsl:value-of select="name()"/> </xsl:message>
+		<xsl:message>Passing over element gat:name() <xsl:value-of select="name()"/>
+		</xsl:message>
 	</xsl:template>
 
 	<xsl:template match="gat:type_error" mode="tex">
