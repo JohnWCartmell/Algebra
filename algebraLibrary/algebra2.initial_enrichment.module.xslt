@@ -17,7 +17,7 @@ Description
 		<xsl:for-each select="algebra">
 			<xsl:copy>
 				<xsl:copy-of select="namespace::*"/>
-				<xsl:for-each select="*">
+				<xsl:for-each select="*[not(self::hidden)]">
 					<xsl:call-template name="initial_enrichment">
 						<xsl:with-param name="document" select="."/>
 					</xsl:call-template>
