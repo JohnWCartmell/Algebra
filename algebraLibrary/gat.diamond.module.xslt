@@ -322,9 +322,9 @@
 						</gat:type_corrected>
 					</xsl:when>
 					<xsl:otherwise>
-					    <xsl:if test="not($firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*/gat:type)">
-						    <xsl:message terminate="yes">Out OF SPEC <xsl:copy-of select="$firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*"/></xsl:message>
-					    </xsl:if>
+						<xsl:if test="not($firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*/gat:type)">
+							<xsl:message terminate="yes">Out OF SPEC <xsl:copy-of select="$firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*"/></xsl:message>
+						</xsl:if>
 						<gat:type_corrected>
 							<gat:top_of_diamond>
 								<gat:tT-rule>
@@ -423,6 +423,14 @@
 							<xsl:copy-of select="gat:right_reduction"/>
 							<xsl:if test="$candidate_more_general_right_reduction_text=$subject_right_reduction_text">
 								<gat:right_reduction_more_general/>
+							</xsl:if>
+							<xsl:if test="not($candidate_more_general_right_reduction_text=$subject_right_reduction_text)">
+								<gat:right_reduction_text>
+									<xsl:value-of select="$candidate_more_general_right_reduction_text"/>
+								</gat:right_reduction_text>
+								<gat:subject_right_reduction_text>
+									<xsl:value-of select="$subject_right_reduction_text"/>
+								</gat:subject_right_reduction_text>
 							</xsl:if>
 							<xsl:if test="$candidate_more_general_left_reduction_text=$subject_left_reduction_text">
 								<gat:left_reduction_more_general/>
@@ -539,11 +547,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-
-
 	<!-- grow_diamond
 	-->
-
 	<xsl:template match="*" mode="grow_diamond">
 		<xsl:copy>
 			<xsl:apply-templates mode="grow_diamond"/>
@@ -605,9 +610,17 @@
 					</xsl:if>
 					<xsl:if test="$lhscost &lt; $rhscost">
 						<gat:RIGHT-TO-LEFT/>
+						<xsl:call-template name="rewrite_rule">
+							<xsl:with-param name="lhs" select="$rightReductionNormalised"/>
+							<xsl:with-param name="rhs" select="$leftReductionNormalised"/>
+						</xsl:call-template>
 					</xsl:if>
 					<xsl:if test="$rhscost &lt; $lhscost">
 						<gat:LEFT-TO-RIGHT/>
+						<xsl:call-template name="rewrite_rule">
+							<xsl:with-param name="lhs" select="$leftReductionNormalised"/>
+							<xsl:with-param name="rhs" select="$rightReductionNormalised"/>
+						</xsl:call-template>
 					</xsl:if>
 				</gat:NON-CONFLUENT>
 				<xsl:message>*********** Diamond <xsl:value-of select="identity"/>  NON CONFLUENT ************</xsl:message>
@@ -616,6 +629,144 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="gat_diamond" name="rewrite_rule">
+		<xsl:param name="lhs" as="element(term)"/>
+		<xsl:param name="rhs" as="element(term)"/>
+		<xsl:variable name="rewrite_rule" as="element(rewriteRule)">
+			<gat:rewriteRule>
+				<gat:id><xsl:value-of select="identity"/></gat:id>
+				<gat:tt-rule>
+					<xsl:copy-of	select="type_corrected/top_of_diamond/tT-rule/context" copy-namespaces="no"/>
+					<gat:tt-conclusion>
+						<gat:lhs>
+							<xsl:copy-of select="$lhs/*"/>
+						</gat:lhs>
+						<gat:rhs>
+							<xsl:copy-of select="$rhs/*"/>
+						</gat:rhs>
+					</gat:tt-conclusion>
+				</gat:tt-rule>
+			</gat:rewriteRule>
+		</xsl:variable>
+		<xsl:apply-templates select="$rewrite_rule" mode="unpostfix_variable_names_if_safe"/>
+	</xsl:template>
+
+	<!-- correlate rewrites -->
+	<xsl:template match = "*" mode="correlate_rewrites">
+		<xsl:copy>
+			<xsl:apply-templates mode="correlate_rewrites"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="diamond[not(NON-CONFLUENT)]" mode="correlate_rewrites">
+		<!-- confluent diamond - omit -->
+	</xsl:template>
+
+
+	<xsl:template match="diamond[NON-CONFLUENT/rewriteRule]" mode="correlate_rewrites">
+		<xsl:copy>
+			<xsl:message>Considering diamond rewrite: <xsl:value-of select="identity"/></xsl:message>			
+			<xsl:apply-templates select="*[not(self::type_corrected|self::leftside|self::rightside)]" mode="correlate_rewrites"/>
+			<xsl:variable name="subject_lhs" as="element(lhs)" select="NON-CONFLUENT/rewriteRule/tt-rule/tt-conclusion/lhs"/>
+			<xsl:for-each select="(preceding-sibling::*|following-sibling::*)
+					[self::gat:diamond]
+					[NON-CONFLUENT/rewriteRule]
+					">
+				<xsl:variable name="candidate_identity" select="identity"/>
+				<xsl:message>... is <xsl:value-of select="$candidate_identity"/> more general? </xsl:message>
+				<xsl:variable name="how_specialises" as="element(gat:substitution)*">
+					<xsl:for-each select="NON-CONFLUENT/rewriteRule/tt-rule/tt-conclusion/lhs/*">
+						<xsl:call-template name="changeTargetVariablesAndSpecialiseTerm">
+							<xsl:with-param name="targetTerm" select="$subject_lhs/*"/>
+						</xsl:call-template>
+					</xsl:for-each>
+				</xsl:variable>
+				<xsl:if test="$how_specialises">
+					<xsl:if test="not(count(target/substitute)=0)">
+						<xsl:message terminate="yes"> Number of target substitutions is <xsl:value-of select="count(target/substitute)"/> </xsl:message>
+					</xsl:if>
+					<gat:more_general_rewrite>
+						<gat:diamond-id><xsl:value-of select="$candidate_identity"/></gat:diamond-id>
+					</gat:more_general_rewrite>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:copy>
+	</xsl:template>
+
+	<!-- rewrite filter -->
+
+	<xsl:template match="algebra" mode="rewrite_filter">
+		<xsl:copy>
+			<xsl:apply-templates mode="rewrite_filter"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="*" mode="rewrite_filter">
+		<xsl:apply-templates mode="rewrite_filter"/>
+	</xsl:template>
+
+	<xsl:template match="gat:diamond
+			[NON-CONFLUENT/rewriteRule]
+			[not(more_general_rewrite)]" mode="rewrite_filter">
+		<xsl:message>Keeping rewrite <xsl:value-of select="identity"/>
+		</xsl:message>
+		<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
+	</xsl:template>
+
+	<xsl:template match="gat:diamond
+			[NON-CONFLUENT/rewriteRule]
+			[more_general_rewrite]" mode="rewrite_filter">
+
+		<!-- filter out this diamond unless the more general rewrite 
+		     itself has this rewrite as a more general in 
+			 in which case we choose the earliest in document order-->
+		<xsl:variable name="more_general_rewrite_that_itself_has_a_more_general_rewrite"
+				as="element(more_general_rewrite)*"
+				select="more_general_rewrite
+				[  some $diamond_id in diamond-id 
+				satisfies //diamond[identity=$diamond_id]/more_general_rewrite
+				]
+				"/>
+		<xsl:choose>
+			<xsl:when test="$more_general_rewrite_that_itself_has_a_more_general_rewrite">
+				<xsl:message> Diamond <xsl:value-of select="identity"/> has generalising top that itself has a generalisation...</xsl:message>
+				<xsl:variable name="subject_identity" select="identity"/>
+				<xsl:choose>
+					<xsl:when test="every $such_more_general_rule
+							in $more_general_rewrite_that_itself_has_a_more_general_rewrite
+							satisfies
+							some $more_general_rules_diamond in  //diamond[identity=$such_more_general_rule/diamond-id],
+							$further_more_general_rules_diamond in $more_general_rules_diamond/more_general_rule,
+							$diamond-id in $further_more_general_rules_diamond/diamond-id
+							satisfies $diamond-id=$subject_identity
+							">
+						<xsl:message>... every one of them is to a more general rule that itself has this one as a generalisation...</xsl:message>
+						<!-- mutually generalising - filter out all but the first one  -->
+						<xsl:variable name="subject_id" select="generate-id()"/>
+						<xsl:choose>
+							<xsl:when test="every $such_more_general_rule
+									in $more_general_rewrite_that_itself_has_a_more_general_rewrite
+									satisfies $such_more_general_rule/generate-id() &gt; $subject_id">
+								<xsl:message>... keep this one as it is the first one.</xsl:message>
+								<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:message>... discard this one as it is not the first one.</xsl:message>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:message>...discard this one because there is no circularity and generalisation is transitive</xsl:message>
+					</xsl:otherwise>
+				</xsl:choose>
+				<!-- I don't know whether or not we could get circular generalisations -->
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:message> Filtering out <xsl:value-of select="identity"/>
+				</xsl:message>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
 
 
 
@@ -661,6 +812,79 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="*" mode="unpostfix_variable_names_if_safe">
+		<xsl:copy copy-namespaces="no">
+			<xsl:apply-templates mode="unpostfix_variable_names_if_safe"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<!--	 [substring(name,string-length(name)-1,string-length(name))=''''] -->
+	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
+			[substring(name,string-length(name),1)='''']
+			[not(some $varlike 
+			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+			satisfies $varlike/name = substring(name,1,string-length(name)-1)
+			)
+			]
+			" 
+			priority="100"							  
+			mode="unpostfix_variable_names_if_safe">
+		<xsl:copy copy-namespaces="no">
+			<gat:name>
+				<xsl:value-of select="substring(name,1,string-length(name)-1)"/>
+			</gat:name>
+			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
+			[substring(name,string-length(name),1)='''']
+			[some $decl 
+			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/*
+			satisfies ($decl/type/*:Ob/*:var/gat:name = name and
+			           not(substring($decl/name,string-length($decl/name) - 1,1)='''') and
+			not(some $varlike 
+			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+			satisfies $varlike/name = concat($decl/name,'_p')
+			)
+			)
+			]
+			" 
+			priority="150"
+			mode="unpostfix_variable_names_if_safe">
+		<xsl:copy copy-namespaces="no">
+			<xsl:variable name="decl" 
+					select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/child::decl
+					[type/*:Ob/*:var/gat:name = current()/name
+					and not(substring(name,string-length(name) - 1,1)='''')
+					and not(some $varlike 
+					in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+					satisfies $varlike/name = concat(name,'_p')
+					)][1]"/>    
+			<gat:name>
+				<xsl:value-of select="concat($decl/name,'_p')"/>
+			</gat:name>
+			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
+			[substring(name,string-length(name),1)='''']
+			[not(some $varlike 
+			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+			satisfies $varlike/name = concat(substring(name,1,string-length(name)-1),'p')
+			)
+			]
+			" 
+			priority="50"							  
+			mode="unpostfix_variable_names_if_safe">
+		<xsl:copy copy-namespaces="no">
+			<gat:name>
+				<xsl:value-of select="concat(substring(name,1,string-length(name)-1),'p')"/>
+			</gat:name>
+			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
+		</xsl:copy>
+	</xsl:template>
 
 	<xsl:template match="*" mode="prefix_variable_names">
 		<xsl:copy copy-namespaces="no">

@@ -247,8 +247,20 @@ Description
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="tT-rule|rewriteRule" mode="type_enrich">
+	    <xsl:message>Type enriching  rule <xsl:value-of select="gat:id"/></xsl:message>
+		<xsl:copy>
+			<xsl:apply-templates  mode="type_enrich"/>
+		</xsl:copy>
+	</xsl:template>
+	
+	<xsl:template match="*" mode="type_enrich">
+		<xsl:copy>
+			<xsl:apply-templates  mode="type_enrich"/>
+		</xsl:copy>
+	</xsl:template>
 
-	<xsl:template match="tT-rule" mode="type_enrich">
+	<xsl:template match="tT-rule|tt-rule" mode="type_enrich">
 		<xsl:variable name="empty_context" as="element(context)">
 			<gat:context/>
 		</xsl:variable>
@@ -257,16 +269,16 @@ Description
 				<xsl:with-param name="contextsofar" select="$empty_context"/>
 			</xsl:apply-templates>
 		</xsl:variable>
-		<xsl:variable name="type_enriched_conclusion" as="element(tT-conclusion)">
+		<xsl:variable name="type_enriched_conclusion" as="element()">
 			<xsl:call-template name="initial_enrichment_recursive">
-				<xsl:with-param name="interim" select="tT-conclusion"/>
+				<xsl:with-param name="interim" select="tT-conclusion|tt-conclusion"/>
 				<xsl:with-param name="context" select="$type_enriched_context"/>
 			</xsl:call-template>
 		</xsl:variable>
-		<gat:tT-rule>
+		<xsl:copy>
 			<xsl:copy-of select="$type_enriched_context"/>
 			<xsl:copy-of select="$type_enriched_conclusion"/>
-		</gat:tT-rule>
+		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="context" mode="type_enrich_context">
@@ -279,7 +291,7 @@ Description
 				<xsl:variable name="next" as="element()" select="*[self::gat:decl|self::gat:sequence][count($contextsofar/*[self::gat:decl|self::gat:sequence])+1]"/>
 				<xsl:variable name="next_enriched" as="element()">
 					<xsl:apply-templates select="$next" mode="initial_enrichment_recursive">
-					    <xsl:with-param name="context" select="$contextsofar"/>
+						<xsl:with-param name="context" select="$contextsofar"/>
 					</xsl:apply-templates>
 				</xsl:variable>
 				<xsl:variable name="context_extended" as="element(context)">
@@ -302,18 +314,6 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_recursive">
 				<xsl:with-param name="context" select="$context"/>
 			</xsl:apply-templates>
-			<!-- was 
-			<xsl:choose>
-				<xsl:when test="ancestor::decl|ancestor::sequence">
-					<xsl:apply-templates mode="normalise" 
-							select="(ancestor::decl|ancestor::sequence)/preceding-sibling::decl[name=current()/name]/type"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates mode="normalise" 
-							select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/decl[name=current()/name]/type"/>
-				</xsl:otherwise>
-			</xsl:choose>
-			is -->
 			<xsl:choose>
 				<xsl:when test="$context/decl[name=current()/name]">
 					<xsl:apply-templates mode="normalise" 
@@ -336,26 +336,14 @@ Description
 			<xsl:apply-templates mode="initial_enrichment_recursive">
 				<xsl:with-param name="context" select="$context"/>
 			</xsl:apply-templates>
-			<!-- was
-			<xsl:choose>
-				<xsl:when test="ancestor::decl|ancestor::sequence">
-
-					<xsl:apply-templates mode="normalise" 
-							select="(ancestor::decl|ancestor::sequence)/preceding-sibling::sequence[name=current()/name]/type"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates mode="normalise" 
-							select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/sequence[name=current()/name]/type"/>
-				</xsl:otherwise>
-			</xsl:choose>
-			now is -->
 			<xsl:choose>
 				<xsl:when test="$context/sequence[name=current()/name]">
 					<xsl:apply-templates mode="normalise" 
 							select="$context/sequence[name=current()/name]/type"/>
 				</xsl:when>		
 				<xsl:when test="(ancestor::decl|ancestor::sequence)/following-sibling::sequence[name=current()/name]">
-					<xsl:message terminate="yes">seq  <xsl:value-of select="name"/> doesn't have a type in earlier part of context but has one in later part of context</xsl:message>
+				    <xsl:variable name="identity" select="ancestor::*/gat:id"/>
+					<xsl:message terminate="yes">seq  <xsl:value-of select="name"/> in <xsl:value-of select="$identity"/>doesn't have a type in earlier part of context but has one in later part of context</xsl:message>
 				</xsl:when>
 				<xsl:otherwise>
 					<!-- untyped variable -->

@@ -140,6 +140,7 @@
 	</xsl:template>
 
 	<xsl:template match="algebra" mode="tex_rulestyle">
+	<xsl:message> in algebra</xsl:message>
 		<xsl:apply-templates mode="tex_rulestyle"/>
 	</xsl:template>
 
@@ -158,6 +159,7 @@
 	</xsl:template>
 
 	<xsl:template match="rewriteRule|axiom" mode="tex_rulestyle">
+	<xsl:message>in reWriteRule <xsl:value-of select="gat:id"/></xsl:message>
 		<xsl:text>
 			\begin{equation}
 		</xsl:text>

@@ -39,11 +39,7 @@
 		<xsl:variable name="varlike_substituting_terms" as="element()*" select="$substitutions/(subject|target)/substitute[count(term/*)=1 and term/*[self::*:var|self::*:seq]] /(*:var|*:seq)"/>
 
 		<xsl:variable name="declikes_substituted_by_varlike" as="element()*" select="./*[some $varlike in $varlike_substituting_terms satisfies $varlike/name=name]"/>
-		<xsl:for-each select="$declikes_substituted_by_varlike">
-			
-			<xsl:variable name="substituting_varlike" as="element()" select="$substitutions/(subject|target)/substitute[(*:var|*:seq)/name=current()/name]/term/(*:var|*:seq)"/>
-			<xsl:variable name="decllike_of_substituting_varlike" as="element()?" select="$context/(*:decl|*:sequence)[name=$substituting_varlike/name]"/>
-		</xsl:for-each>
+
 		<xsl:variable name="firstcut_context" as="element(context)">
 			<xsl:copy>
 				<xsl:apply-templates  mode="substitution_into_context">
