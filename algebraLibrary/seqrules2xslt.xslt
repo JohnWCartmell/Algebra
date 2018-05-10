@@ -1,5 +1,5 @@
 <!--
-rules2xslt.xslt
+seqrules2xslt.xslt
 **********************
 
 DESCRIPTION
@@ -20,7 +20,11 @@ DESCRIPTION
 		<xsl:element name="xsl:transform">
 			<xsl:attribute name="version" select="'2.0'"/>
 			<xsl:attribute name="xpath-default-namespace" select="gat:namespace"/>
-			<xsl:copy-of select="namespace::*"/>  <xsl:apply-templates select="rewriteRule" mode="generate_rewrite"/>
+			<xsl:copy-of select="namespace::*"/>  
+			<xsl:element name="xsl:include">
+				<xsl:attribute name="href" select="'../theory/main.xslt'"/>
+			</xsl:element>
+			<xsl:apply-templates select="rewriteRule" mode="generate_rewrite"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -161,14 +165,14 @@ DESCRIPTION
 	</xsl:template>
 
 	<xsl:template name="remainder">
-	    <!-- added ancestor-or-self::*/ on Friday 17th March -->
+		<!-- added ancestor-or-self::*/ on Friday 17th March -->
 		<xsl:apply-templates select="child::* [not(self::gat:*)] | ancestor-or-self::*[not(self::gat:*)]/following-sibling::* [not(self::gat:required)]" 
 				mode="lhs"/>
-				
+
 		<xsl:text>$unit in ((1)) satisfies true()</xsl:text>
-        <xsl:for-each select="ancestor-or-self::*[parent::gat:lhs]">
-		<xsl:call-template name="generate_var_deep_equals_tests"/> 
-		<xsl:call-template name="generate_seq_deep_equals_tests"/>
+		<xsl:for-each select="ancestor-or-self::*[parent::gat:lhs]">
+			<xsl:call-template name="generate_var_deep_equals_tests"/> 
+			<xsl:call-template name="generate_seq_deep_equals_tests"/>
 		</xsl:for-each>
 		<xsl:text>][1]</xsl:text>
 	</xsl:template>
@@ -238,7 +242,7 @@ DESCRIPTION
 		<xsl:for-each select="(self::*|following-sibling::*)/descendant-or-self::*:var">
 			<xsl:if test="not(ancestor::gat:type)"> <!-- added when gat:type added to source in some cases 14 Feb 2018 -->
 				<xsl:if test="preceding::*:var[not(ancestor::gat:type)]
-					[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
+						[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
 					<xsl:call-template name="newline">
 						<xsl:with-param name="level" select="0"/>
 					</xsl:call-template> 
@@ -257,7 +261,7 @@ DESCRIPTION
 	<xsl:template name="generate_seq_deep_equals_tests">
 		<xsl:for-each select="(self::*|following-sibling::*)/descendant-or-self::*:seq">
 			<xsl:if test="preceding::*:seq [not(ancestor::gat:type)]
-				[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
+					[(name=current()/name) and (generate-id(ancestor::lhs) = generate-id(current()/ancestor::lhs))]">
 				<xsl:call-template name="newline">
 					<xsl:with-param name="level" select="0"/>
 				</xsl:call-template> 
