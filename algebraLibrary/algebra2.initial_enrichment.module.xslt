@@ -15,14 +15,14 @@ Description
 
 	<xsl:template match="/">
 		<xsl:for-each select="algebra">
-			<xsl:copy>
-				<xsl:copy-of select="namespace::*"/>
-				<xsl:for-each select="*[not(self::hidden)]">
+			<!--<xsl:copy> -->
+				<!--<xsl:copy-of select="namespace::*"/> -->
+				<!-- <xsl:for-each select="*[not(self::hidden)]"> -->
 					<xsl:call-template name="initial_enrichment">
-						<xsl:with-param name="document" select="."/>
+						<xsl:with-param name="document" select="."/> <!-- was "." -->
 					</xsl:call-template>
-				</xsl:for-each>
-			</xsl:copy>
+				<!-- </xsl:for-each> -->
+			<!--</xsl:copy>-->
 		</xsl:for-each>
 	</xsl:template>
 
@@ -33,6 +33,13 @@ Description
 	
 		<xsl:variable name="current_state">
 			<xsl:for-each select="$document">
+				<xsl:copy>
+					<xsl:apply-templates mode="pass_0"/>
+				</xsl:copy>
+			</xsl:for-each>
+		</xsl:variable>
+				<xsl:variable name="current_state">
+			<xsl:for-each select="$current_state">
 				<xsl:copy>
 					<xsl:apply-templates mode="initial_enrichment_zero_pass"/>
 				</xsl:copy>
@@ -60,6 +67,44 @@ Description
 		</xsl:for-each>
 
 	</xsl:template>
+	
+	<!-- pass_0 is a copy of standard include code from ER modfelling generators -->
+	
+	<!--
+	  <xsl:template match="/">
+      <xsl:copy>
+         <xsl:apply-templates mode="pass_0"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   -->
+   
+   <xsl:template match="@*|node()" mode="pass_0">
+  <!-- <xsl:message>in pass zero generic <xsl:value-of select="name()"/></xsl:message>-->
+      <xsl:copy>
+         <xsl:apply-templates select="@*|node()" mode="pass_0"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="include[not(*/self::type)]" mode="pass_0">
+      <xsl:apply-templates select="document(filename)/*/*" mode="pass_0"/>
+   </xsl:template>
+   
+   <xsl:template match="/*/include[*/self::type]" mode="pass_0">
+      <xsl:variable name="temp" select="../name()"/>
+      <xsl:apply-templates select="document(filename)/*[name()=$temp]/*[name()=current()/type]"
+                           mode="pass_0"/>
+   </xsl:template>
+   
+   <xsl:template match="/*/*/include[*/self::type]" mode="pass_0">
+      <xsl:variable name="temp" select="../../name()"/>
+      <xsl:variable name="temp2" select="../name()"/>
+      <xsl:apply-templates select="document(filename)/*[name()=$temp]/*[name()=$temp2]/*[name()=current()/type]"
+                           mode="pass_0"/>
+   </xsl:template>
+   
+   <!-- end of pass_0 -->
+   
 
 	<xsl:template match="*"
 			mode="initial_enrichment_zero_pass"> 
@@ -79,7 +124,7 @@ Description
 
 	<xsl:template match="gat:*"
 			mode="initial_enrichment_first_pass"> 
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy > <!-- was copy-namespaces="no" -->
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_first_pass"/>
 		</xsl:copy>
@@ -149,8 +194,18 @@ Description
   -->
 
 	<!--	<xsl:template match="algebra|name|id" mode="initial_enrichment_second_pass"> -->
+	
+	<xsl:template match="gat:algebra" mode="initial_enrichment_second_pass" priority="1000">
+	<xsl:message> in gat:algebra </xsl:message>
+		<xsl:copy>  <!-- copies namespaces -->
+		   <!--<xsl:copy-of select="namespace::*"/>-->
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates mode="initial_enrichment_second_pass"/>
+		</xsl:copy>
+	</xsl:template>
+	
 	<xsl:template match="gat:*[not(self::gat:type)]" mode="initial_enrichment_second_pass">
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy copy-namespaces="no">  
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates mode="initial_enrichment_second_pass"/>
 		</xsl:copy>
@@ -158,7 +213,7 @@ Description
 
 	<xsl:template match="*[not(self::gat:*|self::*:seq)]" 
 			mode="initial_enrichment_second_pass">
-		<xsl:copy copy-namespaces="no">
+		<xsl:copy copy-namespaces="no"> <!-- was copy-namespaces="no" -->
 			<xsl:copy-of select="@*"/>
 			<xsl:if test="ancestor::lhs">
 				<xsl:attribute name="selector">

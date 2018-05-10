@@ -7,10 +7,10 @@
 	<!-- 14 March 2018 Reverse changes that introduced id(x).
 	                   Keep revised contexts.
     -->
-
+	
 
 	<gat:rewriteRule>
-		<gat:id>c.1</gat:id>
+		<gat:id>C.1</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:sequence>
@@ -78,7 +78,7 @@
 	</gat:rewriteRule>
 
 	<gat:rewriteRule>
-		<gat:id>c.2</gat:id>
+		<gat:id>C.2</gat:id>
 		<gat:tt-rule>
 			<gat:context> 
 				<gat:decl>
@@ -110,7 +110,7 @@
 	</gat:rewriteRule>
 	
 	<gat:rewriteRule>
-		<gat:id>c0.0</gat:id>
+		<gat:id>C0.0</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -192,7 +192,7 @@
 
 	
 		<gat:rewriteRule>
-		<gat:id>c0.1</gat:id>
+		<gat:id>C0.1</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -222,7 +222,7 @@
 	</gat:rewriteRule>
 
 	<gat:rewriteRule>
-		<gat:id>c0.2</gat:id>
+		<gat:id>C0.2</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -255,7 +255,7 @@
 	
 
 	<gat:rewriteRule>
-		<gat:id>c0.3</gat:id>
+		<gat:id>C0.3</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -314,7 +314,7 @@
 	</gat:rewriteRule>
 
 	<gat:rewriteRule>
-		<gat:id>c0.4</gat:id>
+		<gat:id>C0.4</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -427,7 +427,7 @@
 	
     <!-- <gat:hidden> -->
 	<gat:rewriteRule>
-		<gat:id>c1.1</gat:id>
+		<gat:id>C1.5</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -664,10 +664,8 @@
 	-->
 
 
-	<!-- experiment 4th April 2018
-
 	<gat:rewriteRule>
-		<gat:id>11pps</gat:id>
+		<gat:id>C1.6</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:decl>
@@ -742,7 +740,6 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 	
-	-->
 
 	<gat:hidden>
 	<gat:rewriteRule>

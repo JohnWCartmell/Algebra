@@ -246,6 +246,16 @@ Description
 			<xsl:apply-templates select="*[not(self::gat:*)]" mode="remove_gat_annotations"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<xsl:template match="/" mode="type_enrich">
+		<xsl:for-each select="gat:algebra">
+			<xsl:copy>
+				<xsl:copy-of select="namespace::*"/>
+				<xsl:apply-templates select="gat:*" mode="type_enrich"/>
+			</xsl:copy>
+		</xsl:for-each>
+	</xsl:template>
+	
 
 	<xsl:template match="tT-rule|rewriteRule" mode="type_enrich">
 	    <xsl:message>Type enriching  rule <xsl:value-of select="gat:id"/></xsl:message>

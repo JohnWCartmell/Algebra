@@ -18,6 +18,8 @@
     -->			
 
 
+
+
 	<xsl:template match = "/" mode="prepare_roughcut_diamonds">
 		<xsl:apply-templates mode="prepare_roughcut_diamonds"/>
 	</xsl:template>
@@ -26,6 +28,10 @@
 		<xsl:copy>
 			<xsl:copy-of select="namespace::*"/>
 			<xsl:variable name="algebra_name" select="name"/>
+
+
+
+
 			<xsl:for-each select="rewriteRule/tt-rule"> 
 				<xsl:variable name="inner_rule_id" select="../id"/>
 				<xsl:message>Inner rule <xsl:value-of select="$inner_rule_id"/> </xsl:message> 
@@ -67,7 +73,7 @@
 						</xsl:apply-templates>
 					</xsl:variable>
 					<xsl:for-each select="$results">
-						<xsl:variable name="diamond_identity" select="concat($inner_rule_id,'-',$outer_rule_id,'-',position())"/>
+						<xsl:variable name="diamond_identity" select="concat($inner_rule_id,'+',$outer_rule_id,'(',position(),')')"/>
 						<xsl:variable name="innerContextSubstituted" as="element(context)">
 							<xsl:apply-templates select="$innerContext" mode="substitution">
 								<xsl:with-param name="substitutions" select="substitution"/>  
@@ -695,8 +701,14 @@
 
 	<!-- rewrite filter -->
 
+	<xsl:param name="include" />
+
 	<xsl:template match="algebra" mode="rewrite_filter">
 		<xsl:copy>
+			<gat:include>
+				<gat:filename><xsl:value-of select="$include"/></gat:filename>
+				<gat:type>gat:rewriteRule</gat:type>
+			</gat:include>
 			<xsl:apply-templates mode="rewrite_filter"/>
 		</xsl:copy>
 	</xsl:template>
@@ -842,7 +854,7 @@
 			[some $decl 
 			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/*
 			satisfies ($decl/type/*:Ob/*:var/gat:name = name and
-			           not(substring($decl/name,string-length($decl/name) - 1,1)='''') and
+			not(substring($decl/name,string-length($decl/name) - 1,1)='''') and
 			not(some $varlike 
 			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
 			satisfies $varlike/name = concat($decl/name,'_p')
