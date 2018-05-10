@@ -181,7 +181,6 @@
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
-		<xsl:message>Exit unifyTerms</xsl:message>
 	</xsl:template>
 
 
@@ -240,7 +239,6 @@
 					<xsl:if test="not($head_substitution/substitution[self::substitution])">
 						<xsl:message terminate="yes"> ***** return type assertion fails</xsl:message>
 					</xsl:if>
-					<xsl:message>   sSTF finished consumption branch one</xsl:message>
 					<xsl:copy-of select="$head_substitution/substitution"/> 
 				</xsl:when>
 				<xsl:otherwise>	
@@ -636,7 +634,6 @@
 									]
 									)
 									">
-								<xsl:message> case (8) triggers</xsl:message>
 								<head_substitution>
 									<gat:substitution>
 										<case>8</case>

@@ -702,18 +702,43 @@
 	<!-- rewrite filter -->
 
 	<xsl:param name="include" />
+	<xsl:param name="iteration" />
 
 	<xsl:template match="algebra" mode="rewrite_filter">
 		<xsl:copy>
 			<gat:include>
+				<gat:filename>algebra0.xml</gat:filename>
+				<gat:type>gat:name</gat:type>
+			</gat:include>
+			<gat:include>
+				<gat:filename>algebra0.xml</gat:filename>
+				<gat:type>gat:namespace</gat:type>
+			</gat:include>
+			<gat:include>
 				<gat:filename><xsl:value-of select="$include"/></gat:filename>
 				<gat:type>gat:rewriteRule</gat:type>
 			</gat:include>
-			<xsl:apply-templates mode="rewrite_filter"/>
+			<xsl:variable name="rewrite_rules" as="element(rewriteRule)*">
+				<xsl:apply-templates mode="rewrite_filter"/>
+			</xsl:variable>
+			<xsl:for-each select="$rewrite_rules">
+				<gat:rewriteRule>
+					<gat:id>
+						<xsl:value-of select="concat('x',$iteration,'.',position())"/>
+					</gat:id>
+					<gat:diamond>
+						<xsl:value-of select="gat:id"/>
+					</gat:diamond>
+					<xsl:copy-of select="*[not(self::gat:id)]"/>
+				</gat:rewriteRule>
+			</xsl:for-each>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="*" mode="rewrite_filter">
+	<xsl:template match="text()" mode="rewrite_filter">
+	</xsl:template>
+
+	<xsl:template match="*|text()" mode="rewrite_filter">
 		<xsl:apply-templates mode="rewrite_filter"/>
 	</xsl:template>
 
@@ -748,7 +773,7 @@
 							in $more_general_rewrite_that_itself_has_a_more_general_rewrite
 							satisfies
 							some $more_general_rules_diamond in  //diamond[identity=$such_more_general_rule/diamond-id],
-							$further_more_general_rules_diamond in $more_general_rules_diamond/more_general_rule,
+							$further_more_general_rules_diamond in $more_general_rules_diamond/more_general_rewrite,
 							$diamond-id in $further_more_general_rules_diamond/diamond-id
 							satisfies $diamond-id=$subject_identity
 							">
@@ -843,7 +868,7 @@
 			mode="unpostfix_variable_names_if_safe">
 		<xsl:copy copy-namespaces="no">
 			<gat:name>
-				<xsl:value-of select="substring(name,1,string-length(name)-1)"/>
+				<xsl:value-of select="replace(substring(name,1,string-length(name)-1),'''','8')"/>
 			</gat:name>
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
 		</xsl:copy>
@@ -873,26 +898,23 @@
 					in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
 					satisfies $varlike/name = concat(name,'_p')
 					)][1]"/>    
+			<xsl:if test="substring($decl/name,string-length(name) - 1,1)=''''">
+				<xsl:message terminate="yes">OUT OF SPEC</xsl:message>
+			</xsl:if>
 			<gat:name>
-				<xsl:value-of select="concat($decl/name,'_p')"/>
+				<xsl:value-of select="replace(concat($decl/name,'_p'),'''','9')"/>
 			</gat:name>
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
 		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
-			[substring(name,string-length(name),1)='''']
-			[not(some $varlike 
-			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
-			satisfies $varlike/name = concat(substring(name,1,string-length(name)-1),'p')
-			)
-			]
 			" 
 			priority="50"							  
 			mode="unpostfix_variable_names_if_safe">
 		<xsl:copy copy-namespaces="no">
 			<gat:name>
-				<xsl:value-of select="concat(substring(name,1,string-length(name)-1),'p')"/>
+				<xsl:value-of select="replace(name,'''','m')"/>
 			</gat:name>
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="unpostfix_variable_names_if_safe"/>
 		</xsl:copy>

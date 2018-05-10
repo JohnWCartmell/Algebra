@@ -160,7 +160,6 @@ Description
 	<xsl:template name="unifyTermsConsistentWithContext">
 		<xsl:param name="targetTerm" as="element()"/>
 		<xsl:param name="context" as="element(context)"/>
-
 		<xsl:variable name="specialisations" as="element()*">
 			<xsl:call-template name="unifyTerms">
 				<xsl:with-param name="subjectTerm" select="."/>
@@ -188,7 +187,11 @@ Description
 								$varlike_dependended_on_by_substituting_term_varlike 
 								in $defining_decl_of_varlike_in_substituting_term/type/(descendant::*:var|descendant::*:seq)										 
 								satisfies $varlike_being_substituted_for/name=$varlike_dependended_on_by_substituting_term_varlike/name">
-							<xsl:message terminate="yes">Avoiding dependency cycle (terminate added 2nd May 2018 as diagnostic aid) </xsl:message>
+								<xsl:message>context <xsl:apply-templates select="$context" mode="text"/></xsl:message>
+								<xsl:message>substitution <xsl:apply-templates select="." mode="text"/></xsl:message>
+								<xsl:message>targetTerm <xsl:apply-templates select="$targetTerm" mode="text"/></xsl:message>
+								
+							<xsl:message >Avoiding dependency cycle </xsl:message>
 							<gat:incompatible>
 								Avoiding dependency cycle
 							</gat:incompatible>
