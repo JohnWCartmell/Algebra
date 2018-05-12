@@ -15,6 +15,8 @@
             correlate_diamonds
             diamond_filter
             grow_diamonds
+			correlate_rewrites
+			rewrite_filter
     -->			
 
 
@@ -375,11 +377,11 @@
 			</xsl:variable>
 			<xsl:variable name="more_general_tops" as="element(more_general_top)*">	
 				<xsl:for-each select="(preceding-sibling::*|following-sibling::*)
-						[self::gat:diamond]
-						[not(type_corrected/ABANDONED)]
-						[from_outer_id = current()/from_outer_id]
-						[from_inner_id = current()/from_inner_id]
-						">
+					[self::gat:diamond]
+					[not(type_corrected/ABANDONED)]
+					[from_outer_id = current()/from_outer_id]
+					[from_inner_id = current()/from_inner_id]
+					">
 					<xsl:variable name="candidate_identity" select="identity"/>
 					<xsl:message>... is <xsl:value-of select="$candidate_identity"/> more general? </xsl:message>
 					<xsl:variable name="how_specialises" as="element(gat:substitution)*">
@@ -472,13 +474,13 @@
 	</xsl:template>
 
 	<xsl:template match="gat:diamond
-			[not(most_generalising_tops/most_generalising_top
-			[right_reduction_more_general
-			and 
-			left_reduction_more_general
-			]
-			)
-			]" mode="diamond_filter">
+		[not(most_generalising_tops/most_generalising_top
+		[right_reduction_more_general
+		and 
+		left_reduction_more_general
+		]
+		)
+		]" mode="diamond_filter">
 		<xsl:message>Keeping <xsl:value-of select="identity"/>
 		</xsl:message>
 		<xsl:copy>
@@ -487,49 +489,49 @@
 	</xsl:template>
 
 	<xsl:template match="gat:diamond
-			[most_generalising_tops/most_generalising_top
-			[right_reduction_more_general
-			and 
-			left_reduction_more_general
-			]
-			]" mode="diamond_filter">
+		[most_generalising_tops/most_generalising_top
+		[right_reduction_more_general
+		and 
+		left_reduction_more_general
+		]
+		]" mode="diamond_filter">
 
 		<!-- filter out this diamond -->
 		<xsl:variable name="generalising_top_that_itself_has_a_generalisation"
 				as="element(most_generalising_top)*"
 				select="most_generalising_tops/most_generalising_top
-				[right_reduction_more_general
-				and 
-				left_reduction_more_general
-				]
-				[  some $diamond_id in diamond-id 
-				satisfies //diamond[identity=$diamond_id]/most_generalising_tops/most_generalising_top
-				[right_reduction_more_general
-				and 
-				left_reduction_more_general
-				]
-				]
-				"/>
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			[  some $diamond_id in diamond-id 
+			satisfies //diamond[identity=$diamond_id]/most_generalising_tops/most_generalising_top
+			[right_reduction_more_general
+			and 
+			left_reduction_more_general
+			]
+			]
+			"/>
 		<xsl:choose>
 			<xsl:when test="$generalising_top_that_itself_has_a_generalisation">
 				<xsl:message> Diamond <xsl:value-of select="identity"/> has generalising top that itself has a generalisation...</xsl:message>
 				<xsl:variable name="subject_identity" select="identity"/>
 				<xsl:choose>
 					<xsl:when test="every $such_generalising_top
-							in $generalising_top_that_itself_has_a_generalisation
-							satisfies
-							some $generalising_diamond in  //diamond[identity=$such_generalising_top/diamond-id],
-							$further_generalisation in $generalising_diamond/most_generalising_tops/most_generalising_top,
-							$diamond-id in $further_generalisation/diamond-id
-							satisfies $diamond-id=$subject_identity
-							">
+						in $generalising_top_that_itself_has_a_generalisation
+						satisfies
+						some $generalising_diamond in  //diamond[identity=$such_generalising_top/diamond-id],
+						$further_generalisation in $generalising_diamond/most_generalising_tops/most_generalising_top,
+						$diamond-id in $further_generalisation/diamond-id
+						satisfies $diamond-id=$subject_identity
+						">
 						<xsl:message>... every one of them is to a more general diamond that itself has this one as a generalisation...</xsl:message>
 						<!-- mutually generalising - filter out all but the first one  -->
 						<xsl:variable name="subject_position" select="tokenize(identity,'-')[last()]"/>
 						<xsl:choose>
 							<xsl:when test="every $such_generalising_top
-									in $generalising_top_that_itself_has_a_generalisation
-									satisfies number($such_generalising_top/tokenize(diamond-id,'-')[last()]) &gt; number($subject_position)">
+								in $generalising_top_that_itself_has_a_generalisation
+								satisfies number($such_generalising_top/tokenize(diamond-id,'-')[last()]) &gt; number($subject_position)">
 								<xsl:message>... keep this one as it is the first one.</xsl:message>
 								<xsl:copy>
 									<xsl:copy-of select="*[not(self::most_generalising_tops)]"/>
@@ -675,9 +677,9 @@
 			<xsl:apply-templates select="*[not(self::type_corrected|self::leftside|self::rightside)]" mode="correlate_rewrites"/>
 			<xsl:variable name="subject_lhs" as="element(lhs)" select="NON-CONFLUENT/rewriteRule/tt-rule/tt-conclusion/lhs"/>
 			<xsl:for-each select="(preceding-sibling::*|following-sibling::*)
-					[self::gat:diamond]
-					[NON-CONFLUENT/rewriteRule]
-					">
+				[self::gat:diamond]
+				[NON-CONFLUENT/rewriteRule]
+				">
 				<xsl:variable name="candidate_identity" select="identity"/>
 				<xsl:message>... is <xsl:value-of select="$candidate_identity"/> more general? </xsl:message>
 				<xsl:variable name="how_specialises" as="element(gat:substitution)*">
@@ -743,16 +745,16 @@
 	</xsl:template>
 
 	<xsl:template match="gat:diamond
-			[NON-CONFLUENT/rewriteRule]
-			[not(more_general_rewrite)]" mode="rewrite_filter">
+		[NON-CONFLUENT/rewriteRule]
+		[not(more_general_rewrite)]" mode="rewrite_filter">
 		<xsl:message>Keeping rewrite <xsl:value-of select="identity"/>
 		</xsl:message>
 		<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
 	</xsl:template>
 
 	<xsl:template match="gat:diamond
-			[NON-CONFLUENT/rewriteRule]
-			[more_general_rewrite]" mode="rewrite_filter">
+		[NON-CONFLUENT/rewriteRule]
+		[more_general_rewrite]" mode="rewrite_filter">
 
 		<!-- filter out this diamond unless the more general rewrite 
 		     itself has this rewrite as a more general in 
@@ -760,31 +762,36 @@
 		<xsl:variable name="more_general_rewrite_that_itself_has_a_more_general_rewrite"
 				as="element(more_general_rewrite)*"
 				select="more_general_rewrite
-				[  some $diamond_id in diamond-id 
-				satisfies //diamond[identity=$diamond_id]/more_general_rewrite
-				]
-				"/>
+			[  some $diamond_id in diamond-id 
+			satisfies //diamond[identity=$diamond_id]/more_general_rewrite
+			]
+			"/>
 		<xsl:choose>
 			<xsl:when test="$more_general_rewrite_that_itself_has_a_more_general_rewrite">
 				<xsl:message> Diamond <xsl:value-of select="identity"/> has generalising top that itself has a generalisation...</xsl:message>
 				<xsl:variable name="subject_identity" select="identity"/>
 				<xsl:choose>
 					<xsl:when test="every $such_more_general_rule
-							in $more_general_rewrite_that_itself_has_a_more_general_rewrite
-							satisfies
-							some $more_general_rules_diamond in  //diamond[identity=$such_more_general_rule/diamond-id],
-							$further_more_general_rules_diamond in $more_general_rules_diamond/more_general_rewrite,
-							$diamond-id in $further_more_general_rules_diamond/diamond-id
-							satisfies $diamond-id=$subject_identity
-							">
+						in $more_general_rewrite_that_itself_has_a_more_general_rewrite
+						satisfies
+						some $more_general_rules_diamond in  //diamond[identity=$such_more_general_rule/diamond-id],
+						$further_more_general_rules_diamond in $more_general_rules_diamond/more_general_rewrite,
+						$diamond-id in $further_more_general_rules_diamond/diamond-id
+						satisfies $diamond-id=$subject_identity
+						">
 						<xsl:message>... every one of them is to a more general rule that itself has this one as a generalisation...</xsl:message>
 						<!-- mutually generalising - filter out all but the first one  -->
 						<xsl:variable name="subject_id" select="generate-id()"/>
+						<xsl:message>subject_id <xsl:value-of select="$subject_id"/></xsl:message>
 						<xsl:choose>
 							<xsl:when test="every $such_more_general_rule
-									in $more_general_rewrite_that_itself_has_a_more_general_rewrite
-									satisfies $such_more_general_rule/generate-id() &gt; $subject_id">
-								<xsl:message>... keep this one as it is the first one.</xsl:message>
+								in $more_general_rewrite_that_itself_has_a_more_general_rewrite
+								satisfies some $more_general_rules_diamond in  //diamond[identity=$such_more_general_rule/diamond-id]
+								satisfies $more_general_rules_diamond/generate-id() &gt; $subject_id">
+								<xsl:for-each select="$more_general_rewrite_that_itself_has_a_more_general_rewrite">
+									<xsl:message>later is <xsl:value-of select="diamond-id"/></xsl:message>
+								</xsl:for-each>
+								<xsl:message>... keep this one as it is the first one in generate-id order.</xsl:message>
 								<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
 							</xsl:when>
 							<xsl:otherwise>
@@ -857,13 +864,13 @@
 
 	<!--	 [substring(name,string-length(name)-1,string-length(name))=''''] -->
 	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
-			[substring(name,string-length(name),1)='''']
-			[not(some $varlike 
-			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
-			satisfies $varlike/name = substring(name,1,string-length(name)-1)
-			)
-			]
-			" 
+		[substring(name,string-length(name),1)='''']
+		[not(some $varlike 
+		in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+		satisfies $varlike/name = substring(name,1,string-length(name)-1)
+		)
+		]
+		" 
 			priority="100"							  
 			mode="unpostfix_variable_names_if_safe">
 		<xsl:copy copy-namespaces="no">
@@ -875,29 +882,29 @@
 	</xsl:template>
 
 	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
-			[substring(name,string-length(name),1)='''']
-			[some $decl 
-			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/*
-			satisfies ($decl/type/*:Ob/*:var/gat:name = name and
-			not(substring($decl/name,string-length($decl/name) - 1,1)='''') and
-			not(some $varlike 
-			in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
-			satisfies $varlike/name = concat($decl/name,'_p')
-			)
-			)
-			]
-			" 
+		[substring(name,string-length(name),1)='''']
+		[some $decl 
+		in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/*
+		satisfies ($decl/type/*:Ob/*:var/gat:name = name and
+		not(substring($decl/name,string-length($decl/name) - 1,1)='''') and
+		not(some $varlike 
+		in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+		satisfies $varlike/name = concat($decl/name,'_p')
+		)
+		)
+		]
+		" 
 			priority="150"
 			mode="unpostfix_variable_names_if_safe">
 		<xsl:copy copy-namespaces="no">
 			<xsl:variable name="decl" 
 					select="(ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/context/child::decl
-					[type/*:Ob/*:var/gat:name = current()/name
-					and not(substring(name,string-length(name) - 1,1)='''')
-					and not(some $varlike 
-					in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
-					satisfies $varlike/name = concat(name,'_p')
-					)][1]"/>    
+				[type/*:Ob/*:var/gat:name = current()/name
+				and not(substring(name,string-length(name) - 1,1)='''')
+				and not(some $varlike 
+				in (ancestor::T-rule|ancestor::tT-rule|ancestor::tt-rule|ancestor::TT-rule)/(descendant::*:seq|descendant::*:var)
+				satisfies $varlike/name = concat(name,'_p')
+				)][1]"/>    
 			<xsl:if test="substring($decl/name,string-length(name) - 1,1)=''''">
 				<xsl:message terminate="yes">OUT OF SPEC</xsl:message>
 			</xsl:if>
@@ -909,7 +916,7 @@
 	</xsl:template>
 
 	<xsl:template match="*[self::*:var|self::*:seq|self::gat:sequence|self::gat:decl]
-			" 
+		" 
 			priority="50"							  
 			mode="unpostfix_variable_names_if_safe">
 		<xsl:copy copy-namespaces="no">
