@@ -86,7 +86,6 @@
 							($duplicate_named_later_decl and  count( $duplicate_named_later_decl/type/descendant::*) &gt; count( $next_decl/type/descendant::*))
 							">
 						<!-- drop in favour of either earlier or later and deeper -->
-						<xsl:message>Dropping duplicate decl <xsl:value-of select="$next_decl/name"/></xsl:message>
 						<xsl:call-template name="remove_duplicate_declarations">
 							<xsl:with-param name="declarations_so_far" select="$declarations_so_far"/>
 							<xsl:with-param name="declarations" select="$declarations[position() &gt; 1]"/>

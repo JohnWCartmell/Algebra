@@ -2,6 +2,7 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:gat              ="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
+		xmlns:ccseqfun            ="http://www.entitymodelling.org/theory/contextualcategory/sequence/fun"
 		xpath-default-namespace="http://www.entitymodelling.org/theory/generalisedalgebraictheory"	   
 		xmlns="http://www.entitymodelling.org/theory/generalisedalgebraictheory"
 		exclude-result-prefixes="xs gat">
@@ -21,7 +22,7 @@
 
 
 
-
+    <!-- prepare_roughcut_diamonds also normalises rhsides of existing rewriteRules -->
 	<xsl:template match = "/" mode="prepare_roughcut_diamonds">
 		<xsl:apply-templates mode="prepare_roughcut_diamonds"/>
 	</xsl:template>
@@ -29,11 +30,9 @@
 	<xsl:template match="algebra" mode="prepare_roughcut_diamonds">
 		<xsl:copy>
 			<xsl:copy-of select="namespace::*"/>
+			<xsl:copy-of select="gat:name|gat:namespace"/>
 			<xsl:variable name="algebra_name" select="name"/>
-
-
-
-
+            <xsl:apply-templates select="rewriteRule" mode="normalise_rhs"/>
 			<xsl:for-each select="rewriteRule/tt-rule"> 
 				<xsl:variable name="inner_rule_id" select="../id"/>
 				<xsl:message>Inner rule <xsl:value-of select="$inner_rule_id"/> </xsl:message> 
@@ -221,6 +220,17 @@
 			</xsl:for-each>
 		</xsl:copy>
 	</xsl:template>
+	
+		<xsl:template match="*" mode="normalise_rhs">
+		<xsl:copy>
+			<xsl:apply-templates mode="normalise_rhs"/>
+		</xsl:copy>
+	</xsl:template>
+	
+	<xsl:template match="rhs" mode="normalise_rhs">
+			<xsl:apply-templates select="." mode="normalise"/>
+	</xsl:template>
+	
 
 	<!-- type_correction -->
 	<xsl:param name="diamond_selection_pattern" select="'.*'"/>
@@ -231,7 +241,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond" mode="type_correction">
+	<xsl:template match="gat:algebra/gat:diamond" mode="type_correction">
 		<xsl:if test="matches(identity,$diamond_selection_pattern)">
 			<xsl:message>Type correcting <xsl:value-of select="gat:identity"/></xsl:message>
 			<xsl:copy>
@@ -360,10 +370,10 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="diamond[type_corrected/ABANDONED]" mode="correlate_diamonds">
+	<xsl:template match="gat:algebra/gat:diamond[type_corrected/ABANDONED]" mode="correlate_diamonds">
 	</xsl:template>
 
-	<xsl:template match="diamond[not(type_corrected/ABANDONED)]" mode="correlate_diamonds">
+	<xsl:template match="algebra/diamond[not(type_corrected/ABANDONED)]" mode="correlate_diamonds">
 		<xsl:copy>
 			<xsl:message>Considering roughcut diamond: <xsl:value-of select="identity"/></xsl:message>
 			<xsl:copy-of select="namespace::*"/>			
@@ -473,7 +483,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond
+	<xsl:template match="gat:algebra/gat:diamond
 		[not(most_generalising_tops/most_generalising_top
 		[right_reduction_more_general
 		and 
@@ -488,7 +498,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond
+	<xsl:template match="gat:algebra/gat:diamond
 		[most_generalising_tops/most_generalising_top
 		[right_reduction_more_general
 		and 
@@ -563,7 +573,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond" mode="grow_diamond">
+	<xsl:template match="algebra/gat:diamond" mode="grow_diamond">
 		<xsl:copy>
 			<xsl:copy-of select="*"/>
 			<xsl:message> Normalise the left reduction </xsl:message>
@@ -637,7 +647,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="gat_diamond" name="rewrite_rule">
+	<xsl:template match="algebra/gat_diamond" name="rewrite_rule">
 		<xsl:param name="lhs" as="element(term)"/>
 		<xsl:param name="rhs" as="element(term)"/>
 		<xsl:variable name="rewrite_rule" as="element(rewriteRule)">
@@ -666,12 +676,12 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="diamond[not(NON-CONFLUENT)]" mode="correlate_rewrites">
+	<xsl:template match="algebra/diamond[not(NON-CONFLUENT)]" mode="correlate_rewrites">
 		<!-- confluent diamond - omit -->
 	</xsl:template>
 
 
-	<xsl:template match="diamond[NON-CONFLUENT/rewriteRule]" mode="correlate_rewrites">
+	<xsl:template match="algebra/diamond[NON-CONFLUENT/rewriteRule]" mode="correlate_rewrites">
 		<xsl:copy>
 			<xsl:message>Considering diamond rewrite: <xsl:value-of select="identity"/></xsl:message>			
 			<xsl:apply-templates select="*[not(self::type_corrected|self::leftside|self::rightside)]" mode="correlate_rewrites"/>
@@ -708,18 +718,7 @@
 
 	<xsl:template match="algebra" mode="rewrite_filter">
 		<xsl:copy>
-			<gat:include>
-				<gat:filename>algebra0.xml</gat:filename>
-				<gat:type>gat:name</gat:type>
-			</gat:include>
-			<gat:include>
-				<gat:filename>algebra0.xml</gat:filename>
-				<gat:type>gat:namespace</gat:type>
-			</gat:include>
-			<gat:include>
-				<gat:filename><xsl:value-of select="$include"/></gat:filename>
-				<gat:type>gat:rewriteRule</gat:type>
-			</gat:include>
+		    <xsl:copy-of select="name|namespace|rewriteRule"/>
 			<xsl:variable name="rewrite_rules" as="element(rewriteRule)*">
 				<xsl:apply-templates mode="rewrite_filter"/>
 			</xsl:variable>
@@ -744,15 +743,15 @@
 		<xsl:apply-templates mode="rewrite_filter"/>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond
+	<xsl:template match="algebra/gat:diamond
 		[NON-CONFLUENT/rewriteRule]
 		[not(more_general_rewrite)]" mode="rewrite_filter">
 		<xsl:message>Keeping rewrite <xsl:value-of select="identity"/>
 		</xsl:message>
-		<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
+		<xsl:apply-templates select="NON-CONFLUENT/rewriteRule" mode="relabel"/>
 	</xsl:template>
 
-	<xsl:template match="gat:diamond
+	<xsl:template match="algebra/gat:diamond
 		[NON-CONFLUENT/rewriteRule]
 		[more_general_rewrite]" mode="rewrite_filter">
 
@@ -792,7 +791,7 @@
 									<xsl:message>later is <xsl:value-of select="diamond-id"/></xsl:message>
 								</xsl:for-each>
 								<xsl:message>... keep this one as it is the first one in generate-id order.</xsl:message>
-								<xsl:copy-of select="NON-CONFLUENT/rewriteRule"/>
+								<xsl:apply-templates select="NON-CONFLUENT/rewriteRule" mode="relabel"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:message>... discard this one as it is not the first one.</xsl:message>
@@ -810,6 +809,40 @@
 				</xsl:message>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="rewriteRule" mode="relabel">
+		<xsl:variable name="relabelling" as="element(relabel)*" select="ccseqfun:relabelling(tt-rule/context)"/>
+		<xsl:copy copy-namespaces="no">
+			<xsl:apply-templates mode="relabel_variables">
+				<xsl:with-param name="relabelling" select="$relabelling"/>
+			</xsl:apply-templates>
+		</xsl:copy>
+	</xsl:template>
+
+
+	<xsl:template match="*" mode="relabel_variables">
+		<xsl:param name="relabelling" as="element(relabel)*"/>
+	
+		<xsl:copy copy-namespaces="no">
+			<xsl:apply-templates mode="relabel_variables">
+				<xsl:with-param name="relabelling" select="$relabelling"/>
+			</xsl:apply-templates>
+		</xsl:copy>
+	</xsl:template>
+
+
+	<xsl:template match="*[self::decl|self::sequence|self::*:var|self::*:seq]" mode="relabel_variables">
+		<xsl:param name="relabelling" as="element(relabel)*"/>
+		<xsl:copy>
+			<gat:name>
+				<xsl:value-of select="$relabelling[pre=current()/gat:name]/post"/>
+			</gat:name>
+			
+			<xsl:apply-templates select="*[not(self::gat:name)]" mode="relabel_variables">
+				<xsl:with-param name="relabelling" select="$relabelling"/>
+			</xsl:apply-templates>
+		</xsl:copy>
 	</xsl:template>
 
 
