@@ -81,7 +81,7 @@
 		<xsl:param name="relabelling" as="element(gat:relabel)*"/>
 		<xsl:param name="dependedOn_name" as="xs:string"/>
 		<xsl:variable name="dependent" as="element(gat:decl)?" 
-				select="$context/gat:decl[gat:type/Ob/var/gat:name = $dependedOn_name]"/>
+				select="$context/gat:decl[gat:type/Ob/var/gat:name = $dependedOn_name][1]"/>
 		<xsl:choose>
 			<xsl:when test="$dependent">
 				<xsl:variable name="dependents_name" as="xs:string"
