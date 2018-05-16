@@ -1,4 +1,4 @@
 SET ALGEBRAHOME=%~dp0..
 SET ERSCRIPTHOME=%ALGEBRAHOME%\..\..\Distributions\ERScript_r3
-SET SAXON_PATH=%ERSCRIPTHOME%\thirdparty\SaxonHE9-7-0-19J
+SET SAXON_PATH=%ALGEBRAHOME%\..\..\SCripting\thirdparty\SaxonHE9-8-0-12J
 SET JING_PATH=%ERSCRIPTHOME%\thirdparty\jing-20091111\bin
