@@ -5,7 +5,177 @@
 		xmlns:gat   ="http://www.entitymodelling.org/theory/generalisedalgebraictheory" 	   
 		xmlns="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
-<hidden>
+
+
+	<gat:termpair>
+		<gat:subject>
+			<o>
+				<o>
+					<seq>
+						<gat:name>f_1</gat:name>
+					</seq>
+				</o>
+
+				<seq>
+					<gat:name>f_1</gat:name>
+				</seq>
+				<!--
+				<seq>
+					<gat:name>sq_1</gat:name>
+				</seq>
+				-->
+			</o>
+		</gat:subject>
+		<gat:target>
+			<o>
+				<o>
+					<seq>
+						<gat:name>f_2</gat:name>
+					</seq>
+				</o>
+
+				<seq>
+					<gat:name>f_2</gat:name>
+				</seq>
+			</o>
+		</gat:target>
+	</gat:termpair>
+
+	<gat:termpair>
+		<gat:subject>
+			<o>
+				<var>
+					<gat:name>z</gat:name>
+				</var>
+				<s>
+					<var>
+						<gat:name>z</gat:name>
+					</var>
+					<o>
+						<var>
+							<gat:name>z</gat:name>
+						</var>
+						<seq>
+							<gat:name>h_2</gat:name>
+						</seq>
+					</o>
+				</s>
+				<o>
+					<var>
+						<gat:name>y</gat:name>
+					</var>
+					<seq>
+						<gat:name>h_2</gat:name>
+					</seq>
+				</o>
+				<q>
+					<var>
+						<gat:name>z</gat:name>
+					</var>
+					<o>
+						<var>
+							<gat:name>z</gat:name>
+						</var>
+						<seq>
+							<gat:name>h_2</gat:name>
+						</seq>
+						<p>
+							<star>
+								<var>
+									<gat:name>w</gat:name>
+								</var>
+								<var>
+									<gat:name>f</gat:name>
+								</var>
+								<var>
+									<gat:name>x</gat:name>
+								</var>
+							</star>
+							<var>
+								<gat:name>w</gat:name>
+							</var>
+						</p>
+						<var>
+							<gat:name>f</gat:name>
+						</var>
+					</o>
+					<var>
+						<gat:name>x</gat:name>
+					</var>
+				</q>
+				<seq>
+					<gat:name>h_1</gat:name>
+				</seq>
+			</o>
+		</gat:subject>
+		<gat:target>
+			<o>
+				<var>
+					<gat:name>vy</gat:name>
+				</var>
+				<s>
+					<var>
+						<gat:name>vy</gat:name>
+					</var>
+					<o>
+						<var>
+							<gat:name>vy</gat:name>
+						</var>
+						<seq>
+							<gat:name>vh_1</gat:name>
+						</seq>
+					</o>
+				</s>
+				<o>
+					<var>
+						<gat:name>vy</gat:name>
+					</var> 
+					<seq>
+						<gat:name>vh_1</gat:name>
+					</seq>
+				</o>
+				<q>
+					<var>
+						<gat:name>vy</gat:name>
+					</var>
+					<o>
+						<var>
+							<gat:name>vy</gat:name>
+						</var>
+						<seq>
+							<gat:name>vh_1</gat:name>
+						</seq>
+						<p>
+							<star>
+								<var>
+									<gat:name>vx</gat:name>
+								</var>
+								<var>
+									<gat:name>vf</gat:name>
+								</var>
+								<var>
+									<gat:name>vz</gat:name>
+								</var>
+							</star>
+							<var>
+								<gat:name>vx</gat:name>
+							</var>
+						</p>
+						<var>
+							<gat:name>vf</gat:name>
+						</var>
+					</o>
+					<var>
+						<gat:name>vz</gat:name>
+					</var>
+				</q>
+
+			</o>
+		</gat:target>
+	</gat:termpair>
+
+
+	<hidden>
 		<gat:termpair>
 			<gat:subject>
 				<o>
@@ -24,8 +194,6 @@
 				</o>
 			</gat:target>
 		</gat:termpair>
-</hidden>
-
 
 		<!-- test for symetry -->
 		<gat:termpair>
@@ -55,7 +223,6 @@
 			</gat:target>
 		</gat:termpair>
 
-	<hidden>
 		<!-- Design to recreate circularity bug -->
 		<gat:termpair>
 			<gat:subject>

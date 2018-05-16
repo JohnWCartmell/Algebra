@@ -22,7 +22,7 @@
 
 
 
-    <!-- prepare_roughcut_diamonds also normalises rhsides of existing rewriteRules -->
+	<!-- prepare_roughcut_diamonds also normalises rhsides of existing rewriteRules -->
 	<xsl:template match = "/" mode="prepare_roughcut_diamonds">
 		<xsl:apply-templates mode="prepare_roughcut_diamonds"/>
 	</xsl:template>
@@ -32,7 +32,7 @@
 			<xsl:copy-of select="namespace::*"/>
 			<xsl:copy-of select="gat:name|gat:namespace"/>
 			<xsl:variable name="algebra_name" select="name"/>
-            <xsl:apply-templates select="rewriteRule" mode="normalise_rhs"/>
+			<xsl:apply-templates select="rewriteRule" mode="normalise_rhs"/>
 			<xsl:for-each select="rewriteRule/tt-rule"> 
 				<xsl:variable name="inner_rule_id" select="../id"/>
 				<xsl:message>Inner rule <xsl:value-of select="$inner_rule_id"/> </xsl:message> 
@@ -220,17 +220,17 @@
 			</xsl:for-each>
 		</xsl:copy>
 	</xsl:template>
-	
-		<xsl:template match="*" mode="normalise_rhs">
+
+	<xsl:template match="*" mode="normalise_rhs">
 		<xsl:copy>
 			<xsl:apply-templates mode="normalise_rhs"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 	<xsl:template match="rhs" mode="normalise_rhs">
-			<xsl:apply-templates select="." mode="normalise"/>
+		<xsl:apply-templates select="." mode="normalise"/>
 	</xsl:template>
-	
+
 
 	<!-- type_correction -->
 	<xsl:param name="diamond_selection_pattern" select="'.*'"/>
@@ -343,6 +343,7 @@
 						<xsl:if test="not($firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*/gat:type)">
 							<xsl:message terminate="yes">Out OF SPEC <xsl:copy-of select="$firstCutTopOfDiamondRuleTypeEnriched/tT-conclusion/term/*"/></xsl:message>
 						</xsl:if>
+
 						<gat:type_corrected>
 							<gat:top_of_diamond>
 								<gat:tT-rule>
@@ -356,6 +357,33 @@
 							<xsl:copy-of select="from/outer/left_reduction"/>
 							<xsl:copy-of select="from/inner/right_reduction" />
 						</gat:type_corrected>
+
+
+						<!-- now flag up whether outer rule is redundant -->
+						<xsl:if test="not(from/outer/id = from/inner/id)">
+						<xsl:variable name="outertermlhs_text">
+							<xsl:apply-templates select="from/outer/term_specialised" mode="text"/>
+						</xsl:variable>
+						<xsl:variable name="top_of_diamond_text">
+							<xsl:apply-templates select="$firstCutTopOfDiamondRule/tT-conclusion/term" mode="text"/>
+						</xsl:variable>
+						<xsl:if test="$outertermlhs_text = $top_of_diamond_text">
+							<xsl:variable name="left_reduction_text">
+								<xsl:apply-templates	select="from/outer/left_reduction" mode="text"/>
+							</xsl:variable>
+							<xsl:variable name="right_reduction_text">
+								<xsl:apply-templates	select="from/inner/right_reduction" mode="text"/>
+							</xsl:variable>
+							<xsl:if test="$left_reduction_text = $right_reduction_text">
+								<gat:redundant>
+									<gat:ruleid>
+										<xsl:value-of select="from/outer/id"/>
+									</gat:ruleid>
+								</gat:redundant>
+							</xsl:if>
+						</xsl:if>
+						</xsl:if>
+
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:copy>
@@ -718,7 +746,7 @@
 
 	<xsl:template match="algebra" mode="rewrite_filter">
 		<xsl:copy>
-		    <xsl:copy-of select="name|namespace|rewriteRule"/>
+			<xsl:copy-of select="name|namespace|rewriteRule"/>
 			<xsl:variable name="rewrite_rules" as="element(rewriteRule)*">
 				<xsl:apply-templates mode="rewrite_filter"/>
 			</xsl:variable>
@@ -823,7 +851,7 @@
 
 	<xsl:template match="*" mode="relabel_variables">
 		<xsl:param name="relabelling" as="element(relabel)*"/>
-	
+
 		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates mode="relabel_variables">
 				<xsl:with-param name="relabelling" select="$relabelling"/>
@@ -838,13 +866,12 @@
 			<gat:name>
 				<xsl:value-of select="$relabelling[pre=current()/gat:name]/post"/>
 			</gat:name>
-			
+
 			<xsl:apply-templates select="*[not(self::gat:name)]" mode="relabel_variables">
 				<xsl:with-param name="relabelling" select="$relabelling"/>
 			</xsl:apply-templates>
 		</xsl:copy>
 	</xsl:template>
-
 
 
 	<xsl:template match="*" mode="expand_metavariables">

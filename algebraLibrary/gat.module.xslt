@@ -49,7 +49,8 @@
           <!--<xsl:for-each select="subject/*">-->
             <xsl:call-template name="unifyTerms">
 			<xsl:with-param name="subjectTerm" select="subject/*"/>
-              <xsl:with-param name="targetTerm" select="../../target/*"/>
+              <xsl:with-param name="targetTerm" select="target/*"/>
+			  <xsl:with-param name="specialise" select="true()"/>
             </xsl:call-template>
           <!--</xsl:for-each>-->
         </xsl:variable>
