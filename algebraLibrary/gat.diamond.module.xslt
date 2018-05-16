@@ -392,11 +392,29 @@
 
 
 	<!-- correlate diamonds -->
+	<!-- also does some pruning of rules previously marked as redundant and diamonds that follow on from them -->
 	<xsl:template match = "*" mode="correlate_diamonds">
 		<xsl:copy>
 			<xsl:apply-templates mode="correlate_diamonds"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<xsl:template match = "rewriteRule
+		                       [some $diamondruleid 
+							    in /algebra/diamond/redundant/ruleid 
+								satisfies id=$diamondruleid ]
+								" mode="correlate_diamonds">
+	     <!-- don't copy rules previously identified as redundant -->
+	</xsl:template>
+	
+		<xsl:template match = "algebra/diamond
+		                       [some $diamondruleid 
+							    in /algebra/diamond/redundant/ruleid 
+								satisfies (from_outer_id=$diamondruleid or from_inner_id=$diamondruleid) ]
+								" mode="correlate_diamonds" priority="100">
+	     <!-- don't copy diamonds constructed from rules identified as redundant -->
+	</xsl:template>
+	
 
 	<xsl:template match="gat:algebra/gat:diamond[type_corrected/ABANDONED]" mode="correlate_diamonds">
 	</xsl:template>
@@ -449,7 +467,7 @@
 				</xsl:for-each>
 			</xsl:variable>
 
-			<xsl:message>More general tops right reduction:<xsl:copy-of select="$more_general_tops/right_reduction"/></xsl:message>
+			<!--<xsl:message>More general tops right reduction:<xsl:copy-of select="$more_general_tops/right_reduction"/></xsl:message>-->
 			<xsl:if test="$more_general_tops">
 				<xsl:variable name="most_subs" select="max($more_general_tops/substitution/count(subject/substitute))"/>
 				<xsl:message >**** most subs is <xsl:value-of select="$most_subs"/></xsl:message>
