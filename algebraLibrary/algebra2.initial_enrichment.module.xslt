@@ -30,16 +30,9 @@ Description
 	<!-- module would begin here -->
 	<xsl:template name="initial_enrichment">
 		<xsl:param name="document"/>
-	
+	<!-- REMOVED pass_0 -->
 		<xsl:variable name="current_state">
 			<xsl:for-each select="$document">
-				<xsl:copy>
-					<xsl:apply-templates mode="pass_0"/>
-				</xsl:copy>
-			</xsl:for-each>
-		</xsl:variable>
-				<xsl:variable name="current_state">
-			<xsl:for-each select="$current_state">
 				<xsl:copy>
 					<xsl:apply-templates mode="initial_enrichment_zero_pass"/>
 				</xsl:copy>
@@ -68,42 +61,7 @@ Description
 
 	</xsl:template>
 	
-	<!-- pass_0 is a copy of standard include code from ER modfelling generators -->
-	
-	<!--
-	  <xsl:template match="/">
-      <xsl:copy>
-         <xsl:apply-templates mode="pass_0"/>
-      </xsl:copy>
-   </xsl:template>
-   
-   -->
-   
-   <xsl:template match="@*|node()" mode="pass_0">
-  <!-- <xsl:message>in pass zero generic <xsl:value-of select="name()"/></xsl:message>-->
-      <xsl:copy>
-         <xsl:apply-templates select="@*|node()" mode="pass_0"/>
-      </xsl:copy>
-   </xsl:template>
-   
-   <xsl:template match="include[not(*/self::type)]" mode="pass_0">
-      <xsl:apply-templates select="document(filename)/*/*" mode="pass_0"/>
-   </xsl:template>
-   
-   <xsl:template match="/*/include[*/self::type]" mode="pass_0">
-      <xsl:variable name="temp" select="../name()"/>
-      <xsl:apply-templates select="document(filename)/*[name()=$temp]/*[name()=current()/type]"
-                           mode="pass_0"/>
-   </xsl:template>
-   
-   <xsl:template match="/*/*/include[*/self::type]" mode="pass_0">
-      <xsl:variable name="temp" select="../../name()"/>
-      <xsl:variable name="temp2" select="../name()"/>
-      <xsl:apply-templates select="document(filename)/*[name()=$temp]/*[name()=$temp2]/*[name()=current()/type]"
-                           mode="pass_0"/>
-   </xsl:template>
-   
-   <!-- end of pass_0 -->
+
    
 
 	<xsl:template match="*"
