@@ -83,7 +83,7 @@
 		<xsl:apply-templates select="type_corrected/top_of_diamond/tT-rule/tT-conclusion/term/*" mode="tex"/>
 		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
 		<xsl:text>\mbox{(top)}\\&#xA;</xsl:text>
-	    <xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
 		<xsl:apply-templates select="type_corrected/top_of_diamond/tT-rule/tT-conclusion/type/*" mode="tex"/>
 		<xsl:text disable-output-escaping="yes"><![CDATA[&]]></xsl:text>
 		<xsl:text>\mbox{(type)}\\&#xA;</xsl:text>
@@ -106,9 +106,8 @@
 		<xsl:text>\end{array}&#xA;</xsl:text>
 		<xsl:text>\end{equation*}&#xA;</xsl:text>
 		<xsl:text>\noindent\rule{8cm}{0.4pt}&#xA;</xsl:text>\\
-        <xsl:text>&#xA;</xsl:text>
-        <xsl:text>\noindent&#xA;</xsl:text>
-
+		<xsl:text>&#xA;</xsl:text>
+		<xsl:text>\noindent&#xA;</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="/" mode="tex_rulestyle" >
@@ -140,7 +139,7 @@
 	</xsl:template>
 
 	<xsl:template match="algebra" mode="tex_rulestyle">
-	<xsl:message> in algebra</xsl:message>
+		<xsl:message> in algebra</xsl:message>
 		<xsl:apply-templates mode="tex_rulestyle"/>
 	</xsl:template>
 
@@ -159,7 +158,7 @@
 	</xsl:template>
 
 	<xsl:template match="rewriteRule|axiom" mode="tex_rulestyle">
-	<xsl:message>in reWriteRule <xsl:value-of select="gat:id"/></xsl:message>
+		<xsl:message>in <xsl:value-of select="name()"/> <xsl:value-of select="gat:id"/></xsl:message>
 		<xsl:text>
 			\begin{equation}
 		</xsl:text>
@@ -296,7 +295,7 @@
 		<xsl:text>=</xsl:text>
 		<xsl:apply-templates select="rhs/*" mode="tex"/>
 	</xsl:template>
-	
+
 	<xsl:template match="tt-conclusion" mode="tex">
 		<xsl:variable name="lhstypetex">
 			<xsl:apply-templates select="lhs/*/gat:type/*" mode="tex"/>
@@ -338,6 +337,27 @@
 		</xsl:choose>
 	</xsl:template>
 	
+		<xsl:template match="T-conclusion" mode="tex.short">
+		<xsl:message>in T-conclustion</xsl:message>
+		<xsl:text>\isT{</xsl:text>
+		<xsl:apply-templates select="type/*" mode="tex"/>
+		<xsl:text>}</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="tT-conclusion" mode="tex.short">
+		<xsl:text>\ofT{</xsl:text>
+		<xsl:apply-templates select="term/*" mode="tex"/>  
+		<xsl:text>}{</xsl:text>
+		<xsl:apply-templates select="type/*" mode="tex"/>
+		<xsl:text>}</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="TT-conclusion" mode="tex.short">
+		<xsl:apply-templates select="lhs/*" mode="tex"/>  
+		<xsl:text>=</xsl:text>
+		<xsl:apply-templates select="rhs/*" mode="tex"/>
+	</xsl:template>
+
 
 	<xsl:template match="tt-conclusion" mode="tex.short">
 		<xsl:variable name="lhstypetex">
@@ -402,8 +422,8 @@
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
-	
-		<xsl:template match="context" mode="tex.short">
+
+	<xsl:template match="context" mode="tex.short">
 		<xsl:for-each select="decl|sequence">
 			<xsl:apply-templates select="." mode ="tex.short"/>
 			<xsl:if test="following-sibling::decl | following-sibling::sequence">
@@ -411,7 +431,7 @@
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
-	
+
 
 	<xsl:template match="decl[not(gat:term)]" mode="tex">
 		<xsl:text>\ofT{</xsl:text>
@@ -431,8 +451,8 @@
 		<xsl:apply-templates select="gat:term" mode="tex"/>
 		<xsl:apply-templates select="type" mode="tex"/>
 	</xsl:template>
-	
-		<xsl:template match="decl[not(gat:term)]" mode="tex.short">
+
+	<xsl:template match="decl[not(gat:term)]" mode="tex.short">
 		<xsl:text>\ofT{</xsl:text>
 		<xsl:value-of select="name"/>
 		<xsl:text>}{</xsl:text>
@@ -450,7 +470,7 @@
 		<xsl:apply-templates select="gat:term" mode="tex.short"/>
 		<xsl:apply-templates select="type" mode="tex.short"/>
 	</xsl:template>
-	
+
 
 	<xsl:template match="sequence" mode="tex">
 		<xsl:text>\ofT{\vec{</xsl:text>
@@ -459,20 +479,20 @@
 		<xsl:apply-templates select="type" mode="tex"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
-	
-		<xsl:template match="sequence" mode="tex.short">
+
+	<xsl:template match="sequence" mode="tex.short">
 		<xsl:text>\ofT{\vec{</xsl:text>
 		<xsl:value-of select="name"/>
 		<xsl:text>}}{</xsl:text>
 		<xsl:apply-templates select="type" mode="tex.short"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
-	
+
 
 	<xsl:template match="type" mode="tex">
 		<xsl:apply-templates mode="tex"/> 
 	</xsl:template>
-		
+
 	<xsl:template match="type" mode="tex.short">
 		<xsl:apply-templates mode="tex.short"/> 
 	</xsl:template>
@@ -480,8 +500,8 @@
 	<xsl:template match="*:var" mode="tex.short">
 		<xsl:value-of select="name"/>
 	</xsl:template>
-	
-		<xsl:template match="*:var" mode="tex">
+
+	<xsl:template match="*:var" mode="tex">
 		<xsl:value-of select="name"/>
 	</xsl:template>
 
@@ -491,8 +511,8 @@
 		<xsl:value-of select="name"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
-	
-	
+
+
 	<xsl:template match="*:seq" mode="tex.short">
 		<xsl:text>\vec{</xsl:text>
 		<xsl:value-of select="name"/>
