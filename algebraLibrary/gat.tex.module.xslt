@@ -340,7 +340,7 @@
 		<xsl:template match="T-conclusion" mode="tex.short">
 		<xsl:message>in T-conclustion</xsl:message>
 		<xsl:text>\isT{</xsl:text>
-		<xsl:apply-templates select="type/*" mode="tex"/>
+		<xsl:apply-templates select="type/*" mode="tex.short"/>
 		<xsl:text>}</xsl:text>
 	</xsl:template>
 
@@ -361,10 +361,10 @@
 
 	<xsl:template match="tt-conclusion" mode="tex.short">
 		<xsl:variable name="lhstypetex">
-			<xsl:apply-templates select="lhs/*/gat:type/*" mode="tex"/>
+			<xsl:apply-templates select="lhs/*/gat:type/*" mode="tex.short"/>
 		</xsl:variable>
 		<xsl:variable name="rhstypetex">
-			<xsl:apply-templates select="rhs/*/gat:type/*" mode="tex"/>
+			<xsl:apply-templates select="rhs/*/gat:type/*" mode="tex.short"/>
 		</xsl:variable>
 		<xsl:choose>
 			<xsl:when test="$lhstypetex=$rhstypetex">

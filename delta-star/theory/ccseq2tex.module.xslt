@@ -135,24 +135,26 @@ DESCRIPTION
 	<xsl:template match="subm" mode="tex">
 	    <xsl:text>{</xsl:text>
 		<xsl:choose> 
-			<xsl:when test="*[1][self::o|self::star]">
+			<xsl:when test="*[2][self::o|self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="*[2]" mode="tex"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="*[2]" mode="tex"/>
 			</xsl:otherwise>
 		</xsl:choose>
+				<xsl:text>}_{</xsl:text>
+		   <xsl:apply-templates select="*[1]" mode="tex"/>
 		<xsl:text>}^*</xsl:text>
 		<xsl:choose> 
-			<xsl:when test="*[2][self::o | self::star]">
+			<xsl:when test="*[3][self::o | self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="*[3]" mode="tex"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="*[3]" mode="tex"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -245,24 +247,24 @@ DESCRIPTION
 	<xsl:template match="subm" mode="tex.short">
 	    <xsl:text>{</xsl:text>
 		<xsl:choose> 
-			<xsl:when test="*[1][self::o|self::star]">
+			<xsl:when test="*[2][self::o|self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="*[2]" mode="tex.short"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[1]" mode="tex"/>
+				<xsl:apply-templates select="*[2]" mode="tex.short"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>}^*</xsl:text>
 		<xsl:choose> 
 			<xsl:when test="*[2][self::o | self::star]">
 				<xsl:text>(</xsl:text>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="*[3]" mode="tex.short"/>
 				<xsl:text>)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="*[2]" mode="tex"/>
+				<xsl:apply-templates select="*[3]" mode="tex.short"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

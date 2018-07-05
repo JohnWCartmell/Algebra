@@ -14,7 +14,7 @@ DESCRIPTION
 		xpath-default-namespace="http://www.entitymodelling.org/theory/contextualcategory/sequence" >
 
 
-	<xsl:template match="o|star|p|q|s"  mode="text">
+	<xsl:template match="o|star|p|q|s|subm"  mode="text">
 		<xsl:value-of select="name()"/>
 		<xsl:text>[</xsl:text>
 		<xsl:apply-templates select="*[1]" mode="text"/>

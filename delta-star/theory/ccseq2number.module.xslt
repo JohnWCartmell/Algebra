@@ -83,6 +83,26 @@ DESCRIPTION
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+    <xsl:template match="subm" mode="number">
+      <xsl:choose>
+      <xsl:when test="count(ccseq:*)=3">
+        <xsl:variable name="arg1" as="xs:double">
+          <xsl:apply-templates select="*[2]" mode="number"/>
+        </xsl:variable>
+        <xsl:variable name="arg2" as="xs:double">
+          <xsl:apply-templates select="*[3]" mode="number"/>
+        </xsl:variable>
+        <xsl:value-of select="$arg1 + $arg2"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message>**********  subm Term has error in number of args <xsl:copy-of select="."/>
+        </xsl:message>
+        <xsl:value-of select="0"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
 
   <xsl:template match="s" mode="number">
     <xsl:choose>

@@ -8,7 +8,6 @@
 	                   Keep revised contexts.
     -->
 
-
 	<gat:rewriteRule>
 		<gat:id>C.1</gat:id>
 		<gat:tt-rule>
@@ -424,8 +423,99 @@
 		</gat:tt-rule>
 	</gat:rewriteRule>
 
+
 	<gat:rewriteRule>
 		<gat:id>star-1</gat:id>
+		<gat:tt-rule>
+			<gat:context>
+				<gat:sequence>
+					<gat:name>h_1</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var>w</var>
+							<var>x</var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+				<gat:decl>
+					<gat:name>y</gat:name>
+					<gat:type>
+						<Ob>
+							<var>y_p</var>
+						</Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>f</gat:name>
+					<gat:type>
+						<Hom>
+							<var>x</var>
+							<var>y_p</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>g</gat:name>
+					<gat:type>
+						<Hom>
+							<var>y_p</var>
+							<var>y</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:sequence>
+					<gat:name>h_2</gat:name>
+					<gat:type>
+						<HomSeq>
+							<var>x</var>
+							<var>z</var>
+						</HomSeq>
+					</gat:type>
+				</gat:sequence>
+			</gat:context>
+			<gat:tt-conclusion>
+				<gat:lhs>
+					<o>
+						<var>w</var>
+						<seq>h_1</seq>
+						<subm>
+							<var>x</var>
+							<var>f</var>
+							<var>g</var>
+						</subm>
+						<p>
+							<star>
+								<var>x</var>
+								<o>
+									<var>x</var>
+									<var>f</var>
+									<var>g</var>
+									<p>
+										<var>y</var>
+										<var>y_p</var>
+									</p>
+								</o>
+								<var>y</var>
+							</star>
+							<var>x</var>
+						</p>
+						<seq>h_2</seq>
+					</o>
+				</gat:lhs>
+				<gat:rhs>
+					<o>
+						<var>w</var>
+						<seq>h_1</seq>
+						<seq>h_2</seq>
+					</o>
+				</gat:rhs>
+			</gat:tt-conclusion>
+		</gat:tt-rule>
+	</gat:rewriteRule>
+
+
+	<gat:rewriteRule>
+		<gat:id>star-2</gat:id>
 		<gat:tt-rule>
 			<gat:context>
 				<gat:sequence>
@@ -479,6 +569,7 @@
 						<var>w</var>
 						<seq>h_1</seq>
 						<subm>
+							<var>x</var>
 							<var>f</var>
 							<var>g</var>
 						</subm>
@@ -510,4 +601,73 @@
 			</gat:tt-conclusion>
 		</gat:tt-rule>
 	</gat:rewriteRule>
+
+	<gat:rewriteRule>
+		<gat:id>star-3</gat:id>
+		<gat:tt-rule>
+			<gat:context>
+				<gat:decl>
+					<gat:name>y</gat:name>
+					<gat:type>
+						<Ob>
+							<var>y_p</var>
+						</Ob>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>f_1</gat:name>
+					<gat:type>
+						<Hom>
+							<var>x_1</var>
+							<var>x_2</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>f_2</gat:name>
+					<gat:type>
+						<Hom>
+							<var>x_2</var>
+							<var>y_p</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+				<gat:decl>
+					<gat:name>g</gat:name>
+					<gat:type>
+						<Hom>
+							<var>y_p</var>
+							<var>y</var>
+						</Hom>
+					</gat:type>
+				</gat:decl>
+			</gat:context>
+			<gat:tt-conclusion>
+				<gat:lhs>
+					<subm>
+						<var>x_1</var>
+						<var>f_1</var>
+						<subm>
+							<var>x_2</var>
+							<var>f_2</var>
+							<var>g</var>
+						</subm>
+					</subm>
+				</gat:lhs>
+				<gat:rhs>
+					<subm>
+						<var>x_1</var>
+						<o>
+							<var>x_1</var>
+							<var>f_1</var>
+							<var>f_2</var>
+						</o>
+						<var>g</var>
+					</subm>
+				</gat:rhs>
+			</gat:tt-conclusion>
+		</gat:tt-rule>
+	</gat:rewriteRule>
+
+
 </gat:algebra>
