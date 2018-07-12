@@ -337,7 +337,7 @@
 		</xsl:choose>
 	</xsl:template>
 	
-		<xsl:template match="T-conclusion" mode="tex.short">
+	<xsl:template match="T-conclusion" mode="tex.short">
 		<xsl:message>in T-conclustion</xsl:message>
 		<xsl:text>\isT{</xsl:text>
 		<xsl:apply-templates select="type/*" mode="tex.short"/>
@@ -409,6 +409,11 @@
 	<xsl:template match="gat:type_error" mode="tex">
 
 	</xsl:template>
+	
+	<xsl:template match="gat:type_error" mode="tex.short">
+
+	</xsl:template>
+	
 
 	<xsl:template match="algebra" mode="tex">
 		<xsl:apply-templates mode="tex"/>

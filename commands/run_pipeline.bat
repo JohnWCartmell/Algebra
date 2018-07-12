@@ -3,6 +3,8 @@ call %~dp0\set_path_variables
 set THEORY=%1
 set ITERATION=%2
 
+if %ITERATION% EQU 0 COPY %THEORY%\theory\algebra.xml %THEORY%\temp\algebra0.xml
+
 call %~dp0\iterate_initial_enrichment.bat %THEORY% %ITERATION%
 
 call %~dp0\rewrite2.roughcutdiamonds.bat %THEORY% %ITERATION%
